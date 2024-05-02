@@ -1,0 +1,10 @@
+{
+  "hosting": {
+    "public": "CarJourney/y",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}
