@@ -18,6 +18,7 @@
         <ul>
           <li><a href="#" class="active"><i class="fas fa-home"></i> Home</a></li>
           <li><a href="#"><i class="fas fa-search"></i> Search</a></li>
+          <li><a href="#" id="finance-btn"><i class="fas fa-wallet"></i> Finance</a></li>
           <li><a href="#" id="login-btn"><i class="fas fa-sign-in-alt"></i> Login</a></li>
           <li><a href="#" id="register-btn"><i class="fas fa-user-plus"></i> Register</a></li>
         </ul>
@@ -118,11 +119,60 @@
         <label for="register-password">Password:</label>
         <input type="password" id="register-password" name="password" required>
 
-        <button type="submit" class="btn">Register</button>
+        <button type="submit" class="btn">Submit</button>
       </form>
     </div>
   </div>
 
+  <!--  //=====================\\
+        ||    Finance Modal    ||
+        \\=====================//  -->   
+  <div id="finance-modal" class="modal">
+    <div class="finance-content">
+      <span class="close" id="finance-close">&times;</span>
+      <h2>Finance</h2>
+      <form id="finance-form">
+        <!-- Car Price -->
+        <label for="car-price">Car Price</label>
+        <input type="text" id="car-price" name="car-price">
+
+        <!-- Interest Rate -->
+        <label for="interest-rate">Interest Rate (Percentage)</label>
+        <input type="text" id="interest-rate" name="interest-rate">
+
+        <!-- Loan Term (months) -->
+        <label for="loan-term">Loan Term (months)</label>
+        <input type="text" id="loan-term" name="loan-term">
+
+        <!-- Sales Tax Rate -->
+        <label for="sales-rate">Sales Tax Rate (Percentage)</label>
+        <input type="text" id="sales-rate" name="sales-rate">
+    
+        <!-- Down Payment -->
+        <label for="down-payment">Down Payment</label>
+        <input type="text" id="down-payment" name="down-payment">
+
+        <!-- Trade-in Value -->
+        <label for="trade-value">Trade-in Value</label>
+        <input type="text" id="trade-value" name="trade-value">
+
+        <!-- Amount Owed on Trade -->
+        <label for="trade-owed">Amount Owed on Trade</label>
+        <input type="text" id="trade-owed" name="trade-owed">
+
+        <!-- Results -->
+        <div class="finance-results">
+          <p id="monthly-pay">Est. Monthly Payment: $0</p>
+          <p id="total-finance">Est. Total Financed: $0</p>
+          <p id="total-interest">Est. Total Interest: $0</p>
+          <p id="total-loan">Est. Total Loan: $0</p>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
   <footer>
     <div class="container">
       <p>&copy; 2024 CarJourney. All rights reserved.</p>

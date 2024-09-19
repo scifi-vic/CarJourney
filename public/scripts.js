@@ -105,6 +105,10 @@ const registerBtn = document.getElementById('register-btn');
 const loginClose = document.getElementById('login-close');
 const registerClose = document.getElementById('register-close');
 
+const financeModal = document.getElementById('finance-modal');
+const financeBtn = document.getElementById('finance-btn');
+const financeClose = document.getElementById('finance-close');
+
 // Open login modal
 loginBtn.addEventListener('click', function () {
   loginModal.style.display = 'block';
@@ -131,5 +135,86 @@ window.addEventListener('click', function (event) {
     loginModal.style.display = 'none';
   } else if (event.target === registerModal) {
     registerModal.style.display = 'none';
+  } else if (event.target === financeModal) {
+    financeModal.style.display = 'none';
   }
 });
+
+// //=============\\
+// ||   Finance   ||
+// \\=============//
+// Open Finance modal
+financeBtn.addEventListener('click', function () {
+  financeModal.style.display = 'block';
+});
+
+// Close Finance modal
+financeClose.addEventListener('click', function () {
+  financeModal.style.display = 'none';
+});
+
+// Dynamically update the database as the user types
+document.getElementById('car-price').addEventListener('input', function() { Finance();});
+document.getElementById('interest-rate').addEventListener('input', function() { Finance();});
+document.getElementById('loan-term').addEventListener('input', function() { Finance();});
+document.getElementById('sales-rate').addEventListener('input', function() { Finance();});
+document.getElementById('down-payment').addEventListener('input', function() { Finance();});
+document.getElementById('trade-value').addEventListener('input', function() { Finance();});
+document.getElementById('trade-owed').addEventListener('input', function() { Finance();});
+
+// Calculate
+function Finance() {
+  // Variables
+  // Set variables to 0 if it's not a number, float, or integer
+  var carPrice = parseFloat(document.getElementById('car-price').value);  if (isNaN(carPrice)) { carPrice = 0;}
+  var loanTerm = parseFloat(document.getElementById('loan-term').value);  if (isNaN(loanTerm)) { loanTerm = 0;}
+  var downPayment = parseFloat(document.getElementById('down-payment').value);  if (isNaN(downPayment)) { downPayment = 0;}
+  var tradeValue = parseFloat(document.getElementById('trade-value').value);  if (isNaN(tradeValue)) { tradeValue = 0;}
+  var tradeOwed = parseFloat(document.getElementById('trade-owed').value);  if (isNaN(tradeOwed)) { tradeOwed = 0;}
+
+  // Convert Rates
+  let interestRate = parseFloat(document.getElementById('interest-rate').value) / 100;  // Divides by 100 to convert to percentage
+  if (isNaN(interestRate)) { interestRate = 0;}
+  let salesRate = parseFloat(document.getElementById('sales-rate').value) / 100;  // Divides by 100 to convert to percentage
+  if (isNaN(salesRate)) { salesRate = 0;}
+
+  let interestRate_month = (interestRate) / 12;   // Interest rate per month
+
+  /*  Calculate Sales Tax
+      Sales Tax has its own formula apart from the Rate   */
+  let salesTax = (carPrice) * (salesRate);
+
+  /*  Calculate Total Finance  
+      From: https://www.autotrader.com/car-payment-calculator   */
+  let totalFinance = (carPrice) + (salesTax) - (downPayment) - (tradeValue) + (tradeOwed);
+
+  /*  Calculate Monthly Payment
+      Formula for Monthly Payment was taken from these 2 websites:
+        https://www.calculatorsoup.com/calculators/financial/loan-calculator.php
+        https://www.rocketloans.com/learn/financial-smarts/how-to-calculate-monthly-payment-on-a-loan   */
+  let monthlyPayment = totalFinance * ((interestRate_month) * ((1 + interestRate_month) ** loanTerm)) / (((1 + interestRate_month) ** loanTerm) - 1);
+
+  /*  Calculate Total Interest
+      Formula: https://www.reddit.com/r/HelpMeFind/comments/12mtb62/what_does_est_total_interest_mean_im_confused/  */
+  let totalInterest = (monthlyPayment * loanTerm) - (totalFinance);
+
+  // Calculate Total Loan
+  let totalLoan = (totalFinance) + (totalInterest);
+
+  /* Check Results
+     Set to 0 if any variable is NaN or infinity   */
+  if (!isFinite(monthlyPayment) || isNaN(monthlyPayment) ) { monthlyPayment = 0;}
+  if (!isFinite(totalFinance) || isNaN(totalFinance) ) { totalFinance = 0;}
+  if (!isFinite(totalInterest) || isNaN(totalInterest) ) { totalInterest = 0;}
+  if (!isFinite(totalLoan) || isNaN(totalLoan) ) { totalLoan = 0;}
+
+  // Update HTML
+  document.getElementById("monthly-pay").innerHTML = "Est. Monthly Payment: $" + monthlyPayment;
+  document.getElementById("total-finance").innerHTML = "Est. Total Financed: $" + totalFinance;
+  document.getElementById("total-interest").innerHTML = "Est. Total Interest: $" + totalInterest;
+  document.getElementById("total-loan").innerHTML = "Est. Total Loan: $" + totalLoan;
+
+};
+
+
+

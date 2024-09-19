@@ -325,6 +325,87 @@ nav ul li a.active {
   background-color: #c0392b;
 }
 
+/*  //=====================\\
+    ||    Finance Modal    ||
+    \\=====================//  */  
+.finance {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Black background with transparency */
+}
+
+.finance-content {
+  background-color: #fff;
+  margin: 10% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 1000px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Modal Form Styling */
+.finance-content h2 {
+  margin-bottom: 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 24px;
+  color: #2c3e50;
+}
+
+.finance-content form {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-template-rows: max-content max-content;
+  grid-gap: 10px;
+}
+
+.finance-content form label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  text-align: left;  /* Align text to left */
+}
+
+.finance-content form input {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.finance-content form .btn {
+  padding: 12px;
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+.finance-content form .btn:hover {
+  background-color: #c0392b;
+}
+
+/* Results */
+.finance-results {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+}
+
+.finance-results p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
 /* Footer */
 footer {
   background-color: #2c3e50;
