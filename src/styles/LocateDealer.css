@@ -1,0 +1,143 @@
+/* src/styles/LocateDealer.css */
+
+
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Container */
+.locate-dealer {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Header */
+header {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 20px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Dealer Search Form */
+.zipcode-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#zipcode-input {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 250px;
+    transition: border-color 0.3s;
+}
+
+#zipcode-input:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.btn {
+    padding: 12px 20px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+}
+
+.loader {
+    display: block;
+    margin: 20px auto;
+    font-size: 1.5em;
+}
+
+.dealer-results {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Dealer Item Styling */
+.dealer-item {
+    display: flex;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 800px;
+    margin-bottom: 10px;
+    padding: 20px;
+    text-align: left;
+    justify-content: space-between;
+}
+
+.dealer-photo {
+    flex: 1;
+}
+
+.dealer-photo img {
+    max-width: 200px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.dealer-info {
+    flex: 3;
+    padding-left: 20px;
+}
+
+.dealer-info h3 {
+    font-size: 1.5em;
+    margin-bottom: 5px;
+}
+
+.dealer-info p {
+    margin: 5px 0;
+}
+
+.btn-visit a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-visit {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #3498db;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn-visit:hover {
+    background-color: #2980b9;
+}

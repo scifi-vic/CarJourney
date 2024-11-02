@@ -7,7 +7,8 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Garage from './pages/Garage';
 import User from './pages/User';
-import CarQuiz from './pages/Car-Quiz'; // Updated import for Car-Quiz.js
+import CarQuiz from './pages/Car-Quiz';
+import LocateDealer from './pages/LocateDealer'; // Import for LocateDealer component
 
 function App() {
   return (
@@ -18,7 +19,8 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/garage" element={<Garage />} />
         <Route path="/user" element={<User />} />
-        <Route path="/car-quiz" element={<CarQuiz />} /> {/* Route for Car Quiz */}
+        <Route path="/car-quiz" element={<CarQuiz />} />
+        <Route path="/locate-dealer" element={<LocateDealer />} /> {/* Route for Locate Dealer */}
       </Routes>
       <Footer />
     </Router>
