@@ -1,3 +1,4 @@
+// RegisterModal.js
 import React, { useState, useEffect } from 'react';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { Box, Modal, TextField, Button, Typography, IconButton, InputAdornment } from '@mui/material';
@@ -20,9 +21,7 @@ function RegisterModal({ open, onClose }) {
   const [verificationMessage, setVerificationMessage] = useState('');
 
   useEffect(() => {
-    if (!open) {
-      resetForm();
-    }
+    if (!open) resetForm();
   }, [open]);
 
   const resetForm = () => {
@@ -68,35 +67,26 @@ function RegisterModal({ open, onClose }) {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
-      
-      console.log('User successfully registered:', user);
 
       await setDoc(doc(db, "users", user.uid), {
         email: formData.email,
         name: `${formData.firstName} ${formData.lastName}`
       });
 
-      console.log('User data saved to Firestore');
-
-      // Attempt to send verification email and log outcome
       await sendEmailVerification(user)
         .then(() => {
-          console.log('Verification email sent');
           setVerificationMessage('A verification email has been sent. Please check your inbox and verify your account.');
         })
-        .catch((error) => {
-          console.error('Error sending verification email:', error);
+        .catch(() => {
           setError('Failed to send verification email. Please try again later.');
         });
-
     } catch (error) {
-      console.error('Error during registration:', error.message);
       setError(`Registration failed: ${error.message}`);
     }
   };
 
   return (
-    <Modal open={open} onClose={() => { setError(''); setVerificationMessage(''); }}>
+    <Modal open={open} onClose={onClose}>
       <Box
         sx={{
           padding: 4,
@@ -166,14 +156,36 @@ function RegisterModal({ open, onClose }) {
             }}
           />
 
+          {/* Password Criteria Display */}
+          <Box sx={{ mt: 1 }}>
+            <Typography
+              color={passwordCriteria.length ? 'green' : 'red'}
+              sx={{ fontSize: '0.85rem' }}
+            >
+              • At least 8 characters
+            </Typography>
+            <Typography
+              color={passwordCriteria.number ? 'green' : 'red'}
+              sx={{ fontSize: '0.85rem' }}
+            >
+              • Contains a number
+            </Typography>
+            <Typography
+              color={passwordCriteria.specialChar ? 'green' : 'red'}
+              sx={{ fontSize: '0.85rem' }}
+            >
+              • Contains a special character
+            </Typography>
+          </Box>
+
           {error && (
-            <Typography color="error" sx={{ mt: 1, textAlign: 'center', backgroundColor: 'rgba(255, 0, 0, 0.1)', padding: '0.5rem', borderRadius: '5px' }}>
+            <Typography color="error" sx={{ mt: 1, textAlign: 'center', padding: '0.5rem', borderRadius: '5px' }}>
               {error}
             </Typography>
           )}
 
           {verificationMessage && (
-            <Typography color="primary" sx={{ mt: 1, textAlign: 'center', backgroundColor: 'rgba(0, 128, 0, 0.1)', padding: '0.5rem', borderRadius: '5px' }}>
+            <Typography color="primary" sx={{ mt: 1, textAlign: 'center', padding: '0.5rem', borderRadius: '5px' }}>
               {verificationMessage}
             </Typography>
           )}
@@ -188,13 +200,7 @@ function RegisterModal({ open, onClose }) {
               fontWeight: 'bold',
               borderRadius: '8px',
               padding: '0.75rem',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              transition: 'background-color 0.3s ease, transform 0.2s ease',
-              '&:hover': {
-                backgroundColor: '#3a4579',
-                transform: 'scale(1.02)',
-              },
+              '&:hover': { backgroundColor: '#3a4579' },
             }}
           >
             Sign Up
