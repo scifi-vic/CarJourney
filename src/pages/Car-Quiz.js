@@ -58,7 +58,6 @@ const CarQuiz = () => {
     },
   ];
 
-  // Insanely extensive car recommendations
   const carRecommendations = {
     "Sedan,Daily commute,Very important,Comfort-oriented,Advanced safety features": "Toyota Corolla Hybrid, Honda Civic Hybrid, Hyundai Elantra Hybrid",
     "Sedan,Daily commute,Very important,Comfort-oriented,Luxury and infotainment": "Lexus ES Hybrid, BMW 3 Series Hybrid, Audi A4",
@@ -87,7 +86,6 @@ const CarQuiz = () => {
     "Coupe,Daily commute,Very important,Sporty,Advanced safety features": "Mercedes-Benz CLA Coupe, Audi A3, BMW 4 Series",
   };
 
-  // Generalized recommendations in case no specific combination is found
   const generalizedRecommendations = {
     "Sedan": "Honda Accord, Toyota Camry, Hyundai Sonata",
     "SUV": "Toyota RAV4, Honda CR-V, Subaru Forester",
@@ -113,7 +111,6 @@ const CarQuiz = () => {
     const recommendedCar = carRecommendations[resultKey];
     setResult(recommendedCar || generalizedRecommendations[selectedAnswers[0]]);
 
-    // Only save to Firestore if the user is authenticated
     if (auth.currentUser) {
       try {
         await setDoc(doc(db, "quizResults", auth.currentUser.uid), {
@@ -128,16 +125,36 @@ const CarQuiz = () => {
     }
   };
 
+  // Function to reset the quiz state
+  const retakeQuiz = () => {
+    setCurrentQuestionIndex(0);
+    setSelectedAnswers([]);
+    setResult(null);
+  };
+
   return (
     <div className="car-quiz-wrapper">
-      <div className="car-quiz">
+      <div className="car-quiz" role="main">
         {!result ? (
           <div className="question-container">
             <h2>{questions[currentQuestionIndex].question}</h2>
             <div className="answer-options">
               {questions[currentQuestionIndex].answers.map((answer, index) => (
-                <div key={index} className="answer-option" onClick={() => loadNextQuestion(answer.text)}>
-                  {answer.img && <img src={answer.img} alt={answer.text} className="answer-img" />}
+                <div
+                  key={index}
+                  className="answer-option"
+                  role="button"
+                  aria-label={answer.text}
+                  onClick={() => loadNextQuestion(answer.text)}
+                >
+                  {answer.img && (
+                    <img
+                      src={answer.img}
+                      alt={answer.text}
+                      className="answer-img"
+                      loading="lazy"
+                    />
+                  )}
                   <button className="answer-btn">{answer.text}</button>
                 </div>
               ))}
@@ -147,6 +164,9 @@ const CarQuiz = () => {
           <div className="result-container">
             <h2>Your Car Recommendation</h2>
             <p>{result}</p>
+            <button className="retake-btn" onClick={retakeQuiz}>
+              Retake Quiz
+            </button>
           </div>
         )}
       </div>
