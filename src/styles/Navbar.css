@@ -1,92 +1,87 @@
+/* Navbar Container */
+.navbar {
+    background-color: rgb(36, 32, 88); /* Navbar color */
+    display: flex;
+    justify-content: space-between; /* Aligns logo to the left and links to the right */
+    align-items: center;
+    height: 80px;
+    padding: 0 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Ensures navbar stays on top */
+}
+
+/* Logo or Branding */
+.logo {
+    font-size: 24px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+/* Logo Hover Effect */
+.logo:hover {
+    color: rgb(180, 180, 255); /* Slightly lighter shade on hover */
+}
+
+/* Navigation Links Container */
 .links {
     display: flex;
     justify-content: center;
-    gap: 10px;
-}
-
-/* NAVIGATION BAR RECTANGLE */
-.navbar { 
-    background-color: rgb(36, 32, 88); /* NAV BAR COLOR */
-    display: flex;
-    justify-content: start;
     align-items: center;
-    height: 80px;
-
+    gap: 20px; /* Space between links */
 }
 
-.menu-bars {
-    margin-left: 2rem;
-    font-size: 2rem;
-    background: none;
-
-}
-
-.nav-menu {
-    background-color: rgb(36, 32, 88);
-    width: 240px;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    position: fixed;
-    top: 0;
-    left: -100%; /* puts it all the way left (off screen) when not active! */
-    transition: 850ms;
-
-}
-
-.nav-menu.active {
-    left: 0;
-    transition: 320ms; 
-
-}
-
-.nav-text {
-    display: flex; 
-    justify-content: start;
-    align-items: center;
-    padding: 8px 0px 8px 16px; 
-    list-style: none;
-    height: 60px;
-
-}
-
-.nav-text a {
+/* Individual Navigation Links */
+.links a {
     text-decoration: none;
-    color:aliceblue;
+    color: aliceblue;
     font-size: 18px;
-    width: 95%;
-    height: 100%; 
-    display: flex; 
-    align-items: center;
-    padding: 0 16px; 
+    padding: 10px 15px;
     border-radius: 4px;
-
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-/* color on hover */
-.nav-text a:hover {
+/* Link Hover Effect */
+.links a:hover {
     background-color: rgb(88, 99, 161);
-
+    transform: translateY(-2px); /* Slight lift on hover */
 }
 
-/* Center the items in sidebar */
-.nav-menu-items {
-    width: 100%;
-
+/* Active Link Style */
+.links a.active {
+    background-color: rgb(58, 69, 121); /* Slightly darker background for active page */
+    font-weight: bold;
 }
 
-/* same color as nav bar */
-.navbar-toggle {
-    background-color: rgb(36, 32, 88);
-    width: 100%;
-    height: 80px; 
-    display: flex;
-    justify-content: start;
-    align-items: center;
+/* Responsive Design for Smaller Screens */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0 10px;
+        height: 70px;
+    }
 
+    .logo {
+        font-size: 20px;
+    }
+
+    .links {
+        gap: 15px;
+    }
+
+    .links a {
+        font-size: 16px;
+        padding: 8px 12px;
+    }
 }
 
-/*  adjust space between icon and text */
-span {
-    margin-left: 16px;
+/* Modal Customization (if needed) */
+.MuiBackdrop-root {
+    background-color: rgba(0, 0, 0, 0.7); /* Darken backdrop */
+}
+
+.MuiButton-root {
+    margin: 0 10px; /* Space between modal buttons */
 }

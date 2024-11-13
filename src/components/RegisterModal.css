@@ -1,0 +1,99 @@
+/* RegisterModal.css */
+
+/* Modal Container */
+.modal-container {
+    position: relative;
+    padding: 2rem;
+    margin: auto;
+    width: 360px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+/* Close Button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: rgb(36, 32, 88);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover {
+    color: rgb(58, 69, 121);
+}
+
+/* Header */
+.modal-header {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.7rem;
+    margin-bottom: 1.5rem;
+    color: rgb(36, 32, 88);
+}
+
+/* Form Fields */
+.text-field {
+    margin: 1rem 0;
+}
+
+/* Password Criteria List */
+.password-criteria {
+    font-size: 0.85rem;
+    margin: 0.5rem 0 1.5rem;
+    padding: 0;
+    list-style: none;
+}
+
+.password-criteria-item {
+    padding: 2px 0;
+    transition: color 0.3s ease;
+}
+
+.password-criteria-item.valid {
+    color: green;
+}
+
+.password-criteria-item.invalid {
+    color: red;
+}
+
+/* Error Message */
+.error-message {
+    color: red;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Sign Up Button */
+.signup-button {
+    background-color: rgb(36, 32, 88);
+    font-weight: bold;
+    width: 100%;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease;
+    padding: 0.75rem;
+    border-radius: 5px;
+}
+
+.signup-button:hover {
+    background-color: rgb(58, 69, 121);
+}
+
+/* Enhanced styles for a cohesive look */
+.modal-container input {
+    border-radius: 5px;
+}
+
+.modal-container label {
+    font-size: 0.9rem;
+    color: #666;
+}

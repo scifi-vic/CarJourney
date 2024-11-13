@@ -1,27 +1,31 @@
 // src/App.js
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import Home from './pages/Home';
-import About from './pages/About';
-import Garage from './pages/Garage';
-import User from './pages/User';
-import CarQuiz from './pages/Car-Quiz';
-import LocateDealer from './pages/LocateDealer'; // Import for LocateDealer component
+
+// Lazy load page components
+const Home = lazy(() => import('./pages/Home'));
+const About = lazy(() => import('./pages/About'));
+const Garage = lazy(() => import('./pages/Garage'));
+const User = lazy(() => import('./pages/User'));
+const CarQuiz = lazy(() => import('./pages/Car-Quiz'));
+const LocateDealer = lazy(() => import('./pages/LocateDealer'));
 
 function App() {
   return (
     <Router>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/garage" element={<Garage />} />
-        <Route path="/user" element={<User />} />
-        <Route path="/car-quiz" element={<CarQuiz />} />
-        <Route path="/locate-dealer" element={<LocateDealer />} /> {/* Route for Locate Dealer */}
-      </Routes>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/garage" element={<Garage />} />
+          <Route path="/user" element={<User />} />
+          <Route path="/car-quiz" element={<CarQuiz />} />
+          <Route path="/locate-dealer" element={<LocateDealer />} />
+        </Routes>
+      </Suspense>
       <Footer />
     </Router>
   );

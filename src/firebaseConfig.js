@@ -1,7 +1,7 @@
 // firebaseConfig.js
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, serverTimestamp } from 'firebase/firestore'; // Import serverTimestamp
 import { getAnalytics } from 'firebase/analytics';
 
 // Firebase configuration
@@ -21,4 +21,5 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const analytics = getAnalytics(app);
 
-export { auth, db, analytics };
+// Export auth, db, analytics, and serverTimestamp
+export { auth, db, analytics, serverTimestamp };
