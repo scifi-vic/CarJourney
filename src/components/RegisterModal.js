@@ -3,16 +3,15 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Box, Modal, TextField, Button, Typography, List, ListItem, IconButton, InputAdornment } from '@mui/material';
 import { db, auth, serverTimestamp } from "../firebaseConfig"; 
 import { doc, setDoc } from "firebase/firestore";
-import './RegisterModal.css'; // Import the CSS file
-import CloseIcon from '@mui/icons-material/Close'; // Close icon for the button
-import Visibility from '@mui/icons-material/Visibility'; // Visibility icon
-import VisibilityOff from '@mui/icons-material/VisibilityOff'; // VisibilityOff icon
+import CloseIcon from '@mui/icons-material/Close';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 function RegisterModal({ open, onClose }) {
   const [formData, setFormData] = useState({ email: '', password: '', firstName: '', lastName: '' });
   const [error, setError] = useState(null);
   const [passwordError, setPasswordError] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  const [showPassword, setShowPassword] = useState(false);
   const [passwordCriteria, setPasswordCriteria] = useState({
     length: false,
     upperCase: false,
@@ -20,7 +19,6 @@ function RegisterModal({ open, onClose }) {
     specialChar: false
   });
 
-  // Reset the form data when the modal closes
   useEffect(() => {
     if (!open) {
       setFormData({ email: '', password: '', firstName: '', lastName: '' });
@@ -32,7 +30,7 @@ function RegisterModal({ open, onClose }) {
         number: false,
         specialChar: false
       });
-      setShowPassword(false); // Reset password visibility
+      setShowPassword(false);
     }
   }, [open]);
 
@@ -50,7 +48,6 @@ function RegisterModal({ open, onClose }) {
   const handlePasswordChange = (event) => {
     const password = event.target.value;
     setFormData({ ...formData, password });
-    
     const isValid = validatePassword(password);
     setPasswordError(isValid ? '' : 'Password must meet all criteria');
   };
@@ -78,7 +75,7 @@ function RegisterModal({ open, onClose }) {
       });
 
       console.log('User successfully registered:', user);
-      onClose(); // Close the modal after successful registration
+      onClose();
     } catch (error) {
       console.error('Error registering:', error.message);
       setError(error.message);
@@ -87,13 +84,25 @@ function RegisterModal({ open, onClose }) {
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Box className="modal-container">
-        {/* Close Button */}
-        <IconButton className="close-button" onClick={onClose}>
+      <Box
+        sx={{
+          padding: 4,
+          margin: 'auto',
+          width: '100%',
+          maxWidth: 400,
+          backgroundColor: 'white',
+          borderRadius: 3,
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.15)',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <IconButton onClick={onClose} sx={{ position: 'absolute', top: 10, right: 10, color: '#242058' }}>
           <CloseIcon />
         </IconButton>
-        
-        <Typography className="modal-header">Sign Up</Typography>
+
+        <Typography variant="h6" component="h2" sx={{ textAlign: 'center', mb: 2, color: '#242058' }}>Sign Up</Typography>
+
         <form onSubmit={handleSubmit}>
           <TextField
             label="First Name"
@@ -101,7 +110,12 @@ function RegisterModal({ open, onClose }) {
             value={formData.firstName}
             onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
             required
-            className="text-field"
+            margin="normal"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '8px',
+              },
+            }}
           />
           <TextField
             label="Last Name"
@@ -109,7 +123,12 @@ function RegisterModal({ open, onClose }) {
             value={formData.lastName}
             onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
             required
-            className="text-field"
+            margin="normal"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '8px',
+              },
+            }}
           />
           <TextField
             label="Email Address"
@@ -117,18 +136,28 @@ function RegisterModal({ open, onClose }) {
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             required
-            className="text-field"
+            margin="normal"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '8px',
+              },
+            }}
           />
           <TextField
             label="Password"
             fullWidth
-            type={showPassword ? "text" : "password"} // Toggle type based on showPassword state
+            type={showPassword ? "text" : "password"}
             value={formData.password}
             onChange={handlePasswordChange}
             required
             error={Boolean(passwordError)}
             helperText={passwordError}
-            className="text-field"
+            margin="normal"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '8px',
+              },
+            }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -142,25 +171,38 @@ function RegisterModal({ open, onClose }) {
               ),
             }}
           />
-          
-          {/* Password Validation Criteria */}
-          <List className="password-criteria">
-            <ListItem className={`password-criteria-item ${passwordCriteria.length ? 'valid' : 'invalid'}`}>
-              • At least 8 characters
-            </ListItem>
-            <ListItem className={`password-criteria-item ${passwordCriteria.upperCase ? 'valid' : 'invalid'}`}>
-              • At least 1 uppercase letter
-            </ListItem>
-            <ListItem className={`password-criteria-item ${passwordCriteria.number ? 'valid' : 'invalid'}`}>
-              • At least 1 number
-            </ListItem>
-            <ListItem className={`password-criteria-item ${passwordCriteria.specialChar ? 'valid' : 'invalid'}`}>
-              • At least 1 special character
-            </ListItem>
+
+          <List sx={{ fontSize: '0.85rem', marginY: 2 }}>
+            <ListItem sx={{ color: passwordCriteria.length ? 'green' : 'red' }}>• At least 8 characters</ListItem>
+            <ListItem sx={{ color: passwordCriteria.upperCase ? 'green' : 'red' }}>• At least 1 uppercase letter</ListItem>
+            <ListItem sx={{ color: passwordCriteria.number ? 'green' : 'red' }}>• At least 1 number</ListItem>
+            <ListItem sx={{ color: passwordCriteria.specialChar ? 'green' : 'red' }}>• At least 1 special character</ListItem>
           </List>
 
-          {error && <Typography className="error-message">{error}</Typography>}
-          <Button type="submit" variant="contained" className="signup-button">
+          {error && (
+            <Typography color="error" sx={{ mt: 1, textAlign: 'center', backgroundColor: 'rgba(255, 0, 0, 0.1)', padding: '0.5rem', borderRadius: '5px' }}>
+              {error}
+            </Typography>
+          )}
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{
+              mt: 2,
+              backgroundColor: '#242058',
+              fontWeight: 'bold',
+              borderRadius: '8px',
+              padding: '0.75rem',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              transition: 'background-color 0.3s ease, transform 0.2s ease',
+              '&:hover': {
+                backgroundColor: '#3a4579',
+                transform: 'scale(1.02)',
+              },
+            }}
+          >
             Sign Up
           </Button>
         </form>

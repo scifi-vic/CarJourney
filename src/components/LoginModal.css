@@ -67,58 +67,19 @@
     border-radius: 8px;
 }
 
-/* Password Criteria List */
-.password-criteria {
-    font-size: 0.85rem;
-    margin: 0.5rem 0 1.5rem;
-    padding: 0;
-    list-style: none;
-    color: #333;
-}
-
-.password-criteria-item {
-    padding: 2px 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: color 0.3s ease;
-    font-weight: 500;
-}
-
-.password-criteria-item.valid {
-    color: #4caf50; /* Green for valid criteria */
-}
-
-.password-criteria-item.invalid {
-    color: #f44336; /* Red for invalid criteria */
-}
-
-/* Adding icons to password criteria */
-.password-criteria-item::before {
-    font-family: 'Material Icons'; /* Leverage Material Icons font */
-}
-
-.password-criteria-item.valid::before {
-    content: '✔'; /* Check icon */
-}
-
-.password-criteria-item.invalid::before {
-    content: '✘'; /* Cross icon */
-}
-
 /* Error Message */
 .error-message {
-    padding: 0.5rem;
-    background-color: rgba(255, 0, 0, 0.1);
     color: #f44336;
     text-align: center;
-    margin-bottom: 1rem;
+    margin-top: 1rem;
     font-size: 0.9rem;
+    background-color: rgba(255, 0, 0, 0.1);
+    padding: 0.5rem;
     border-radius: 5px;
 }
 
-/* Sign Up Button */
-.signup-button {
+/* Log In Button */
+.login-button {
     background-color: #242058;
     font-weight: bold;
     width: 100%;
@@ -131,9 +92,31 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.signup-button:hover {
+.login-button:hover {
     background-color: #3a4579;
     transform: scale(1.02); /* Subtle scale effect */
+}
+
+/* Sign Up Link */
+.signup-link {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #242058;
+}
+
+.signup-link button {
+    color: #242058;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+    transition: color 0.3s ease;
+}
+
+.signup-link button:hover {
+    color: #3a4579;
 }
 
 /* Password Visibility Icon */
