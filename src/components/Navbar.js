@@ -47,6 +47,8 @@ function Navbar() {
           <Button component={Link} to="/" className="nav-link">Home</Button>
           <Button component={Link} to="/about" className="nav-link">About</Button>
           {isLoggedIn && <Button component={Link} to="/garage" className="nav-link">Garage</Button>}
+          <Button component={Link} to="/car-quiz" className="nav-link">Car Quiz</Button> {/* New Link */}
+          <Button component={Link} to="/locate-dealer" className="nav-link">Locate Dealer</Button> {/* New Link */}
         </Box>
 
         <Divider orientation="vertical" flexItem sx={{ bgcolor: "white", mx: 2 }} /> {/* Vertical divider */}
