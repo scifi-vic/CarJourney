@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Toolbar, Typography, Button, Box, IconButton, Menu, MenuItem, Avatar, Divider } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, Box, IconButton, Menu, MenuItem, Avatar, Divider, Drawer, List, ListItem, ListItemText } from "@mui/material";
 import { Link } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserCircle, FaBars } from "react-icons/fa";
 import RegisterModal from "./RegisterModal";
 import LoginModal from "./LoginModal";
 import { auth } from "../firebaseConfig";
@@ -14,6 +14,7 @@ function Navbar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openRegisterModal, setOpenRegisterModal] = useState(false);
   const [openLoginModal, setOpenLoginModal] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -24,8 +25,8 @@ function Navbar() {
 
   const handleMenuClick = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
-
   const toggleModal = (modalSetter) => modalSetter((prev) => !prev);
+  const toggleDrawer = () => setDrawerOpen((prev) => !prev);
 
   const handleSignOut = () => {
     signOut(auth)
@@ -36,36 +37,75 @@ function Navbar() {
   return (
     <AppBar position="static" sx={{ backgroundColor: "rgb(36, 32, 88)" }}>
       <Toolbar className="toolbar">
-        <Box className="logo-container">
+        <Box className="logo-container" sx={{ flexGrow: 1 }}>
           <Typography variant="h6" component={Link} to="/" className="logo-text">
             CarJourney
           </Typography>
           <img src={logo} alt="Logo" className="logo-image" />
         </Box>
 
-        <Box className="links">
+        {/* Desktop Links */}
+        <Box className="links" sx={{ display: { xs: 'none', md: 'flex' } }}>
           <Button component={Link} to="/" className="nav-link">Home</Button>
           <Button component={Link} to="/about" className="nav-link">About</Button>
           {isLoggedIn && <Button component={Link} to="/garage" className="nav-link">Garage</Button>}
-          <Button component={Link} to="/car-quiz" className="nav-link">Car Quiz</Button> {/* New Link */}
-          <Button component={Link} to="/locate-dealer" className="nav-link">Locate Dealer</Button> {/* New Link */}
+          <Button component={Link} to="/car-quiz" className="nav-link">Car Quiz</Button>
+          <Button component={Link} to="/locate-dealer" className="nav-link">Locate Dealer</Button>
         </Box>
 
-        <Divider orientation="vertical" flexItem sx={{ bgcolor: "white", mx: 2 }} /> {/* Vertical divider */}
+        {/* Mobile Menu Button */}
+        <IconButton edge="end" color="inherit" onClick={toggleDrawer} sx={{ display: { xs: 'flex', md: 'none' } }}>
+          <FaBars />
+        </IconButton>
 
-        <Box className="user-icon-wrapper">
-          <IconButton onClick={handleMenuClick} className="user-icon" aria-label="User menu">
-            <Avatar sx={{ bgcolor: "white", color: "rgb(36, 32, 88)" }}>
-              <FaUserCircle size={24} />
-            </Avatar>
-          </IconButton>
+        {/* Drawer for Mobile Links */}
+        <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer}>
+          <List>
+            <ListItem button component={Link} to="/" onClick={toggleDrawer}>
+              <ListItemText primary="Home" />
+            </ListItem>
+            <ListItem button component={Link} to="/about" onClick={toggleDrawer}>
+              <ListItemText primary="About" />
+            </ListItem>
+            {isLoggedIn && (
+              <ListItem button component={Link} to="/garage" onClick={toggleDrawer}>
+                <ListItemText primary="Garage" />
+              </ListItem>
+            )}
+            <ListItem button component={Link} to="/car-quiz" onClick={toggleDrawer}>
+              <ListItemText primary="Car Quiz" />
+            </ListItem>
+            <ListItem button component={Link} to="/locate-dealer" onClick={toggleDrawer}>
+              <ListItemText primary="Locate Dealer" />
+            </ListItem>
+          </List>
+        </Drawer>
+
+        <Divider orientation="vertical" flexItem sx={{ bgcolor: "white", mx: 2, display: { xs: 'none', md: 'flex' } }} />
+
+        {/* User Icon / Login & Register */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+          {isLoggedIn ? (
+            <>
+              <IconButton onClick={handleMenuClick} className="user-icon" aria-label="User menu">
+                <Avatar sx={{ bgcolor: "white", color: "rgb(36, 32, 88)" }}>
+                  <FaUserCircle size={24} />
+                </Avatar>
+              </IconButton>
+              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose} sx={{ mt: 2 }}>
+                <MenuItem onClick={handleMenuClose} component={Link} to="/settings">User Settings</MenuItem>
+                <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <>
+              <Button color="inherit" onClick={() => toggleModal(setOpenLoginModal)}>Login</Button>
+              <Button color="inherit" onClick={() => toggleModal(setOpenRegisterModal)}>Register</Button>
+            </>
+          )}
         </Box>
 
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose} sx={{ mt: 2 }}>
-          <MenuItem onClick={handleMenuClose} component={Link} to="/settings">User Settings</MenuItem>
-          <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
-        </Menu>
-
+        {/* Modals */}
         <LoginModal
           open={openLoginModal}
           onClose={() => toggleModal(setOpenLoginModal)}
@@ -74,7 +114,6 @@ function Navbar() {
             toggleModal(setOpenRegisterModal);
           }}
         />
-
         <RegisterModal open={openRegisterModal} onClose={() => toggleModal(setOpenRegisterModal)} />
       </Toolbar>
     </AppBar>
