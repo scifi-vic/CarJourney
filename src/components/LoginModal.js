@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { Box, Modal, TextField, Button, Typography, IconButton, InputAdornment } from '@mui/material';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { Box, Modal, TextField, Button, Typography, IconButton, InputAdornment, Link } from '@mui/material';
 import { auth } from "../firebaseConfig"; 
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -12,6 +12,7 @@ function LoginModal({ open, onClose, onRegisterClick }) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
+  const [forgotPasswordMessage, setForgotPasswordMessage] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,6 +20,7 @@ function LoginModal({ open, onClose, onRegisterClick }) {
       setEmail('');
       setPassword('');
       setError(null);
+      setForgotPasswordMessage(null);
       setShowPassword(false);
     }
   }, [open]);
@@ -34,7 +36,18 @@ function LoginModal({ open, onClose, onRegisterClick }) {
       navigate('/');
     } catch (error) {
       console.error('Error logging in:', error.message);
-      setError(error.message);
+      setError('Login failed. Please check your credentials.');
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    setForgotPasswordMessage(null);
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setForgotPasswordMessage('If an account exists, a reset email has been sent.');
+    } catch (error) {
+      console.error('Error during password reset:', error);
+      setForgotPasswordMessage('Failed to send reset email. Please check your email address.');
     }
   };
 
@@ -73,9 +86,7 @@ function LoginModal({ open, onClose, onRegisterClick }) {
             required
             margin="normal"
             sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '8px',
-              },
+              '& .MuiOutlinedInput-root': { borderRadius: '8px' },
               '& .MuiOutlinedInput-root.Mui-focused': {
                 borderColor: '#3a4579',
                 boxShadow: '0 0 8px rgba(58, 69, 121, 0.3)',
@@ -92,9 +103,7 @@ function LoginModal({ open, onClose, onRegisterClick }) {
             required
             margin="normal"
             sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '8px',
-              },
+              '& .MuiOutlinedInput-root': { borderRadius: '8px' },
               '& .MuiOutlinedInput-root.Mui-focused': {
                 borderColor: '#3a4579',
                 boxShadow: '0 0 8px rgba(58, 69, 121, 0.3)',
@@ -114,6 +123,12 @@ function LoginModal({ open, onClose, onRegisterClick }) {
           {error && (
             <Typography color="error" sx={{ mt: 1, textAlign: 'center', backgroundColor: 'rgba(255, 0, 0, 0.1)', padding: '0.5rem', borderRadius: '5px' }}>
               {error}
+            </Typography>
+          )}
+          
+          {forgotPasswordMessage && (
+            <Typography color="primary" sx={{ mt: 1, textAlign: 'center', backgroundColor: 'rgba(0, 128, 0, 0.1)', padding: '0.5rem', borderRadius: '5px' }}>
+              {forgotPasswordMessage}
             </Typography>
           )}
           
@@ -139,6 +154,12 @@ function LoginModal({ open, onClose, onRegisterClick }) {
           >
             Log In
           </Button>
+
+          <Typography align="center" sx={{ mt: 1, color: '#242058' }}>
+            <Link onClick={handleForgotPassword} sx={{ cursor: 'pointer', color: '#3a4579', textDecoration: 'underline' }}>
+              Forgot Password?
+            </Link>
+          </Typography>
           
           <Typography align="center" sx={{ mt: 1, color: '#242058' }}>
             Don't have an account?{' '}

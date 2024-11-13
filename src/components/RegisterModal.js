@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { Box, Modal, TextField, Button, Typography, List, ListItem, IconButton, InputAdornment } from '@mui/material';
-import { db, auth, serverTimestamp } from "../firebaseConfig"; 
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { Box, Modal, TextField, Button, Typography, IconButton, InputAdornment } from '@mui/material';
+import { db, auth } from "../firebaseConfig"; 
 import { doc, setDoc } from "firebase/firestore";
 import CloseIcon from '@mui/icons-material/Close';
 import Visibility from '@mui/icons-material/Visibility';
@@ -9,37 +9,36 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 function RegisterModal({ open, onClose }) {
   const [formData, setFormData] = useState({ email: '', password: '', firstName: '', lastName: '' });
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [passwordCriteria, setPasswordCriteria] = useState({
     length: false,
-    upperCase: false,
     number: false,
-    specialChar: false
+    specialChar: false,
   });
+  const [verificationMessage, setVerificationMessage] = useState('');
 
   useEffect(() => {
     if (!open) {
-      setFormData({ email: '', password: '', firstName: '', lastName: '' });
-      setError(null);
-      setPasswordError('');
-      setPasswordCriteria({
-        length: false,
-        upperCase: false,
-        number: false,
-        specialChar: false
-      });
-      setShowPassword(false);
+      resetForm();
     }
   }, [open]);
+
+  const resetForm = () => {
+    setFormData({ email: '', password: '', firstName: '', lastName: '' });
+    setError('');
+    setPasswordError('');
+    setPasswordCriteria({ length: false, number: false, specialChar: false });
+    setShowPassword(false);
+    setVerificationMessage('');
+  };
 
   const validatePassword = (password) => {
     const criteria = {
       length: password.length >= 8,
-      upperCase: /[A-Z]/.test(password),
       number: /\d/.test(password),
-      specialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+      specialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
     };
     setPasswordCriteria(criteria);
     return Object.values(criteria).every(Boolean);
@@ -58,32 +57,46 @@ function RegisterModal({ open, onClose }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError(null);
+    setError('');
+    setVerificationMessage('');
 
-    if (passwordError) return;
+    if (!validatePassword(formData.password)) {
+      setPasswordError("Invalid password. Ensure it meets the criteria.");
+      return;
+    }
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
+      
+      console.log('User successfully registered:', user);
 
       await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
         email: formData.email,
-        createdAt: serverTimestamp(),
+        name: `${formData.firstName} ${formData.lastName}`
       });
 
-      console.log('User successfully registered:', user);
-      onClose();
+      console.log('User data saved to Firestore');
+
+      // Attempt to send verification email and log outcome
+      await sendEmailVerification(user)
+        .then(() => {
+          console.log('Verification email sent');
+          setVerificationMessage('A verification email has been sent. Please check your inbox and verify your account.');
+        })
+        .catch((error) => {
+          console.error('Error sending verification email:', error);
+          setError('Failed to send verification email. Please try again later.');
+        });
+
     } catch (error) {
-      console.error('Error registering:', error.message);
-      setError(error.message);
+      console.error('Error during registration:', error.message);
+      setError(`Registration failed: ${error.message}`);
     }
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={() => { setError(''); setVerificationMessage(''); }}>
       <Box
         sx={{
           padding: 4,
@@ -111,11 +124,7 @@ function RegisterModal({ open, onClose }) {
             onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
             required
             margin="normal"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '8px',
-              },
-            }}
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
           />
           <TextField
             label="Last Name"
@@ -124,11 +133,7 @@ function RegisterModal({ open, onClose }) {
             onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
             required
             margin="normal"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '8px',
-              },
-            }}
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
           />
           <TextField
             label="Email Address"
@@ -137,11 +142,7 @@ function RegisterModal({ open, onClose }) {
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             required
             margin="normal"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '8px',
-              },
-            }}
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
           />
           <TextField
             label="Password"
@@ -153,18 +154,11 @@ function RegisterModal({ open, onClose }) {
             error={Boolean(passwordError)}
             helperText={passwordError}
             margin="normal"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '8px',
-              },
-            }}
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton
-                    onClick={handleTogglePasswordVisibility}
-                    edge="end"
-                  >
+                  <IconButton onClick={handleTogglePasswordVisibility} edge="end">
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
@@ -172,18 +166,18 @@ function RegisterModal({ open, onClose }) {
             }}
           />
 
-          <List sx={{ fontSize: '0.85rem', marginY: 2 }}>
-            <ListItem sx={{ color: passwordCriteria.length ? 'green' : 'red' }}>• At least 8 characters</ListItem>
-            <ListItem sx={{ color: passwordCriteria.upperCase ? 'green' : 'red' }}>• At least 1 uppercase letter</ListItem>
-            <ListItem sx={{ color: passwordCriteria.number ? 'green' : 'red' }}>• At least 1 number</ListItem>
-            <ListItem sx={{ color: passwordCriteria.specialChar ? 'green' : 'red' }}>• At least 1 special character</ListItem>
-          </List>
-
           {error && (
             <Typography color="error" sx={{ mt: 1, textAlign: 'center', backgroundColor: 'rgba(255, 0, 0, 0.1)', padding: '0.5rem', borderRadius: '5px' }}>
               {error}
             </Typography>
           )}
+
+          {verificationMessage && (
+            <Typography color="primary" sx={{ mt: 1, textAlign: 'center', backgroundColor: 'rgba(0, 128, 0, 0.1)', padding: '0.5rem', borderRadius: '5px' }}>
+              {verificationMessage}
+            </Typography>
+          )}
+
           <Button
             type="submit"
             variant="contained"
