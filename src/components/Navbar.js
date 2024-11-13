@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Toolbar, Typography, Button, Box, IconButton, Menu, MenuItem, Avatar } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, Box, IconButton, Menu, MenuItem, Avatar, Divider } from "@mui/material";
 import { Link } from "react-router-dom";
-import { FaUserCircle, FaSignInAlt } from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
 import RegisterModal from "./RegisterModal";
 import LoginModal from "./LoginModal";
 import { auth } from "../firebaseConfig";
@@ -24,15 +24,13 @@ function Navbar() {
 
   const handleMenuClick = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
-  const handleLoginModalOpen = () => setOpenLoginModal(true);
-  const handleLoginModalClose = () => setOpenLoginModal(false);
-  const handleRegisterModalOpen = () => setOpenRegisterModal(true);
-  const handleRegisterModalClose = () => setOpenRegisterModal(false);
+
+  const toggleModal = (modalSetter) => modalSetter((prev) => !prev);
 
   const handleSignOut = () => {
-    signOut(auth).then(() => {
-      handleMenuClose();
-    }).catch((error) => console.error("Sign-out error:", error));
+    signOut(auth)
+      .then(handleMenuClose)
+      .catch((error) => console.error("Sign-out error:", error));
   };
 
   return (
@@ -43,27 +41,22 @@ function Navbar() {
             CarJourney
           </Typography>
           <img src={logo} alt="Logo" className="logo-image" />
-
         </Box>
 
         <Box className="links">
           <Button component={Link} to="/" className="nav-link">Home</Button>
           <Button component={Link} to="/about" className="nav-link">About</Button>
-          <Button component={Link} to="/garage" className="nav-link">Garage</Button>
+          {isLoggedIn && <Button component={Link} to="/garage" className="nav-link">Garage</Button>}
         </Box>
 
+        <Divider orientation="vertical" flexItem sx={{ bgcolor: "white", mx: 2 }} /> {/* Vertical divider */}
+
         <Box className="user-icon-wrapper">
-          {isLoggedIn ? (
-            <IconButton onClick={handleMenuClick} className="user-icon">
-              <Avatar sx={{ bgcolor: "white", color: "rgb(36, 32, 88)" }}>
-                <FaUserCircle size={24} />
-              </Avatar>
-            </IconButton>
-          ) : (
-            <IconButton onClick={handleLoginModalOpen} className="user-icon">
-              <FaSignInAlt size={24} style={{ color: "white" }} />
-            </IconButton>
-          )}
+          <IconButton onClick={handleMenuClick} className="user-icon" aria-label="User menu">
+            <Avatar sx={{ bgcolor: "white", color: "rgb(36, 32, 88)" }}>
+              <FaUserCircle size={24} />
+            </Avatar>
+          </IconButton>
         </Box>
 
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose} sx={{ mt: 2 }}>
@@ -73,14 +66,14 @@ function Navbar() {
 
         <LoginModal
           open={openLoginModal}
-          onClose={handleLoginModalClose}
+          onClose={() => toggleModal(setOpenLoginModal)}
           onRegisterClick={() => {
-            handleLoginModalClose();
-            handleRegisterModalOpen();
+            toggleModal(setOpenLoginModal);
+            toggleModal(setOpenRegisterModal);
           }}
         />
 
-        <RegisterModal open={openRegisterModal} onClose={handleRegisterModalClose} />
+        <RegisterModal open={openRegisterModal} onClose={() => toggleModal(setOpenRegisterModal)} />
       </Toolbar>
     </AppBar>
   );

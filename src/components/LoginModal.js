@@ -1,3 +1,4 @@
+// LoginModal.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
@@ -135,7 +136,6 @@ function LoginModal({ open, onClose, onRegisterClick }) {
           <Button
             type="submit"
             variant="contained"
-            color="primary"
             fullWidth
             sx={{
               mt: 2,

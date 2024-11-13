@@ -44,7 +44,7 @@
 /* Navigation Link Styles */
 .nav-link {
     font-size: 18px;
-    color: #ffffff; /* White color for high contrast */
+    color: #ffffff !important;
     text-decoration: none;
     padding: 10px 15px;
     border-radius: 5px;
@@ -53,8 +53,8 @@
 }
 
 .nav-link:hover {
-    background-color: rgba(240, 240, 245, 0.1); /* Subtle hover effect */
-    color: #ffffff; /* Ensure white color remains on hover */
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #e0e0ff !important;
     transform: scale(1.05);
 }
 
@@ -66,6 +66,7 @@
     flex-shrink: 0;
 }
 
+/* User Icon */
 .user-icon {
     font-size: 24px;
     padding: 10px;
@@ -79,4 +80,21 @@
 .user-icon:hover {
     background-color: #e0e0ff;
     transform: scale(1.1);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .toolbar {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .logo-text {
+        font-size: 1.25rem;
+    }
+
+    .nav-link {
+        font-size: 0.875rem;
+        padding: 8px 10px;
+    }
 }
