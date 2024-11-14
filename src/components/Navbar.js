@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Toolbar, Typography, Button, Box, IconButton, Menu, MenuItem, Avatar, Divider, Drawer, List, ListItem, ListItemText } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box,
+  IconButton,
+  Avatar,
+  Menu,
+  MenuItem,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import { FaUserCircle, FaBars } from "react-icons/fa";
 import RegisterModal from "./RegisterModal";
@@ -37,20 +51,43 @@ function Navbar() {
   return (
     <AppBar position="static" sx={{ backgroundColor: "rgb(36, 32, 88)" }}>
       <Toolbar className="toolbar">
-        <Box className="logo-container" sx={{ flexGrow: 1 }}>
+        {/* Logo Section */}
+        <Box className="logo-container" sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography variant="h6" component={Link} to="/" className="logo-text">
             CarJourney
           </Typography>
           <img src={logo} alt="Logo" className="logo-image" />
         </Box>
 
-        {/* Desktop Links */}
-        <Box className="links" sx={{ display: { xs: 'none', md: 'flex' } }}>
+        {/* Center Links */}
+        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'center' }}>
           <Button component={Link} to="/" className="nav-link">Home</Button>
           <Button component={Link} to="/about" className="nav-link">About</Button>
           {isLoggedIn && <Button component={Link} to="/garage" className="nav-link">Garage</Button>}
           <Button component={Link} to="/car-quiz" className="nav-link">Car Quiz</Button>
           <Button component={Link} to="/locate-dealer" className="nav-link">Locate Dealer</Button>
+        </Box>
+
+        {/* Right Aligned User Icon / Login & Register */}
+        <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
+          {isLoggedIn ? (
+            <>
+              <IconButton onClick={handleMenuClick} className="user-icon" aria-label="User menu">
+                <Avatar sx={{ bgcolor: "white", color: "rgb(36, 32, 88)" }}>
+                  <FaUserCircle size={24} />
+                </Avatar>
+              </IconButton>
+              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose} sx={{ mt: 2 }}>
+                <MenuItem onClick={handleMenuClose} component={Link} to="/settings">User Settings</MenuItem>
+                <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <>
+              <Button color="inherit" onClick={() => toggleModal(setOpenLoginModal)}>Login</Button>
+              <Button color="inherit" onClick={() => toggleModal(setOpenRegisterModal)}>Register</Button>
+            </>
+          )}
         </Box>
 
         {/* Mobile Menu Button */}
@@ -80,30 +117,6 @@ function Navbar() {
             </ListItem>
           </List>
         </Drawer>
-
-        <Divider orientation="vertical" flexItem sx={{ bgcolor: "white", mx: 2, display: { xs: 'none', md: 'flex' } }} />
-
-        {/* User Icon / Login & Register */}
-        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          {isLoggedIn ? (
-            <>
-              <IconButton onClick={handleMenuClick} className="user-icon" aria-label="User menu">
-                <Avatar sx={{ bgcolor: "white", color: "rgb(36, 32, 88)" }}>
-                  <FaUserCircle size={24} />
-                </Avatar>
-              </IconButton>
-              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose} sx={{ mt: 2 }}>
-                <MenuItem onClick={handleMenuClose} component={Link} to="/settings">User Settings</MenuItem>
-                <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
-              </Menu>
-            </>
-          ) : (
-            <>
-              <Button color="inherit" onClick={() => toggleModal(setOpenLoginModal)}>Login</Button>
-              <Button color="inherit" onClick={() => toggleModal(setOpenRegisterModal)}>Register</Button>
-            </>
-          )}
-        </Box>
 
         {/* Modals */}
         <LoginModal

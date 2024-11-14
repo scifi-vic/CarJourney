@@ -1,10 +1,8 @@
 /* Toolbar */
 .toolbar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1400px;
     padding: 0 20px;
     box-sizing: border-box;
     background-color: rgb(36, 32, 88);
@@ -15,7 +13,6 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-shrink: 0;
 }
 
 /* Logo Text */
@@ -33,14 +30,6 @@
     height: auto;
 }
 
-/* Links Container */
-.links {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-grow: 1;
-}
-
 /* Navigation Link Styles */
 .nav-link {
     font-size: 18px;
@@ -49,24 +38,22 @@
     padding: 10px 15px;
     border-radius: 5px;
     transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link:focus {
     background-color: rgba(255, 255, 255, 0.15);
     color: #e0e0ff !important;
     transform: scale(1.05);
 }
 
-/* User Icon Wrapper */
-.user-icon-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex-shrink: 0;
+/* Focus outline for accessibility */
+.nav-link:focus {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
 }
 
-/* User Icon */
+/* User Icon Wrapper */
 .user-icon {
     font-size: 24px;
     padding: 10px;
@@ -77,7 +64,8 @@
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
 }
 
-.user-icon:hover {
+.user-icon:hover,
+.user-icon:focus {
     background-color: #e0e0ff;
     transform: scale(1.1);
 }
