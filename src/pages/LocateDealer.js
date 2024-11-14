@@ -6,6 +6,7 @@ const LocateDealer = () => {
   const [dealers, setDealers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [googleMapsLoaded, setGoogleMapsLoaded] = useState(false);
+  const [pagination, setPagination] = useState(null); // Store pagination object
 
   useEffect(() => {
     if (!googleMapsLoaded) {
@@ -54,15 +55,24 @@ const LocateDealer = () => {
         radius: 50000,
         type: 'car_dealer',
       },
-      (results, status) => {
+      (results, status, pagination) => {
         if (status === window.google.maps.places.PlacesServiceStatus.OK) {
           const uniqueDealers = removeDuplicates(results);
-          setDealers(uniqueDealers);
+          setDealers((prevDealers) => [...prevDealers, ...uniqueDealers]); // Append new dealers to existing list
+          setPagination(pagination); // Store pagination object for "Load More"
         } else {
           console.error('Error retrieving dealer data:', status);
         }
       }
     );
+  };
+
+  const loadMoreDealers = () => {
+    if (pagination && pagination.hasNextPage) {
+      setLoading(true);
+      pagination.nextPage(); // Load next set of results
+      setLoading(false);
+    }
   };
 
   const removeDuplicates = (dealers) => {
@@ -100,6 +110,9 @@ const LocateDealer = () => {
           {dealers.map((dealer) => (
             <DealerItem key={dealer.place_id} dealer={dealer} />
           ))}
+          {pagination && pagination.hasNextPage && (
+            <button onClick={loadMoreDealers} className="btn-load-more">Load More</button>
+          )}
         </div>
       )}
     </div>
