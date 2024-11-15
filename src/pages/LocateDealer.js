@@ -6,7 +6,6 @@ const LocateDealer = () => {
   const [dealers, setDealers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [googleMapsLoaded, setGoogleMapsLoaded] = useState(false);
-  const [pagination, setPagination] = useState(null); // Store pagination object
   const [userLocation, setUserLocation] = useState(null); // Store user location
 
   useEffect(() => {
@@ -51,25 +50,37 @@ const LocateDealer = () => {
 
   const findDealers = (location) => {
     const service = new window.google.maps.places.PlacesService(document.createElement('div'));
+    const allDealers = [];
+
+    const handleResults = (results, status, pagination) => {
+      if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+        const uniqueDealers = removeDuplicates(results);
+        allDealers.push(...uniqueDealers);
+
+        if (pagination && pagination.hasNextPage) {
+          setTimeout(() => pagination.nextPage(), 200); // Delay to avoid API throttling
+        } else {
+          const sortedDealers = allDealers.map((dealer) => ({
+            ...dealer,
+            distance: calculateDistance(location, dealer.geometry.location),
+          })).sort((a, b) => a.distance - b.distance); // Sort by distance
+          setDealers(sortedDealers); // Update state with sorted dealers
+          setLoading(false);
+        }
+      } else {
+        console.error('Error retrieving dealer data:', status);
+        setLoading(false);
+      }
+    };
+
+    setLoading(true);
     service.nearbySearch(
       {
         location,
         radius: 50000,
         type: 'car_dealer',
       },
-      (results, status, pagination) => {
-        if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-          const uniqueDealers = removeDuplicates(results);
-          const sortedDealers = uniqueDealers.map((dealer) => ({
-            ...dealer,
-            distance: calculateDistance(location, dealer.geometry.location),
-          })).sort((a, b) => a.distance - b.distance); // Sort by distance
-          setDealers((prevDealers) => [...prevDealers, ...sortedDealers]); // Append sorted dealers
-          setPagination(pagination); // Store pagination object for "Load More"
-        } else {
-          console.error('Error retrieving dealer data:', status);
-        }
-      }
+      handleResults
     );
   };
 
@@ -90,14 +101,6 @@ const LocateDealer = () => {
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c; // Distance in miles
-  };
-
-  const loadMoreDealers = () => {
-    if (pagination && pagination.hasNextPage) {
-      setLoading(true);
-      pagination.nextPage(); // Load next set of results
-      setLoading(false);
-    }
   };
 
   const removeDuplicates = (dealers) => {
@@ -135,9 +138,6 @@ const LocateDealer = () => {
           {dealers.map((dealer) => (
             <DealerItem key={dealer.place_id} dealer={dealer} />
           ))}
-          {pagination && pagination.hasNextPage && (
-            <button onClick={loadMoreDealers} className="btn-load-more">Load More</button>
-          )}
         </div>
       )}
     </div>
@@ -168,7 +168,7 @@ const DealerItem = ({ dealer }) => {
       <div className="dealer-info">
         <h3>{dealer.name}</h3>
         <p>{dealer.vicinity}</p>
-        <p><strong>Distance:</strong> {dealer.distance.toFixed(2)} miles</p> {/* Display the distance in miles */}
+        <p><strong>Distance:</strong> {dealer.distance.toFixed(2)} miles</p>
         {details && (
           <>
             <p><strong>Phone:</strong> {details.formatted_phone_number || 'N/A'}</p>
