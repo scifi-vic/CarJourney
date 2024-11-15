@@ -136,22 +136,6 @@ body {
   background-color: #488ac7;
 }
 
-/* Load More Button */
-.btn-load-more {
-  padding: 10px 20px;
-  background-color: #5c9ced;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 25px;
-}
-
-.btn-load-more:hover {
-  background-color: #488ac7;
-}
-
 /* Loader Animation */
 .loader {
   display: inline-block;
