@@ -7,6 +7,7 @@ const LocateDealer = () => {
   const [loading, setLoading] = useState(false);
   const [googleMapsLoaded, setGoogleMapsLoaded] = useState(false);
   const [pagination, setPagination] = useState(null); // Store pagination object
+  const [userLocation, setUserLocation] = useState(null); // Store user location
 
   useEffect(() => {
     if (!googleMapsLoaded) {
@@ -27,6 +28,7 @@ const LocateDealer = () => {
       const geocoder = new window.google.maps.Geocoder();
       const response = await geocodeZipCode(geocoder, zipCode);
       if (response) {
+        setUserLocation(response.location);
         findDealers(response.location);
       }
     } catch (error) {
@@ -58,13 +60,36 @@ const LocateDealer = () => {
       (results, status, pagination) => {
         if (status === window.google.maps.places.PlacesServiceStatus.OK) {
           const uniqueDealers = removeDuplicates(results);
-          setDealers((prevDealers) => [...prevDealers, ...uniqueDealers]); // Append new dealers to existing list
+          const sortedDealers = uniqueDealers.map((dealer) => ({
+            ...dealer,
+            distance: calculateDistance(location, dealer.geometry.location),
+          })).sort((a, b) => a.distance - b.distance); // Sort by distance
+          setDealers((prevDealers) => [...prevDealers, ...sortedDealers]); // Append sorted dealers
           setPagination(pagination); // Store pagination object for "Load More"
         } else {
           console.error('Error retrieving dealer data:', status);
         }
       }
     );
+  };
+
+  const calculateDistance = (location1, location2) => {
+    const R = 3958.8; // Radius of the Earth in miles
+    const lat1 = location1.lat();
+    const lon1 = location1.lng();
+    const lat2 = location2.lat();
+    const lon2 = location2.lng();
+
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in miles
   };
 
   const loadMoreDealers = () => {
@@ -143,6 +168,7 @@ const DealerItem = ({ dealer }) => {
       <div className="dealer-info">
         <h3>{dealer.name}</h3>
         <p>{dealer.vicinity}</p>
+        <p><strong>Distance:</strong> {dealer.distance.toFixed(2)} miles</p> {/* Display the distance in miles */}
         {details && (
           <>
             <p><strong>Phone:</strong> {details.formatted_phone_number || 'N/A'}</p>
