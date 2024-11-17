@@ -1,0 +1,117 @@
+[debug] [2024-05-02T02:12:49.227Z] ----------------------------------------------------------------------
+[debug] [2024-05-02T02:12:49.229Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\ninja\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2024-05-02T02:12:49.229Z] CLI Version:   13.8.0
+[debug] [2024-05-02T02:12:49.229Z] Platform:      win32
+[debug] [2024-05-02T02:12:49.229Z] Node Version:  v22.0.0
+[debug] [2024-05-02T02:12:49.230Z] Time:          Wed May 01 2024 19:12:49 GMT-0700 (Pacific Daylight Time)
+[debug] [2024-05-02T02:12:49.230Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-05-02T02:12:49.330Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-05-02T02:12:49.330Z] > authorizing via signed-in user (nicholaschan1215@gmail.com)
+[debug] [2024-05-02T02:12:49.331Z] [iam] checking project carjourney-4f2a8 for permissions ["firebase.projects.get"]
+[debug] [2024-05-02T02:12:49.332Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions [none]
+[debug] [2024-05-02T02:12:49.332Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions x-goog-quota-user=projects/carjourney-4f2a8
+[debug] [2024-05-02T02:12:49.332Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2024-05-02T02:12:49.662Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions 200
+[debug] [2024-05-02T02:12:49.662Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2024-05-02T02:12:49.662Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 [none]
+[debug] [2024-05-02T02:12:49.961Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 200
+[debug] [2024-05-02T02:12:49.961Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 {"projectId":"carjourney-4f2a8","projectNumber":"624955961218","displayName":"CarJourney","name":"projects/carjourney-4f2a8","resources":{"hostingSite":"carjourney-4f2a8"},"state":"ACTIVE","etag":"1_1fc7ab04-005e-4d6d-a9f0-6851e660fe73"}
+[info] 
+[info] === Serving from 'C:\Users\ninja\OneDrive\Desktop\CarJourney'...
+[info] 
+[debug] [2024-05-02T02:12:49.964Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/carjourney-4f2a8/sites 
+[debug] [2024-05-02T02:12:50.749Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/carjourney-4f2a8/sites 200
+[debug] [2024-05-02T02:12:50.749Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/carjourney-4f2a8/sites {"sites":[{"name":"projects/carjourney-4f2a8/sites/carjourney-4f2a8","defaultUrl":"https://carjourney-4f2a8.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2024-05-02T02:12:50.749Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8/webApps/-/config [none]
+[debug] [2024-05-02T02:12:51.107Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8/webApps/-/config 200
+[debug] [2024-05-02T02:12:51.107Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8/webApps/-/config {"projectId":"carjourney-4f2a8","storageBucket":"carjourney-4f2a8.appspot.com","apiKey":"AIzaSyC5r1YPHHjQn8FGb-uRUCkLXokzF536e3U","authDomain":"carjourney-4f2a8.firebaseapp.com","messagingSenderId":"624955961218"}
+[debug] [2024-05-02T02:12:51.110Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 [none]
+[debug] [2024-05-02T02:12:51.402Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 200
+[debug] [2024-05-02T02:12:51.402Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 {"projectId":"carjourney-4f2a8","projectNumber":"624955961218","displayName":"CarJourney","name":"projects/carjourney-4f2a8","resources":{"hostingSite":"carjourney-4f2a8"},"state":"ACTIVE","etag":"1_1fc7ab04-005e-4d6d-a9f0-6851e660fe73"}
+[info] i  hosting[carjourney-4f2a8]: Serving hosting files from: public {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mpublic\u001b[22m"}}
+[info] +  hosting[carjourney-4f2a8]: Local server: http://localhost:5000 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://localhost:5000\u001b[22m\u001b[24m"}}
+[info] i  hosting: ::1 - - [02/May/2024:02:12:53 +0000] "GET / HTTP/1.1" 500 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [02/May/2024:02:12:53 +0000] \"GET / HTTP/1.1\" 500 - \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [02/May/2024:02:12:53 +0000] "GET /favicon.ico HTTP/1.1" 500 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [02/May/2024:02:12:53 +0000] \"GET /favicon.ico HTTP/1.1\" 500 - \"http://localhost:5000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36\""}}
+[debug] [2024-05-02T03:22:32.600Z] ----------------------------------------------------------------------
+[debug] [2024-05-02T03:22:32.602Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\ninja\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2024-05-02T03:22:32.602Z] CLI Version:   13.8.0
+[debug] [2024-05-02T03:22:32.602Z] Platform:      win32
+[debug] [2024-05-02T03:22:32.603Z] Node Version:  v22.0.0
+[debug] [2024-05-02T03:22:32.603Z] Time:          Wed May 01 2024 20:22:32 GMT-0700 (Pacific Daylight Time)
+[debug] [2024-05-02T03:22:32.603Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-05-02T03:22:32.699Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-05-02T03:22:32.699Z] > authorizing via signed-in user (nicholaschan1215@gmail.com)
+[debug] [2024-05-02T03:22:32.699Z] [iam] checking project carjourney-4f2a8 for permissions ["firebase.projects.get"]
+[debug] [2024-05-02T03:22:32.700Z] > refreshing access token with scopes: []
+[debug] [2024-05-02T03:22:32.701Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2024-05-02T03:22:32.702Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2024-05-02T03:22:32.790Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2024-05-02T03:22:32.791Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2024-05-02T03:22:32.798Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions [none]
+[debug] [2024-05-02T03:22:32.798Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions x-goog-quota-user=projects/carjourney-4f2a8
+[debug] [2024-05-02T03:22:32.798Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2024-05-02T03:22:33.028Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions 200
+[debug] [2024-05-02T03:22:33.028Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2024-05-02T03:22:33.028Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 [none]
+[debug] [2024-05-02T03:22:33.328Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 200
+[debug] [2024-05-02T03:22:33.328Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 {"projectId":"carjourney-4f2a8","projectNumber":"624955961218","displayName":"CarJourney","name":"projects/carjourney-4f2a8","resources":{"hostingSite":"carjourney-4f2a8"},"state":"ACTIVE","etag":"1_1fc7ab04-005e-4d6d-a9f0-6851e660fe73"}
+[info] 
+[info] === Serving from 'C:\Users\ninja\OneDrive\Desktop\CarJourney'...
+[info] 
+[debug] [2024-05-02T03:22:33.330Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/carjourney-4f2a8/sites 
+[debug] [2024-05-02T03:22:34.112Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/carjourney-4f2a8/sites 200
+[debug] [2024-05-02T03:22:34.112Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/carjourney-4f2a8/sites {"sites":[{"name":"projects/carjourney-4f2a8/sites/carjourney-4f2a8","defaultUrl":"https://carjourney-4f2a8.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2024-05-02T03:22:34.113Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8/webApps/-/config [none]
+[debug] [2024-05-02T03:22:34.445Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8/webApps/-/config 200
+[debug] [2024-05-02T03:22:34.445Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8/webApps/-/config {"projectId":"carjourney-4f2a8","storageBucket":"carjourney-4f2a8.appspot.com","apiKey":"AIzaSyC5r1YPHHjQn8FGb-uRUCkLXokzF536e3U","authDomain":"carjourney-4f2a8.firebaseapp.com","messagingSenderId":"624955961218"}
+[debug] [2024-05-02T03:22:34.448Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 [none]
+[debug] [2024-05-02T03:22:34.595Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 200
+[debug] [2024-05-02T03:22:34.595Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 {"projectId":"carjourney-4f2a8","projectNumber":"624955961218","displayName":"CarJourney","name":"projects/carjourney-4f2a8","resources":{"hostingSite":"carjourney-4f2a8"},"state":"ACTIVE","etag":"1_1fc7ab04-005e-4d6d-a9f0-6851e660fe73"}
+[info] i  hosting[carjourney-4f2a8]: Serving hosting files from: public {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mpublic\u001b[22m"}}
+[info] +  hosting[carjourney-4f2a8]: Local server: http://localhost:5000 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://localhost:5000\u001b[22m\u001b[24m"}}
+[info] i  hosting: ::1 - - [02/May/2024:03:22:37 +0000] "GET / HTTP/1.1" 500 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [02/May/2024:03:22:37 +0000] \"GET / HTTP/1.1\" 500 - \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [02/May/2024:03:22:37 +0000] "GET /favicon.ico HTTP/1.1" 500 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [02/May/2024:03:22:37 +0000] \"GET /favicon.ico HTTP/1.1\" 500 - \"http://localhost:5000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36\""}}
+[debug] [2024-05-02T21:49:38.152Z] ----------------------------------------------------------------------
+[debug] [2024-05-02T21:49:38.154Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\ninja\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2024-05-02T21:49:38.155Z] CLI Version:   13.8.0
+[debug] [2024-05-02T21:49:38.155Z] Platform:      win32
+[debug] [2024-05-02T21:49:38.155Z] Node Version:  v22.0.0
+[debug] [2024-05-02T21:49:38.155Z] Time:          Thu May 02 2024 14:49:38 GMT-0700 (Pacific Daylight Time)
+[debug] [2024-05-02T21:49:38.155Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-05-02T21:49:38.259Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-05-02T21:49:38.259Z] > authorizing via signed-in user (nicholaschan1215@gmail.com)
+[debug] [2024-05-02T21:49:38.259Z] [iam] checking project carjourney-4f2a8 for permissions ["firebase.projects.get"]
+[debug] [2024-05-02T21:49:38.260Z] > refreshing access token with scopes: []
+[debug] [2024-05-02T21:49:38.262Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2024-05-02T21:49:38.262Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2024-05-02T21:49:38.358Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2024-05-02T21:49:38.358Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2024-05-02T21:49:38.362Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions [none]
+[debug] [2024-05-02T21:49:38.362Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions x-goog-quota-user=projects/carjourney-4f2a8
+[debug] [2024-05-02T21:49:38.363Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2024-05-02T21:49:38.465Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions 200
+[debug] [2024-05-02T21:49:38.465Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/carjourney-4f2a8:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2024-05-02T21:49:38.466Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 [none]
+[debug] [2024-05-02T21:49:38.663Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 200
+[debug] [2024-05-02T21:49:38.663Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 {"projectId":"carjourney-4f2a8","projectNumber":"624955961218","displayName":"CarJourney","name":"projects/carjourney-4f2a8","resources":{"hostingSite":"carjourney-4f2a8"},"state":"ACTIVE","etag":"1_d081e1ac-03a3-483f-9fb1-e2a30506ec9c"}
+[info] 
+[info] === Serving from 'C:\Users\ninja\OneDrive\Desktop\CarJourney'...
+[info] 
+[debug] [2024-05-02T21:49:38.666Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/carjourney-4f2a8/sites 
+[debug] [2024-05-02T21:49:39.406Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/carjourney-4f2a8/sites 200
+[debug] [2024-05-02T21:49:39.406Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/carjourney-4f2a8/sites {"sites":[{"name":"projects/carjourney-4f2a8/sites/carjourney-4f2a8","defaultUrl":"https://carjourney-4f2a8.web.app","appId":"1:624955961218:web:5f5484d2160b33f8db299b","type":"DEFAULT_SITE"}]}
+[debug] [2024-05-02T21:49:39.406Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8/webApps/1:624955961218:web:5f5484d2160b33f8db299b/config [none]
+[debug] [2024-05-02T21:49:39.882Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8/webApps/1:624955961218:web:5f5484d2160b33f8db299b/config 200
+[debug] [2024-05-02T21:49:39.882Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8/webApps/1:624955961218:web:5f5484d2160b33f8db299b/config {"projectId":"carjourney-4f2a8","appId":"1:624955961218:web:5f5484d2160b33f8db299b","storageBucket":"carjourney-4f2a8.appspot.com","apiKey":"AIzaSyC5r1YPHHjQn8FGb-uRUCkLXokzF536e3U","authDomain":"carjourney-4f2a8.firebaseapp.com","messagingSenderId":"624955961218","measurementId":"G-TKS4CHW4G4"}
+[debug] [2024-05-02T21:49:39.885Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 [none]
+[debug] [2024-05-02T21:49:40.168Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 200
+[debug] [2024-05-02T21:49:40.168Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/carjourney-4f2a8 {"projectId":"carjourney-4f2a8","projectNumber":"624955961218","displayName":"CarJourney","name":"projects/carjourney-4f2a8","resources":{"hostingSite":"carjourney-4f2a8"},"state":"ACTIVE","etag":"1_d081e1ac-03a3-483f-9fb1-e2a30506ec9c"}
+[info] i  hosting[carjourney-4f2a8]: Serving hosting files from: public {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mpublic\u001b[22m"}}
+[info] +  hosting[carjourney-4f2a8]: Local server: http://localhost:5000 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://localhost:5000\u001b[22m\u001b[24m"}}
+[info] i  hosting: ::1 - - [02/May/2024:21:49:41 +0000] "GET / HTTP/1.1" 500 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [02/May/2024:21:49:41 +0000] \"GET / HTTP/1.1\" 500 - \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [02/May/2024:21:49:41 +0000] "GET /favicon.ico HTTP/1.1" 500 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [02/May/2024:21:49:41 +0000] \"GET /favicon.ico HTTP/1.1\" 500 - \"http://localhost:5000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [02/May/2024:21:49:42 +0000] "GET / HTTP/1.1" 500 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [02/May/2024:21:49:42 +0000] \"GET / HTTP/1.1\" 500 - \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [02/May/2024:21:49:42 +0000] "GET /favicon.ico HTTP/1.1" 500 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [02/May/2024:21:49:42 +0000] \"GET /favicon.ico HTTP/1.1\" 500 - \"http://localhost:5000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36\""}}

@@ -1,0 +1,360 @@
+/* src/styles/Finance.css */
+
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Body Styling */
+  body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4;
+  }
+  
+  /* Container */
+  .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Header / Top Task Bar */
+  header {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 20px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  header h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2em;
+  }
+  
+  nav ul {
+    list-style-type: none;
+    display: flex;
+    gap: 15px;
+  }
+  
+  nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 12px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  nav ul li a:hover,
+  nav ul li a.active {
+    background-color: #34495e;
+    border-radius: 4px;
+  }
+  
+  /* Footer / Bottom Task Bar */
+  footer {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 20px 0;
+  }
+  
+  footer .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  footer p {
+    margin-bottom: 10px;
+  }
+  
+  .social-icons {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .social-icons a {
+    color: #fff;
+    font-size: 1.2em;
+    transition: color 0.3s;
+  }
+  
+  .social-icons a:hover {
+    color: #e74c3c;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    header .container {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    nav ul {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+  
+  /* New Calculator Section */
+  
+  /* Calculator Section Styling */
+  .calculator-section {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 2rem auto;
+    max-width: 800px;
+  }
+  
+  .calculator-section h2 {
+    font-family: 'Montserrat', sans-serif;
+    margin-bottom: 1rem;
+    color: #007bff;
+  }
+  
+  .calculator-section p {
+    margin-bottom: 1.5rem;
+    color: #666;
+  }
+  
+  /* Calculator Form */
+  .calculator-form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .calculator-inputs, .calculator-results {
+    flex: 1;
+    min-width: 280px;
+    margin: 1rem;
+  }
+  
+  .calculator-inputs label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  .calculator-inputs input, .calculator-inputs select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .calculator-inputs input:focus, .calculator-inputs select:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  
+  /* Calculator Results */
+  .calculator-results {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  .calculator-results h3 {
+    margin-bottom: 1rem;
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #007bff;
+  }
+  
+  .calculator-results p {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .calculator-results ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .calculator-results ul li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    color: #333;
+  }
+  
+  .calculator-results ul li span {
+    font-weight: bold;
+    color: #555;
+  }
+  
+  /* Media Queries for Responsiveness */
+  @media (max-width: 768px) {
+    .calculator-form {
+      flex-direction: column;
+    }
+  
+    .calculator-inputs, .calculator-results {
+      margin: 0;
+      margin-bottom: 1.5rem;
+    }
+  }
+  
+  /* Tabs Styling */
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .tabs button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #ddd;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .tabs button.active {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .tabs button:hover {
+    background-color: #0056b3;
+    color: white;
+  }
+  
+  /* Modal Styling */
+  .modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Black background with transparency */
+  }
+  
+  .modal-content {
+    background-color: #fff;
+    margin: 10% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: height 0.3s ease-in-out; /* Smooth expansion */
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  /* Password validation */
+  .password-requirements {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+  }
+  
+  .password-requirements p {
+    margin: 5px 0;
+    font-size: 14px;
+  }
+  
+  .password-requirements .valid {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .password-requirements .invalid {
+    color: red;
+    font-weight: bold;
+  }
+  
+  /* Error message container */
+  #error-container {
+    transition: all 0.3s ease-in-out;
+    padding: 10px 0;
+    margin-top: 10px;
+  }
+  
+  #error-container p {
+    margin: 0;
+  }
+  
+  /* Animation for modal */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Close Button */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #000;
+    cursor: pointer;
+  }
+  
+  /* Modal Form Styling */
+  .modal-content h2 {
+    margin-bottom: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px;
+    color: #2c3e50;
+  }
+  
+  .modal-content form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .modal-content form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .modal-content form input {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .modal-content form .btn {
+    padding: 12px;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+  }
+  
+  .modal-content form .btn:hover {
+    background-color: #c0392b;
+  }
