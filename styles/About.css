@@ -1,0 +1,13 @@
+.about {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.about-body {
+    width: 100%;
+    height: 45%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
