@@ -4,259 +4,258 @@ import { doc, setDoc } from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
 import "./../styles/Finance.css";
 
+// Payment Calculator
 const Finance = () => {
-  const [calculatorType, setCalculatorType] = useState("finance");
+  // Track the active tab
+  const [tab, setTab] = useState("finance"); 
 
   // State for Finance Calculator
   const [financeData, setFinanceData] = useState({
-    carPrice: 0,
-    interestRate: 0,
+    carPrice: '',
+    interestRate: '',
     loanTerm: 60,
-    salesTaxRate: 0,
-    downPayment: 0,
-    tradeValue: 0,
-    tradeOwed: 0,
+    salesTaxRate: '',
+    downPayment: '',
+    tradeValue: '',
+    tradeOwed: '',
   });
 
   // State for Affordability Calculator
   const [affordabilityData, setAffordabilityData] = useState({
-    preferredPayment: 0,
-    affordInterestRate: 0,
+    preferredPayment: '',
+    affordInterestRate: '',
     affordLoanTerm: 60,
-    affordSalesTaxRate: 0,
-    affordDownPayment: 0,
-    affordTradeValue: 0,
-    affordTradeOwed: 0,
+    affordSalesTaxRate: '',
+    affordDownPayment: '',
+    affordTradeValue: '',
+    affordTradeOwed: '',
   });
 
   // State for Lease Calculator
   const [leaseData, setLeaseData] = useState({
-    leaseCarPrice: 0,
-    leaseSalesTax: 0,
+    leaseCarPrice: '',
+    leaseSalesTax: '',
     leaseTerm: 60,
-    leaseInterestRate: 0,
-    leaseTradeValue: 0,
-    leaseTradeOwed: 0,
-    leaseDownPayment: 0,
-    residualValue: 62,
-    leaseMiles: 0,
+    leaseInterestRate: '',
+    leaseTradeValue: '',
+    leaseTradeOwed: '',
+    leaseDownPayment: '',
+    residualValue: '',
+    leaseMiles: '',
   });
 
-  const handleInputChange = (e, setData) => {
+  // Handle results screen changes
+  const [financeResults, setFinance] = useState(null); // Finance results
+  const [affordabilityResults, setAffordability] = useState(null); // Affordability results
+  const [leaseResults, setLease] = useState(null); // Lease results
+
+  // Handle tab change
+  const handleTabChange = (newTab) => {
+    setTab(newTab);
+  };
+
+  // Handle input field changes
+  const handleInputChange = (e) => {
     const { id, value } = e.target;
-    setData((prev) => ({ ...prev, [id]: parseFloat(value) || 0 }));
+    setFinanceData((prev) => ({ ...prev, [id]: parseFloat(value)}));
+    setAffordabilityData((prev) => ({ ...prev, [id]: parseFloat(value)}));
+    setLeaseData((prev) => ({ ...prev, [id]: parseFloat(value)}));
   };
 
-  // Finance Calculation
-  const calculateFinance = () => {
-    const {
-      carPrice,
-      interestRate,
-      loanTerm,
-      salesTaxRate,
-      downPayment,
-      tradeValue,
-      tradeOwed,
-    } = financeData;
+  // Calculate results for the Finance tab
+  useEffect(() => {
+    if (tab === "finance") {
+      // Variables
+      // Set variables to 0 if it's not a number, float, or integer
+      const carPrice = parseFloat(financeData.carPrice || 0);
+      const loanTerm = parseInt(financeData.loanTerm || 60);
+      const downPayment = parseFloat(financeData.downPayment || 0);
+      const tradeValue = parseFloat(financeData.tradeValue || 0);
+      const tradeOwed = parseFloat(financeData.tradeOwed || 0);
 
-    // Convert Rates
-    var salesRate = salesTaxRate / 100; // Divides by 100 to convert to percentage
-    var interestRate_per = interestRate / 100;  // Divides by 100 to convert to percentage
+      // Convert Rates
+      const interestRate = parseFloat(financeData.interestRate || 0) / 100; // Divides by 100 to convert to percentage
+      const salesRate = parseFloat(financeData.salesTaxRate || 0) / 100; // Divides by 100 to convert to percentage
 
-    const monthlyRate = interestRate_per / 12;  // Interest rate per month
+      const monthlyRate = interestRate / 12;  // Interest rate per month
 
-    /*  Calculate Sales Tax
-        Sales Tax has its own formula apart from the Rate   */
-    const salesTax = (carPrice) * (salesRate);
+      /*  Calculate Sales Tax
+          Sales Tax has its own formula apart from the Rate   */
+      const salesTax = (carPrice) * (salesRate);
 
-    /*  Calculate Total Finance  
-            From: https://www.autotrader.com/car-payment-calculator   */
-    const totalFinanced =
-      carPrice + salesTax - downPayment - tradeValue + tradeOwed;
+      /*  Calculate Total Finance  
+              From: https://www.autotrader.com/car-payment-calculator   */
+      const totalFinanced = carPrice + salesTax - downPayment - tradeValue + tradeOwed;
 
-    /*  Calculate Monthly Payment
-        Formula for Monthly Payment was taken from these 2 websites:
-            https://www.calculatorsoup.com/calculators/financial/loan-calculator.php
-            https://www.rocketloans.com/learn/financial-smarts/how-to-calculate-monthly-payment-on-a-loan   */  
-    const monthlyPayment =
-      monthlyRate === 0
-        ? totalFinanced / loanTerm
-        : totalFinanced * ((monthlyRate) * ((1 + monthlyRate) ** loanTerm)) / (((1 + monthlyRate) ** loanTerm) - 1);;
+      /*  Calculate Monthly Payment
+          Formula for Monthly Payment was taken from these 2 websites:
+              https://www.calculatorsoup.com/calculators/financial/loan-calculator.php
+              https://www.rocketloans.com/learn/financial-smarts/how-to-calculate-monthly-payment-on-a-loan   */  
+      const monthlyPayment =
+        monthlyRate === 0
+          ? totalFinanced / loanTerm
+          : totalFinanced * ((monthlyRate) * ((1 + monthlyRate) ** loanTerm)) / (((1 + monthlyRate) ** loanTerm) - 1);;
 
-    /*  Calculate Total Interest
-            Formula: https://www.reddit.com/r/HelpMeFind/comments/12mtb62/what_does_est_total_interest_mean_im_confused/  */ 
-    const totalInterest = (monthlyPayment * loanTerm) - totalFinanced;
+      /*  Calculate Total Interest
+              Formula: https://www.reddit.com/r/HelpMeFind/comments/12mtb62/what_does_est_total_interest_mean_im_confused/  */ 
+      const totalInterest = (monthlyPayment * loanTerm) - totalFinanced;
 
-    // Calculate Total Loan
-    const totalLoan = (totalFinanced) + (totalInterest);
+      // Calculate Total Loan
+      const totalLoan = (totalFinanced) + (totalInterest);
 
-    return {
-      salesTax,
-      totalFinanced,
-      monthlyPayment,
-      totalLoan,
-      totalInterest,
-    };
-  };
+      // Save results to state
+      setFinance ({
+        monthlyPayment: monthlyPayment.toFixed(2), // Rounds to 2 decimal places
+        carPrice: carPrice,
+        salesTax: salesTax.toFixed(),
+        downPayment: downPayment,
+        tradeValue: tradeValue,
+        tradeOwed: tradeOwed,
+        totalFinanced: totalFinanced.toFixed(), // Round number
+        totalInterest: totalInterest.toFixed(),
+        totalLoan: totalLoan.toFixed(),
+      });
+    }
+  }, [financeData, tab]); // Re-run calculations whenever financeData or tab changes
 
-  // Affordability Calculation
-  const calculateAffordability = () => {
-    const {
-      preferredPayment,
-      affordInterestRate,
-      affordLoanTerm,
-      affordSalesTaxRate,
-      affordDownPayment,
-      affordTradeValue,
-      affordTradeOwed,
-    } = affordabilityData;
+  // Calculate results for the Affordability tab
+  useEffect(() => {
+    if (tab === "affordability") {
+      // Variables
+      // Set variables to 0 if it's not a number, float, or integer
+      const preferredPayment = parseFloat(affordabilityData.preferredPayment || 0);
+      const affordLoanTerm = parseInt(affordabilityData.affordLoanTerm || 60);
+      const affordDownPayment = parseFloat(affordabilityData.affordDownPayment || 0);
+      const affordTradeValue = parseFloat(affordabilityData.affordTradeValue || 0);
+      const affordTradeOwed = parseFloat(affordabilityData.affordTradeOwed || 0);
 
-    // Convert Rates
-    var salesRate = affordSalesTaxRate / 100; // Divides by 100 to convert to percentage
-    var interestRate_per = affordInterestRate / 100;  // Divides by 100 to convert to percentage
+      // Convert Rates
+      const affordInterestRate = parseFloat(affordabilityData.affordInterestRate || 0) / 100;  // Divides by 100 to convert to percentage
+      const affordSalesTaxRate = parseFloat(affordabilityData.affordSalesTaxRate || 0) / 100;    // Divides by 100 to convert to percentage
 
-    const monthlyRate = interestRate_per / 12;  // Interest rate per month
+      const monthlyRate = affordInterestRate / 12;  // Interest rate per month
 
-    /*  Calculate Total Finance
-        https://www.calculatorsoup.com/calculators/financial/loan-calculator.php  */
-    const afford_totalFinanced =
-      monthlyRate === 0
-        ? preferredPayment * affordLoanTerm
-        : (preferredPayment / monthlyRate) * (1 - ((1) / ((1 + monthlyRate) ** affordLoanTerm)))
+      /*  Calculate Total Finance
+          https://www.calculatorsoup.com/calculators/financial/loan-calculator.php  */
+      const afford_totalFinanced =
+        monthlyRate === 0
+          ? preferredPayment * affordLoanTerm
+          : (preferredPayment / monthlyRate) * (1 - ((1) / ((1 + monthlyRate) ** affordLoanTerm)))
 
-    /* Calculate Total Loan
-       preferredPayment * affordLoanTerm  */
-    const afford_totalLoan = (preferredPayment) * (affordLoanTerm);
+      /* Calculate Total Loan
+        preferredPayment * affordLoanTerm  */
+      const afford_totalLoan = (preferredPayment) * (affordLoanTerm);
 
-    /* Calculate Sales Tax
-       totalFinanced * salesRate  */
-    const afford_salesTax = (afford_totalFinanced) * (salesRate);
+      /* Calculate Sales Tax
+        totalFinanced * salesRate  */
+      const afford_salesTax = (afford_totalFinanced) * (affordSalesTaxRate);
 
-    // Calculate Total Interest
-    const afford_totalInterest = (afford_totalLoan) - (afford_totalFinanced);
+      // Calculate Total Interest
+      const afford_totalInterest = (afford_totalLoan) - (afford_totalFinanced);
 
-    // Calculate Estimated Car Price
-    const afford_carPrice = (afford_totalFinanced) - (afford_salesTax) + (affordDownPayment) + (affordTradeValue) - (affordTradeOwed);
+      // Calculate Estimated Car Price
+      const afford_carPrice = (afford_totalFinanced) - (afford_salesTax) + (affordDownPayment) + (affordTradeValue) - (affordTradeOwed);
 
-    return {
-      afford_salesTax,
-      afford_totalLoan,
-      afford_totalFinanced,
-      afford_totalInterest,
-      afford_carPrice,
-    };
-  };
+      // Save results to state
+      setAffordability({
+        afford_carPrice: afford_carPrice.toFixed(2),
+        preferredPayment: preferredPayment,
+        afford_salesTax: afford_salesTax.toFixed(),
+        affordDownPayment: affordDownPayment,
+        affordTradeValue: affordTradeValue,
+        affordTradeOwed: affordTradeOwed,
+        afford_totalFinanced: afford_totalFinanced.toFixed(),
+        afford_totalInterest: afford_totalInterest.toFixed(),
+        afford_totalLoan: afford_totalLoan.toFixed(),
+      });
+    }
+  }, [affordabilityData, tab]); // Re-run calculations
 
-  // Lease Calculation
-  const calculateLease = () => {
-    const {
-      leaseCarPrice,
-      leaseSalesTax,
-      leaseTerm,
-      leaseInterestRate,
-      leaseTradeValue,
-      leaseTradeOwed,
-      leaseDownPayment,
-      residualValue,
-    } = leaseData;
+  // Calculate results for the Lease tab
+  useEffect(() => {
+    if (tab === "lease") {
+      // Variables
+      // Set variables to 0 if it's not a number, float, or integer
+      const leaseCarPrice = parseFloat(leaseData.leaseCarPrice || 0);
+      const leaseTerm = parseInt(leaseData.leaseTerm || 60);
+      const leaseTradeValue = parseFloat(leaseData.leaseTradeValue || 0);
+      const leaseTradeOwed = parseFloat(leaseData.leaseTradeOwed || 0);
+      const leaseDownPayment = parseFloat(leaseData.leaseDownPayment || 0);
 
-    // Convert Rates
-    var leaseSalesRate = leaseSalesTax / 100; // Divides by 100 to convert to percentage
-    var interestRate_per = leaseInterestRate / 100;  // Divides by 100 to convert to percentage
-    var residualValue_per = residualValue / 100;  // Divides by 100 to convert to percentage
+      // Convert Rates
+      const leaseInterestRate = parseFloat(leaseData.leaseInterestRate || 0) / 100;  // Divides by 100 to convert to percentage
+      const leaseSalesRate = parseFloat(leaseData.leaseSalesTax || 0) / 100;    // Divides by 100 to convert to percentage
+      const residualValue = parseFloat(leaseData.residualValue || 62.0) / 100;    // Divides by 100 to convert to percentage
 
-    // Misc
-    var residualAmount = leaseCarPrice * (residualValue_per);
-    var deprecCost = leaseCarPrice - residualAmount;
-    var monthlyDeprec = deprecCost / leaseTerm;
-    var avgCarValue = (leaseCarPrice + residualValue_per) / 2;
-    var moneyFactor = interestRate_per / 2400;
-    var monthlyFinanceCharge = avgCarValue * moneyFactor;
+      // Misc
+      var residualAmount = leaseCarPrice * (residualValue);
+      var deprecCost = leaseCarPrice - residualAmount;
+      var monthlyDeprec = deprecCost / leaseTerm;
+      var avgCarValue = (leaseCarPrice + residualValue) / 2;
+      var moneyFactor = leaseInterestRate / 2400;
+      var monthlyFinanceCharge = avgCarValue * moneyFactor;
 
-    // Calculate Monthly Lease Payment
-    const monthlyLease = monthlyDeprec + monthlyFinanceCharge
+      // Calculate Monthly Lease Payment
+      const monthlyLease = monthlyDeprec + monthlyFinanceCharge
 
-    // Calculate Sales Tax
-    const lease_salesTax = (leaseCarPrice) * (leaseSalesRate);
-    
-    // Calculate Net Trade-In Amount
-    const netTrade = (leaseTradeValue) - (leaseTradeOwed);
+      // Calculate Sales Tax
+      const lease_salesTax = (leaseCarPrice) * (leaseSalesRate);
+      
+      // Calculate Net Trade-In Amount
+      const netTrade = (leaseTradeValue) - (leaseTradeOwed);
 
-    // Calculate Total Lease Amount
-    const totalLease = (leaseCarPrice) + (lease_salesTax) - (leaseDownPayment) - (netTrade);
+      // Calculate Total Lease Amount
+      const totalLease = (leaseCarPrice) + (lease_salesTax) - (leaseDownPayment) - (netTrade);
 
-    // Calculate Total Interest
-    const leaseTotalInterest = totalLease + residualAmount - leaseCarPrice;
+      // Calculate Total Interest
+      const leaseTotalInterest = totalLease + residualAmount - leaseCarPrice;
 
-    // Calculate Total Interest
-    const leaseTotalLoan = totalLease + leaseTotalInterest;
+      // Calculate Total Interest
+      const leaseTotalLoan = totalLease + leaseTotalInterest;
 
-    return {
-      monthlyLease,
-      lease_salesTax,
-      netTrade,
-      totalLease,
-      leaseTotalInterest,
-      leaseTotalLoan
-    };
-  };
+      // Save results to state
+      setLease({
+        monthlyLease: monthlyLease.toFixed(2),
+        leaseCarPrice: leaseCarPrice,
+        lease_salesTax: lease_salesTax.toFixed(2),
+        netTrade: netTrade.toFixed(2),
+        leaseDownPayment: leaseDownPayment.toFixed(2),
+        totalLease: totalLease.toFixed(2),
+        leaseTotalInterest: leaseTotalInterest.toFixed(2),
+        leaseTotalLoan: leaseTotalLoan.toFixed(2),
+      });
+    }
+  }, [leaseData, tab]); // Re-run calculations
 
-  // Calculation Variables
-  // Finance
-  const {
-    salesTax,
-    totalFinanced,
-    monthlyPayment,
-    totalLoan,
-    totalInterest,
-  } = calculatorType === "finance" ? calculateFinance() : {};
-
-  // Affordability
-  const {
-    afford_salesTax,
-    afford_totalLoan,
-    afford_totalFinanced,
-    afford_totalInterest,
-    afford_carPrice,
-  } = calculatorType === "affordability" ? calculateAffordability() : {};
-
-  // Lease
-  const {
-    monthlyLease,
-    lease_salesTax,
-    netTrade,
-    totalLease,
-    leaseTotalInterest,
-    leaseTotalLoan
-  } = calculatorType === "lease" ? calculateLease() : {};
-
+  // HTML Portion
   return (
+    // Handle tabs
     <div className="calculator-section">
       <h2>Car Loan Calculators</h2>
       <p>Choose a calculator to estimate your car payment options:</p>
       <div className="tabs">
         <button
-          className={calculatorType === "finance" ? "active" : ""}
-          onClick={() => setCalculatorType("finance")}
+          className={tab === "finance" ? "active" : ""}
+          onClick={() => handleTabChange("finance")}
         >
           Finance
         </button>
         <button
-          className={calculatorType === "affordability" ? "active" : ""}
-          onClick={() => setCalculatorType("affordability")}
+          className={tab === "affordability" ? "active" : ""}
+          onClick={() => handleTabChange("affordability")}
         >
           Affordability
         </button>
         <button
-          className={calculatorType === "lease" ? "active" : ""}
-          onClick={() => setCalculatorType("lease")}
+          className={tab === "lease" ? "active" : ""}
+          onClick={() => handleTabChange("lease")}
         >
           Lease
         </button>
       </div>
 
     {/* Finance Section */}
-      {calculatorType === "finance" && (
+      {tab === "finance" && (
         <div className="calculator-form">
           <div className="calculator-inputs">
             <label htmlFor="carPrice">Car Price</label>
@@ -264,17 +263,21 @@ const Finance = () => {
               type="number"
               id="carPrice"
               placeholder="$0"
-              onChange={(e) => handleInputChange(e, setFinanceData)}
+              value={financeData.carPrice}
+              onChange={handleInputChange}
             />
             <label htmlFor="interestRate">Interest Rate</label>
             <input
               type="number"
               id="interestRate"
               placeholder="$0"
-              onChange={(e) => handleInputChange(e, setFinanceData)}
+              value={financeData.interestRate}
+              onChange={handleInputChange}
             />
             <label htmlFor="loanTerm">Loan Term (months)</label>
-              <select id="loanTerm" value={financeData.loanTerm} onChange={(e) => handleInputChange(e, setFinanceData)}>
+              <select id="loanTerm" value={financeData.loanTerm} onChange={handleInputChange}>
+                <option value="12">12</option>
+                <option value="24">24</option>
                 <option value="36">36</option>
                 <option value="48">48</option>
                 <option value="60" selected>60</option>
@@ -285,50 +288,56 @@ const Finance = () => {
               type="number"
               id="salesTaxRate"
               placeholder="0.0%"
-              onChange={(e) => handleInputChange(e, setFinanceData)}
+              value={financeData.salesTaxRate}
+              onChange={handleInputChange}
             />
             <label htmlFor="downPayment">Down Payment</label>
             <input
               type="number"
               id="downPayment"
               placeholder="$0"
-              onChange={(e) => handleInputChange(e, setFinanceData)}
+              value={financeData.downPayment}
+              onChange={handleInputChange}
             />
             <label htmlFor="tradeValue">Trade-In Value</label>
             <input
               type="number"
               id="tradeValue"
               placeholder="$0"
-              onChange={(e) => handleInputChange(e, setFinanceData)}
+              value={financeData.tradeValue}
+              onChange={handleInputChange}
             />
             <label htmlFor="tradeOwed">Amount Owed on Trade</label>
             <input
               type="number"
               id="tradeOwed"
               placeholder="$0"
-              onChange={(e) => handleInputChange(e, setFinanceData)}
+              value={financeData.tradeOwed}
+              onChange={handleInputChange}
             />
           </div>
           {/* Finance Results */}
-          <div className="calculator-results">
-            <h3>Est. Monthly Payment</h3>
-            <p><strong id="financeMonthlyPayment">${monthlyPayment.toFixed(2)}/month</strong></p>
-            <ul>
-              <li>Car Price: <span id="price">${financeData.carPrice}</span></li>
-              <li>Sales Tax: <span id="salesTax">${salesTax.toFixed()}</span></li>
-              <li>Down Payment: <span id="downPaymentDisplay">${financeData.downPayment}</span></li>
-              <li>Trade-In Value: <span id="tradeInDisplay">${financeData.tradeValue}</span></li>
-              <li>Amount Owed on Trade: <span id="amountOwedDisplay">${financeData.tradeOwed}</span></li>
-              <li>Est. Total Financed: <span id="totalFinancedDisplay">${totalFinanced.toFixed()}</span></li>
-              <li>Est. Total Interest: <span id="totalInterest">${totalInterest.toFixed()}</span></li>
-              <li>Est. Total Loan: <span id="totalLoan">${totalLoan.toFixed()}</span></li>
-            </ul>
-          </div>
+          {tab === "finance" && financeResults && (
+            <div className="calculator-results">
+              <h3>Est. Monthly Payment</h3>
+              <p><strong id="financeMonthlyPayment">${financeResults.monthlyPayment}/month</strong></p>
+              <ul>
+                <li>Car Price: <span id="price">${financeResults.carPrice}</span></li>
+                <li>Sales Tax: <span id="salesTax">${financeResults.salesTax}</span></li>
+                <li>Down Payment: <span id="downPaymentDisplay">${financeResults.downPayment}</span></li>
+                <li>Trade-In Value: <span id="tradeInDisplay">${financeResults.tradeValue}</span></li>
+                <li>Amount Owed on Trade: <span id="amountOwedDisplay">${financeResults.tradeOwed}</span></li>
+                <li>Est. Total Financed: <span id="totalFinancedDisplay">${financeResults.totalFinanced}</span></li>
+                <li>Est. Total Interest: <span id="totalInterest">${financeResults.totalInterest}</span></li>
+                <li>Est. Total Loan: <span id="totalLoan">${financeResults.totalLoan}</span></li>
+              </ul>
+            </div>
+          )}
         </div>
       )}
 
     {/* Affordability Section */}
-      {calculatorType === "affordability" && (
+      {tab === "affordability" && (
         <div className="calculator-form">
           <div className="calculator-inputs">
             <label htmlFor="preferredPayment">Preferred Monthly Payment</label>
@@ -336,17 +345,19 @@ const Finance = () => {
               type="number"
               id="preferredPayment"
               placeholder="$0"
-              onChange={(e) => handleInputChange(e, setAffordabilityData)}
+              value={affordabilityData.preferredPayment}
+              onChange={handleInputChange}
             />
             <label htmlFor="affordInterestRate">Interest Rate</label>
             <input
               type="number"
               id="affordInterestRate"
               placeholder="$0"
-              onChange={(e) => handleInputChange(e, setAffordabilityData)}
+              value={affordabilityData.affordInterestRate}
+              onChange={handleInputChange}
             />
             <label htmlFor="affordLoanTerm">Loan Term (months)</label>
-              <select id="affordLoanTerm" value={affordabilityData.affordLoanTerm} onChange={(e) => handleInputChange(e, setAffordabilityData)}>
+              <select id="affordLoanTerm" value={affordabilityData.affordLoanTerm} onChange={handleInputChange}>
                 <option value="12">12</option>
                 <option value="24">24</option>
                 <option value="36">36</option>
@@ -359,50 +370,56 @@ const Finance = () => {
               type="number"
               id="affordSalesTaxRate"
               placeholder="0.0%"
-              onChange={(e) => handleInputChange(e, setAffordabilityData)}
+              value={affordabilityData.affordSalesTaxRate}
+              onChange={handleInputChange}
             />
             <label htmlFor="affordDownPayment">Down Payment</label>
             <input
               type="number"
               id="affordDownPayment"
               placeholder="$0"
-              onChange={(e) => handleInputChange(e, setAffordabilityData)}
+              value={affordabilityData.affordDownPayment}
+              onChange={handleInputChange}
             />
             <label htmlFor="affordTradeValue">Trade-In Value</label>
             <input
               type="number"
               id="affordTradeValue"
               placeholder="$0"
-              onChange={(e) => handleInputChange(e, setAffordabilityData)}
+              value={affordabilityData.affordTradeValue}
+              onChange={handleInputChange}
             />
             <label htmlFor="affordTradeOwed">Amount Owed on Trade</label>
             <input
               type="number"
               id="affordTradeOwed"
               placeholder="$0"
-              onChange={(e) => handleInputChange(e, setAffordabilityData)}
+              value={affordabilityData.affordTradeOwed}
+              onChange={handleInputChange}
             />
           </div>
           {/* Affordability Results */}
-          <div className="calculator-results">
-            <h3>Est. Car Price</h3>
-            <p><strong id="affordEstCarPrice">${afford_carPrice.toFixed(2)}</strong></p>
-            <ul>
-              <li>Preferred Payment: <span id="preferredDisplay">${affordabilityData.preferredPayment}/month</span></li>
-              <li>Sales Tax: <span id="affordSalesTaxDisplay">${afford_salesTax.toFixed()}</span></li>
-              <li>Down Payment: <span id="affordDownPaymentDisplay">${affordabilityData.affordDownPayment}</span></li>
-              <li>Trade-In Value: <span id="affordTradeInDisplay">${affordabilityData.affordTradeValue}</span></li>
-              <li>Amount Owed on Trade: <span id="affordTradeOwedDisplay">${affordabilityData.affordTradeOwed}</span></li>
-              <li>Est. Total Financed: <span id="affordTotalFinanced">${afford_totalFinanced.toFixed()}</span></li>
-              <li>Est. Total Interest: <span id="affordTotalInterest">${afford_totalInterest.toFixed()}</span></li>
-              <li>Est. Total Loan: <span id="affordTotalLoan">${afford_totalLoan.toFixed()}</span></li>
-            </ul>
-          </div>
+          {tab === "affordability" && affordabilityResults && (
+            <div className="calculator-results">
+              <h3>Est. Car Price</h3>
+              <p><strong id="affordEstCarPrice">${affordabilityResults.afford_carPrice}</strong></p>
+              <ul>
+                <li>Preferred Payment: <span id="preferredDisplay">${affordabilityResults.preferredPayment}/month</span></li>
+                <li>Sales Tax: <span id="affordSalesTaxDisplay">${affordabilityResults.afford_salesTax}</span></li>
+                <li>Down Payment: <span id="affordDownPaymentDisplay">${affordabilityResults.affordDownPayment}</span></li>
+                <li>Trade-In Value: <span id="affordTradeInDisplay">${affordabilityResults.affordTradeValue}</span></li>
+                <li>Amount Owed on Trade: <span id="affordTradeOwedDisplay">${affordabilityResults.affordTradeOwed}</span></li>
+                <li>Est. Total Financed: <span id="affordTotalFinanced">${affordabilityResults.afford_totalFinanced}</span></li>
+                <li>Est. Total Interest: <span id="affordTotalInterest">${affordabilityResults.afford_totalInterest}</span></li>
+                <li>Est. Total Loan: <span id="affordTotalLoan">${affordabilityResults.afford_totalLoan}</span></li>
+              </ul>
+            </div>
+          )}
         </div>
       )}
 
     {/* Lease Section */}
-      {calculatorType === "lease" && (
+      {tab === "lease" && (
         <div className="calculator-form">
           <div className="calculator-inputs">
             <label htmlFor="leaseCarPrice">Car Price</label>
@@ -410,17 +427,19 @@ const Finance = () => {
               type="number"
               id="leaseCarPrice"
               placeholder="$0"
-              onChange={(e) => handleInputChange(e, setLeaseData)}
+              value={leaseData.leaseCarPrice}
+              onChange={handleInputChange}
             />
             <label htmlFor="leaseSalesTax">Sales Tax</label>
             <input
               type="number"
               id="leaseSalesTax"
               placeholder="0.0%"
-              onChange={(e) => handleInputChange(e, setLeaseData)}
+              value={leaseData.leaseSalesTax}
+              onChange={handleInputChange}
             />
             <label htmlFor="leaseTerm">Lease Term (months)</label>
-              <select id="leaseTerm" value={leaseData.leaseTerm} onChange={(e) => handleInputChange(e, setLeaseData)}>
+              <select id="leaseTerm" value={leaseData.leaseTerm} onChange={handleInputChange}>
                 <option value="12">12</option>
                 <option value="24">24</option>
                 <option value="36">36</option>
@@ -433,58 +452,66 @@ const Finance = () => {
               type="number"
               id="leaseInterestRate"
               placeholder="0.0%"
-              onChange={(e) => handleInputChange(e, setLeaseData)}
+              value={leaseData.leaseInterestRate}
+              onChange={handleInputChange}
             />
             <label htmlFor="leaseTradeValue">Trade-In Value</label>
             <input
               type="number"
               id="leaseTradeValue"
               placeholder="$0"
-              onChange={(e) => handleInputChange(e, setLeaseData)}
+              value={leaseData.leaseTradeValue}
+              onChange={handleInputChange}
             />
             <label htmlFor="leaseTradeOwed">Amount Owed on Trade</label>
             <input
               type="number"
               id="leaseTradeOwed"
               placeholder="$0"
-              onChange={(e) => handleInputChange(e, setLeaseData)}
+              value={leaseData.leaseTradeOwed}   
+              onChange={handleInputChange}      
             />
             <label htmlFor="leaseDownPayment">Add'l Down Payment</label>
             <input
               type="number"
               id="leaseDownPayment"
               placeholder="$0"
-              onChange={(e) => handleInputChange(e, setLeaseData)}
+              value={leaseData.leaseDownPayment}
+              onChange={handleInputChange}
             />
             <label htmlFor="residualValue">Residual Value</label>
             <input
               type="number"
               id="residualValue"
               placeholder="62.0%"
-              onChange={(e) => handleInputChange(e, setLeaseData)}
+              value={leaseData.residualValue}
+              onChange={handleInputChange}
             />
             <label htmlFor="leaseMiles">Miles Per Year</label>
             <input
               type="number"
               id="leaseMiles"
               placeholder="0"
-              onChange={(e) => handleInputChange(e, setLeaseData)}
+              value={leaseData.leaseMiles}
+              onChange={handleInputChange}
             />
           </div>
           {/* Lease Results */}
-          <div className="calculator-results">
-            <h3>Est. Monthly Lease Payment</h3>
-            <p><strong id="leaseEstMonthlyPayment">${monthlyLease.toFixed(2)}/month</strong></p>
-            <ul>
-              <li>Car Price: <span id="leasePrice">${leaseData.leaseCarPrice}</span></li>
-              <li>Sales Tax: <span id="leaseSalesDisplay">${lease_salesTax.toFixed(2)}</span></li>
-              <li>Net Trade-In Amount: <span id="netTradeDisplay">${netTrade.toFixed(2)}</span></li>
-              <li>Add'l Down Payment: <span id="leaseDownPaymentDisplay">${leaseData.leaseDownPayment.toFixed(2)}</span></li>
-              <li>Est. Total Lease: <span id="leaseTotal">${totalLease.toFixed(2)}</span></li>
-              <li>Est. Total Interest Paid: <span id="leaseTotalInterest">${leaseTotalInterest.toFixed(2)}</span></li>
-              <li>Est. Total Loan: <span id="leaseTotalLoan">${leaseTotalLoan.toFixed(2)}</span></li>
-            </ul>
-          </div>
+          {tab === "lease" && leaseResults && (
+            <div className="calculator-results">
+              <h3>Est. Monthly Lease Payment</h3>
+              <p><strong id="leaseEstMonthlyPayment">${leaseResults.monthlyLease}/month</strong></p>
+              <ul>
+                <li>Car Price: <span id="leasePrice">${leaseResults.leaseCarPrice}</span></li>
+                <li>Sales Tax: <span id="leaseSalesDisplay">${leaseResults.lease_salesTax}</span></li>
+                <li>Net Trade-In Amount: <span id="netTradeDisplay">${leaseResults.netTrade}</span></li>
+                <li>Add'l Down Payment: <span id="leaseDownPaymentDisplay">${leaseResults.leaseDownPayment}</span></li>
+                <li>Est. Total Lease: <span id="leaseTotal">${leaseResults.totalLease}</span></li>
+                <li>Est. Total Interest Paid: <span id="leaseTotalInterest">${leaseResults.leaseTotalInterest}</span></li>
+                <li>Est. Total Loan: <span id="leaseTotalLoan">${leaseResults.leaseTotalLoan}</span></li>
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -4,6 +4,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
 import "./../styles/Finance.css";
 
+// Payment Calculator
 const Finance = () => {
   const [calculatorType, setCalculatorType] = useState("finance");
 
