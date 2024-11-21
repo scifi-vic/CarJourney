@@ -1,0 +1,117 @@
+ /* Container styling */
+ .car-search-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f9;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Card container */
+.search-card {
+  width: 100%;
+  max-width: 600px;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Title styling */
+.search-card h1 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Form styling */
+.car-search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Form section styling */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+/* Label styling */
+.form-section label {
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+/* Input and select styling */
+.form-section input,
+.form-section select {
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.form-section input:focus,
+.form-section select:focus {
+  border-color: #007bff;
+}
+
+/* Search button styling */
+.search-button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 14px;
+  width: 150%;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-button:hover {
+  background-color: #0056b3;
+}
+
+/* Advanced Search button styling */
+.advanced-search-button {
+  margin-top: 20px;
+  padding: 14px;
+  width: 100%;
+  font-size: 16px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.advanced-search-button:hover {
+  background-color: #218838;
+}
+
+/* Placeholder styling */
+.form-section input::placeholder {
+  color: #888;
+  font-style: italic;
+}
+
+/* Remove arrow for select dropdowns */
+.form-section select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray"><polygon points="0,0 16,0 8,8"/></svg>') no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 12px;
+}

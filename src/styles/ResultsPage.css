@@ -1,0 +1,89 @@
+.results-page {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  text-align: center;
+}
+
+.results-title {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.results-container {
+  display: flex;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+/* Filter Panel Styling */
+.filter-panel {
+  flex: 1;
+  max-width: 300px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Vehicle List Styling */
+.vehicle-list {
+  flex: 3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* Vehicle Card Styling */
+.vehicle-card {
+  width: 280px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.vehicle-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.vehicle-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.vehicle-card h3 {
+  font-size: 18px;
+  color: #333;
+  margin: 15px 10px 5px;
+}
+
+.vehicle-card p {
+  font-size: 14px;
+  color: #666;
+  margin: 5px 10px;
+}
+
+.heart-icon {
+  font-size: 24px;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.3s;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.heart-icon.fas {
+  color: #e74c3c;
+}
+
+.heart-icon:hover {
+  color: #e74c3c;
+}
