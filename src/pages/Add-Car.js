@@ -7,17 +7,31 @@ import "./../styles/Add-Car.css";
 const AddCar = () => {
     const [searchType, setSearchType] = useState("VIN");
     const [vin, setVin] = useState("");
+    const [carImage, setCarImage] = useState(null);
     const [year, setYear] = useState("");
     const [make, setMake] = useState("");
     const [model, setModel] = useState("");
     const [cost, setCost] = useState("");
     const [mileage, setMileage] = useState("");
     const [zipCode, setZipCode] = useState("");
+    const [color, setColor] = useState("");
+    const [engine, setEngine] = useState("");
     const [licensePlate, setLicensePlate] = useState("");
     const [state, setState] = useState("");
   
     const handleRadioChange = (e) => setSearchType(e.target.value);
   
+    const handleImageChange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        setCarImage(URL.createObjectURL(file));
+      }
+    };
+
+    const handleImageClick = () => {
+      document.getElementById('car-image-input').click();
+    };
+
     const handleGoClick = () => {
       if (searchType === "VIN") {
         console.log("Searching by VIN:", vin);
@@ -121,7 +135,18 @@ const AddCar = () => {
               {searchType === "Make/Model" && (
                 <div id="makeModel-inputs" className="car-details-inputs">
                   <p className="make-description">Make your own car.</p>
-                  <div className="make-input-group">
+                  <div className="car-image">
+                    <div className="image-upload" onClick={handleImageClick}>
+                      {carImage ? (
+                        <img src={carImage} alt="Car Preview" />
+                      ) : (
+                        <span>Click to add image</span>
+                      )}
+                    </div>
+                    { /* Do not display the "Choose File" button */ }
+                    <input id="car-image-input" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }}/>
+                  </div>
+                  <div className="additional-input-group">
                     <input
                       type="text"
                       name="year"
@@ -146,8 +171,6 @@ const AddCar = () => {
                       value={model}
                       onChange={(e) => setModel(e.target.value)}
                     />
-                  </div>
-                  <div className="additional-input-group">
                     <input
                       type="text"
                       name="cost"
@@ -156,6 +179,9 @@ const AddCar = () => {
                       value={cost}
                       onChange={(e) => setCost(e.target.value)}
                     />
+                  </div>
+                  { /* 2nd Row */ }
+                  <div className="additional-input-group">
                     <input
                       type="text"
                       name="mileage"
@@ -172,10 +198,26 @@ const AddCar = () => {
                       value={zipCode}
                       onChange={(e) => setZipCode(e.target.value)}
                     />
-                    <button type="button" className="make-go-btn" onClick={handleGoClick}>
-                      Go
-                    </button>
+                    <input
+                      type="text"
+                      name="color"
+                      id="color"
+                      placeholder="Color"
+                      value={color}
+                      onChange={(e) => setColor(e.target.value)}
+                    />
+                    <input
+                      type="text"
+                      name="engine"
+                      id="engine"
+                      placeholder="Engine"
+                      value={engine}
+                      onChange={(e) => setEngine(e.target.value)}
+                    />
                   </div>
+                  <button type="button" className="make-go-btn" onClick={handleGoClick}>
+                      Add Car
+                    </button>
                 </div>
               )}
   

@@ -25,6 +25,8 @@ const CarSearchPage = lazy(() => import('./pages/CarSearchPage'));
 const ResultsPage = lazy(() => import('./pages/ResultsPage'));
 const AdvancedSearchPage = lazy(() => import('./pages/AdvancedSearchPage'));
 
+// Huy
+const CarListingPage = lazy(() => import('./pages/CarListingPage')); // New CarListingPage
 
 function App() {
   // Handle Saved Searches
@@ -63,7 +65,6 @@ function App() {
                 <Route path="/car-quiz" element={<CarQuiz />} />
                 <Route path="/locate-dealer" element={<LocateDealer />} />
                 {/* Miguel */}
-                <Route path="/car-listing" element={<CarListing />} />
                 <Route path="/finance" element={<Finance />} />
                 <Route path="/add-car" element={<AddCar />} />
                 <Route path="/favorited-cars" element={<FavoriteCar />} />
@@ -72,6 +73,8 @@ function App() {
                 <Route path="/search" element={<CarSearchPage />} />
                 <Route path="/results" element={<ResultsPage onSaveSearch={handleSaveSearch} />} /> {/* Route for ResultsPage */}
                 <Route path="/advanced-search" element={<AdvancedSearchPage />} /> {/* Route for AdvancedSearchPage */}
+                {/* Huy */}
+                <Route path="/car-listing" element={<CarListingPage />} /> {/* New Route */}
               </Routes>     
             </div>
           </Suspense>

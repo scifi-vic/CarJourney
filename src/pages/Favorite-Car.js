@@ -4,6 +4,11 @@ import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import "./../styles/Favorite-Car.css";
 
+/* FontAwesome Icons */
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';   // Solid heart
+import {faArrowUpRightFromSquare} from '@fortawesome/free-solid-svg-icons'; 
+
 const FavoriteList = () => {
   const [favorites, setFavorites] = useState([]);
 
@@ -49,21 +54,22 @@ const FavoriteList = () => {
                     <a href={`carListing.html?car=${car.name}`}>
                       <img src={car.image} alt={car.name} />
                     </a>
-                    <i
-                      className="fas fa-heart heart-icon"
+                    <FontAwesomeIcon
+                      icon={fasHeart}
+                      className="heart-icon"
                       onClick={() => removeFromFavorites(index)}
-                    ></i>
+                    />
                   </div>
                   <div className="car-details">
                     <div className="title-cost">
-                      <h3>{car.name}</h3>
-                      <p className="car-cost">{car.cost}</p>
+                      <h3>{car.make} {car.model}</h3>
+                      <p className="car-cost">${Number(car.cost).toLocaleString()}</p>
                     </div>
-                    <p className="odometer">{car.odometer}</p>
+                    <p className="odometer">{Number(car.odometer).toLocaleString()} miles</p> 
                     <p className="seller">{car.seller}</p>
                     <p className="contact-seller">
                       <a href="contact_seller.html" className="contact-seller-link">
-                        Contact Seller <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                        Contact Seller <i><FontAwesomeIcon icon={faArrowUpRightFromSquare} /></i>
                       </a>
                     </p>
                   </div>
