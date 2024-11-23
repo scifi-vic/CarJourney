@@ -5,7 +5,6 @@ import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import "./../styles/SaveSearch.css";
 
-
 const SaveSearch = () => {
   // Load saved searches from localStorage
   const [savedSearches, setSavedSearches] = useState([]);
@@ -16,9 +15,9 @@ const SaveSearch = () => {
     setSavedSearches(storedSearches);
   }, []);
 
-  // Remove a search by index
-  const handleRemoveSearch = (indexToRemove) => {
-    const updatedSearches = savedSearches.filter((_, index) => index !== indexToRemove);
+  // Remove a search by the ID
+  const handleRemoveSearch = (id) => {
+    const updatedSearches = savedSearches.filter((search) => search.id !== id);
     setSavedSearches(updatedSearches);
     localStorage.setItem("savedSearches", JSON.stringify(updatedSearches));
   };
@@ -28,6 +27,20 @@ const SaveSearch = () => {
 
   const handleRedirect = () => {
       navigate("/advanced-search"); // Redirect to the AdvancedSearchPage route
+  };
+
+  // Handle "View Search Results"
+  const handleViewResults = (id) => {
+    const search = savedSearches.find((s) => s.id === id);
+    if (search) {
+      const url = `/results?make=${search.make}&model=${search.model}`
+                  + `&minPrice=${search.minPrice}&maxPrice=${search.maxPrice}`
+                  + `&minYear=${search.minYear}&maxYear=${search.maxYear}`
+                  + `&mileage=${search.mileage}&transmission=${search.transmission}`
+                  + `&fuelType=${search.fuelType}&bodyStyle=${search.bodyStyle}`
+                  + `&driveType=${search.driveType}&color=${search.color}`;
+      navigate(url);
+    }
   };
 
   // Initiate Date
@@ -88,21 +101,69 @@ const SaveSearch = () => {
                 Start a New Search
               </button>
               <ul>
-                  {savedSearches.map((search, index) => (
-                    <div key={index}>
+                  {savedSearches.map((search) => (
+                    <div key={search.id}>
                         <div className="search-header">
-                          <p className="search-title">Saved Search ({index + 1})</p>
-                          <p className="remove-text" onClick={() => handleRemoveSearch(index)}>Remove</p>
+                          <p className="search-title">Saved Search ({search.id})</p>
+                          <p className="remove-text" onClick={() => handleRemoveSearch(search.id)}>Remove</p>
                         </div>
                         <p className="created-text">Created on: <span>{date.toLocaleDateString('en-US')}</span></p>
                         <p className="search-criteria">Search Criteria</p>
 
-                        <p className="search-filters">Make: <span>{search.make}</span></p>
-                        <p className="search-filters">Model: <span>{search.model}</span></p> 
-                        <p className="search-filters">ZIP Code: <span>{search.zipCode}</span></p>
-                        <p className="search-filters">Distance: <span>{search.distance}</span></p>
+                        { /*  Search Filters
+                              Checks if certain filters exist, do not display if it does not exist */}
+                        <div className="search-filters">
+                          {search.make && <p>Make: <span>{search.make}</span></p>}
+                          {search.model && <p>Model: <span>{search.model}</span></p>}
+                          {search.distance && <p>Distance: <span>{search.distance} miles</span></p>}
+                          {search.zipCode && <p>ZIP Code: <span>{search.zipCode}</span></p>}
 
-                        <button className="view-search-button">View Search Results</button>
+                          { /* Handle Year Range */ }
+                          { /* Minimum Year */ }
+                          {search.minYear && !search.maxYear && (
+                            <p>Min. Year: <span>{search.minYear}</span></p>
+                          )}
+                          { /* Max Year */ }
+                          {search.maxYear && !search.minYear && (
+                            <p>Max Year: <span>{search.maxYear}</span></p>
+                          )}
+                          { /* Both Min and Max Year  */ }
+                          {search.minYear && search.maxYear && (
+                            <p>Year Range: <span>{search.minYear} to {search.maxYear}</span></p>
+                          )}
+
+                          { /* Handle Price Range */ }
+                          { /* Minimum Price */ }
+                          {search.minPrice && !search.maxPrice && (
+                            <p>Min. Price: <span>${Number(search.minPrice).toLocaleString()}</span></p>
+                          )}
+                          { /* Max Price */ }
+                          {search.maxPrice && !search.minPrice && (
+                            <p>Max Price: <span>${Number(search.maxPrice).toLocaleString()}</span></p>
+                          )}
+                          { /* Both Min and Max Price  */ }
+                          {search.minPrice && search.maxPrice && (
+                            <p>Price Range: <span>${Number(search.minPrice).toLocaleString()} to ${Number(search.maxPrice).toLocaleString()}</span></p>
+                          )}         
+
+                          {search.mileage && <p>Mileage: <span>{Number(search.mileage).toLocaleString()} miles</span></p>    }
+                          {search.transmission && <p>Transmission: <span>{search.transmission}</span></p>}
+                          {search.fuelType && <p>Fuel Type: <span>{search.fuelType}</span></p>}
+                          {search.driveType && <p>Drive Type: <span>{search.driveType}</span></p>}
+                          {search.bodyStyle && <p>Body Style: <span>{search.bodyStyle}</span></p>}
+                          {search.engineType && <p>Engine Type: <span>{search.engineType}</span></p>}
+                          {search.color && <p>Color Type: <span>{search.color}</span></p>}
+                        </div>
+
+                        { /* View Search Results */ }
+                        <button 
+                          key={search.id}
+                          onClick={() => handleViewResults(search.id)}
+                          className="view-search-button">
+                            View Search Results
+                        </button>
+
+                        { /* Horizontal Line */ }
                         <hr className="horizontal-line" />
                     </div>
                   ))}

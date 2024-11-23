@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../styles/ResultsPage.css';
+import { NestCamWiredStand } from '@mui/icons-material';
 
-const ResultsPage = ({ onSaveSearch }) => {
+const ResultsPage = () => {
   const sampleCars = [
     // Toyota
     { id: 1, make: 'Toyota', model: 'Camry', year: 2018, price: 20000, mileage: 30000, transmission: 'Automatic', fuelType: 'Gasoline', location: '90001', driveType: 'FWD', bodyStyle: 'Sedan', engineType: 'V4', color: 'Red', image: 'https://via.placeholder.com/280x180' },
@@ -71,34 +72,6 @@ const ResultsPage = ({ onSaveSearch }) => {
     localStorage.setItem('savedCars', JSON.stringify(updatedSavedCars));
   };
   
-  {/* Handle Save Search */}
-  // Filters
-  const [filters, setFilters] = useState({
-    make: "Any",
-    model: "Any",
-    zipCode: "",
-    distance: "10 miles",
-  });
-
-  // Handle changes in the filter fields
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
-  };
-
-  // Handle Save Search
-  const handleSaveSearch = () => {
-        const newSearch = {
-          ...filters,
-      };
-
-      const existingSearches = JSON.parse(localStorage.getItem("savedSearches")) || [];
-      const updatedSearches = [...existingSearches, newSearch];
-
-      localStorage.setItem("savedSearches", JSON.stringify(updatedSearches));
-      alert("Search saved!");
-    };
-
   // Models based on selected make
   const modelsByMake = {
     Toyota: ['Camry', 'Corolla', 'RAV4'],
@@ -131,6 +104,46 @@ const ResultsPage = ({ onSaveSearch }) => {
       (!color || car.color === color)
     );
   });
+
+  {/* Handle Save Search */}
+  // Save Filters to Storage
+  const filters = {
+    make: make,
+    model: model,
+    zipCode: zip,
+    distance: radius,
+    minYear: minYear, maxYear: maxYear,
+    minPrice: minPrice, maxPrice: maxPrice,
+    mileage: mileage,
+    transmission: transmission,
+    fuelType: fuelType,
+    driveType: driveType,
+    bodyStyle: bodyStyle,
+    engineType: engineType,
+    color: color,
+  };
+
+  // Handle Save Search
+  const handleSaveSearch = () => {
+    // Take existing searches
+    const existingSearches = JSON.parse(localStorage.getItem("savedSearches")) || [];
+
+    // Give unique IDs to each save added
+    const newId = existingSearches.length > 0 
+      ? Math.max(...existingSearches.map((s) => s.id)) + 1 
+      : 1;
+    
+    // Renew array
+    const newSearch = {
+      id: newId,
+      ...filters,
+    };
+
+    const updatedSearches = [newSearch, ...existingSearches];
+
+    localStorage.setItem("savedSearches", JSON.stringify(updatedSearches));
+    alert("Search saved!");
+  };
 
   return (
     <div className="results-page">

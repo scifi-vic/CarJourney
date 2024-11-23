@@ -14,7 +14,6 @@ const CarQuiz = lazy(() => import('./pages/Car-Quiz'));
 const LocateDealer = lazy(() => import('./pages/LocateDealer'));
 
 // Miguel
-const CarListing = lazy(() => import('./pages/CarListing'));
 const Finance = lazy(() => import('./pages/Finance'));
 const AddCar = lazy(() => import('./pages/Add-Car'));
 const FavoriteCar = lazy(() => import('./pages/Favorite-Car'));

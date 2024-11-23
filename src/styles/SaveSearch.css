@@ -239,8 +239,13 @@
   margin-bottom: 10px; /* Add space below */
 }
 
-/* Style for the search filters text */
+/* Search Criteria Styling */
 .search-filters {
+  display: grid;
+}
+
+/* Style for the search filters text */
+.search-filters p {
   font-size: 0.9em; 
   color: #666; /* Light gray color */
   font-weight: bold; /* Bold for the label */
@@ -251,6 +256,7 @@
   font-weight: normal; /* Normal weight */
 }
 
+/* View Search Button */
 .view-search-button {
   background-color: #f56200;
   color: #fff;
