@@ -51,8 +51,8 @@ const FavoriteList = () => {
               favorites.map((car, index) => (
                 <div key={index} className="car-item">
                   <div className="car-image">
-                    <a href={`carListing.html?car=${car.name}`}>
-                      <img src={car.image} alt={car.name} />
+                    <a href={`car-listing?make=${car.make}&model=${car.model}`}>
+                      <img src={car.image} alt={car.make} />
                     </a>
                     <FontAwesomeIcon
                       icon={fasHeart}
@@ -68,7 +68,7 @@ const FavoriteList = () => {
                     <p className="odometer">{Number(car.odometer).toLocaleString()} miles</p> 
                     <p className="seller">{car.seller}</p>
                     <p className="contact-seller">
-                      <a href="contact_seller.html" className="contact-seller-link">
+                      <a href="contact-seller" className="contact-seller-link">
                         Contact Seller <i><FontAwesomeIcon icon={faArrowUpRightFromSquare} /></i>
                       </a>
                     </p>

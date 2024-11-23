@@ -7,13 +7,15 @@ import "./../styles/SaveSearch.css";
 
 
 const SaveSearch = () => {
+
+  console.log("Saved Searches:", savedSearches); // Debugging: Log the saved searches
   // Handle Saved Cars
   const [savedSearches, setSavedSearches] = useState([]);
 
   const handleSaveSearch = (newSearch) => {
       setSavedSearches((prevSearches) => [...prevSearches, newSearch]);
   };
-  
+
   // Redirect Link
   const navigate = useNavigate(); // React Router hook for navigation
 

@@ -59,15 +59,17 @@ const VehicleCard = ({ vehicle, detailed = false }) => {
       <p className="vehicle-seller">Sold by: {vehicle.seller}</p>
 
       {/* Favorite Button */}
-      <div>
-        <FontAwesomeIcon 
-          icon={isLiked ? fasHeart : farHeart}
-          className="heart-icon"
-          onClick={toggleFavorite} />
+      <div className="contact-container">
+        <div className="heart-save-container" onClick={toggleFavorite}>
+          <FontAwesomeIcon
+            icon={isLiked ? fasHeart : farHeart}
+            className="heart-icon"
+          />
+          <span>{isLiked ? 'Saved' : 'Save'}</span>
+        </div>
+        {/* Move the Contact Seller button here */}
+        <button className="contact-button">Contact Seller</button>
       </div>
-
-      {/* Move the Contact Seller button here */}
-      <button className="contact-button">Contact Seller</button>
 
       <div className="image-box">
         <img src={vehicle.image} alt={`${vehicle.make} ${vehicle.model}`} className="vehicle-image" />

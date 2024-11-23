@@ -27,25 +27,6 @@ const AdvancedSearchPage = lazy(() => import('./pages/AdvancedSearchPage'));
 
 
 function App() {
-  // Handle Saved Searches
-  const [savedSearches, setSavedSearches] = useState(() => {
-    // Retrieve saved searches from localStorage on initial load
-    const saved = localStorage.getItem("savedSearches");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  const handleSaveSearch = (filters) => {
-    console.log("Saving Filters:", filters); // Debugging: Log the filters being saved
-    const updatedSearches = [...savedSearches, filters];
-    setSavedSearches(updatedSearches);
-    localStorage.setItem("savedSearches", JSON.stringify(updatedSearches)); // Save to localStorage
-  };
-
-  useEffect(() => {
-    // Update localStorage whenever savedSearches changes
-    localStorage.setItem("savedSearches", JSON.stringify(savedSearches));
-    console.log("Updated savedSearches:", savedSearches);
-  }, [savedSearches]);
 
   return (
     <div>
@@ -67,10 +48,10 @@ function App() {
                 <Route path="/finance" element={<Finance />} />
                 <Route path="/add-car" element={<AddCar />} />
                 <Route path="/favorited-cars" element={<FavoriteCar />} />
-                <Route path="/saved-searches" element={<SaveSearch savedSearches={savedSearches} />} />
+                <Route path="/saved-searches" element={<SaveSearch />} />
                 {/* Amaar */}
                 <Route path="/search" element={<CarSearchPage />} />
-                <Route path="/results" element={<ResultsPage onSaveSearch={handleSaveSearch} />} /> {/* Route for ResultsPage */}
+                <Route path="/results" element={<ResultsPage />} /> {/* Route for ResultsPage */}
                 <Route path="/advanced-search" element={<AdvancedSearchPage />} /> {/* Route for AdvancedSearchPage */}
               </Routes>     
             </div>

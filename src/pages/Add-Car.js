@@ -11,7 +11,7 @@ const AddCar = () => {
     const [year, setYear] = useState("");
     const [make, setMake] = useState("");
     const [model, setModel] = useState("");
-    const [cost, setCost] = useState("");
+    const [cost, setPrice] = useState("");
     const [mileage, setMileage] = useState("");
     const [zipCode, setZipCode] = useState("");
     const [color, setColor] = useState("");
@@ -173,11 +173,11 @@ const AddCar = () => {
                     />
                     <input
                       type="text"
-                      name="cost"
-                      id="cost"
-                      placeholder="Cost"
+                      name="price"
+                      id="price"
+                      placeholder="Price"
                       value={cost}
-                      onChange={(e) => setCost(e.target.value)}
+                      onChange={(e) => setPrice(e.target.value)}
                     />
                   </div>
                   { /* 2nd Row */ }
