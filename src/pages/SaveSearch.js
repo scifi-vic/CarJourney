@@ -6,7 +6,7 @@ import { auth, db } from "../firebaseConfig";
 import "./../styles/SaveSearch.css";
 
 const SaveSearch = () => {
-  // Load saved searches from localStorage
+  // Load saved searches from localStorage (Initiate array)
   const [savedSearches, setSavedSearches] = useState([]);
 
   // Load saved searches from localStorage on component mount

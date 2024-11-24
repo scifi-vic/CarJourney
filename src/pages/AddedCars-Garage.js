@@ -11,22 +11,25 @@ import { faPlus as fasPlus, faXmark as fasXMark} from '@fortawesome/free-solid-s
 // My Cars
 const MyCars = () => {
 
-    const [cars, setCars] = useState([]);
+    // Initiate variables
     const [selectedCar, setSelectedCar] = useState(null);
   
+    // Load saved cars from localStorage (Initiate array)
+    const [savedCars, setSavedCars] = useState([]);
+
+    // Load saved searches from localStorage on component mount
     useEffect(() => {
-      // Fetch user's cars from Firestore (placeholder code)
-      // You would replace this with the actual code to fetch cars from your Firestore collection
-      const fetchedCars = [
-        { id: 1, name: "2019 Toyota Camry", mileage: "15000 miles", image: "/images/camry1.jpg", description: "Luxury Sedan 4D" },
-        { id: 2, name: "2018 Honda Civic", mileage: "20000 miles", image: "/images/camry2.png", description: "W12 Sedan 4D" },
-        { id: 3, name: "2020 Ford Mustang", mileage: "5000 miles", image: "mustang.jpg", description: "Premium Sports Car" },
-        { id: 4, name: "2017 Chevrolet Malibu", mileage: "30000 miles", image: "malibu.jpg", description: "Comfort Sedan 4D" },
-        { id: 5, name: "2021 Nissan Altima", mileage: "10000 miles", image: "altima.jpg", description: "Family Sedan 4D" }
-      ];
-      setCars(fetchedCars);
+      const storedCars = JSON.parse(localStorage.getItem("addedCars")) || [];
+      setSavedCars(storedCars);
     }, []);
-  
+
+    // Remove a search by the ID
+    const handleRemoveCar = (id) => {
+      const updatedCars = savedCars.filter((car) => car.id !== id);
+      setSavedCars(updatedCars);
+      localStorage.setItem("addedCars", JSON.stringify(updatedCars));
+    };
+
     const handleCarSelect = (car) => {
       setSelectedCar(car);
     };
@@ -50,12 +53,12 @@ const MyCars = () => {
       <main>
 
         <section className="car-amount">
-            <h2>You Have {cars.length} Saved Cars</h2>
+            <h2>You Have {savedCars.length} Saved Car{savedCars.length !== 1 ? "s" : ""}</h2>
         </section>
 
         <div className="my-cars-container">
         <div>
-            {cars.length === 0 ? (
+            {savedCars.length === 0 ? (
               <p>No cars found.</p>
             ) : (
               <>
@@ -70,54 +73,57 @@ const MyCars = () => {
 
               </div>
               <div className="car-list-view">
-                  {cars.map((car) => (
+                  {savedCars.map((car) => (
                     <li key={car.id} className="car-item" onClick={() => handleCarSelect(car)}>
                       <img src={car.image} alt={car.name} className="car-image" />
                       <div className="car-info">
-                        <h3>{car.name}</h3>
-                        <p>Mileage: {car.mileage}</p>
+                        <h3>{car.year} {car.make} {car.model}</h3>
+                        <p>Mileage: {car.mileage} miles</p>
                       </div>
                     </li>
                   ))}
                 </div></>
             )}
         </div>
-          <div class="car-details-container">
-              { /* Car Details Header */ }
-              <div class="car-details-header">
+          {savedCars.length === 0 ? (
+            <p></p>
+            ) : (
+            <div class="car-details-container">
+                { /* Car Details Header */ }
+                <div class="car-details-header">
+                  <h2 class="car-details-title">Car Details</h2>
 
-                <h2 class="car-details-title">Car Details</h2>
-
-                { /* Remove Car Option */}
-                <div className="remove-car-container" >
-                  <FontAwesomeIcon className="x-icon" icon={fasXMark}></FontAwesomeIcon>
-                  <p className="remove-car">Remove this car</p>
+                  { /* Remove Car Option */}
+                  <div className="remove-car-container" >
+                    <FontAwesomeIcon className="x-icon" icon={fasXMark}></FontAwesomeIcon>
+                    <p className="remove-car" onClick={() => handleRemoveCar(selectedCar.id)}>Remove this car</p>
+                  </div>
                 </div>
 
-              </div>
-              { /* Car Details Card */ }
-              <div className="car-details-card">
+                { /* Car Details Card */ }
+                <div className="car-details-card">
                   {selectedCar ? (
-                  <div className="car-details-info">
-                      <h2 class="car-info-title">{selectedCar.name}</h2>
+                    <div className="car-details-info">
+                        <h2 class="car-info-title">{selectedCar.year} {selectedCar.make} {selectedCar.model}</h2>
 
-                      <div class="car-image-container">
-                        <img src={selectedCar.image} alt={selectedCar.name} className="car-image-large" />
-                      </div>
-                      
-                      <div className="car-details-text">
-                        <p>Price: </p>
-                        <p>Mileage: <span>{selectedCar.mileage}</span></p>
-                        <p>ZIP Code: </p>
-                        <p>Color: </p>
-                        <p>Engine: </p>
-                      </div>
-                  </div>
-                  ) : (
-                  <p>Select a car to view details</p>
+                        <div class="car-image-container">
+                          <img src={selectedCar.image} alt={selectedCar.name} className="car-image-large" />
+                        </div>
+                        
+                        <div className="car-details-text">
+                          <p>Price: <span>${selectedCar.price}</span></p>
+                          <p>Mileage: <span>{selectedCar.mileage} miles</span></p>
+                          <p>ZIP Code: <span>{selectedCar.zipCode}</span></p>
+                          <p>Color: <span>{selectedCar.color}</span></p>
+                          <p>Engine: <span>{selectedCar.engine}</span></p>
+                        </div>
+                    </div>
+                    ) : (
+                    <p>Select a car to view details</p>
                   )}
-              </div>
-          </div>
+                </div>
+            </div>
+          )}
         </div>
       </main>
     </div>

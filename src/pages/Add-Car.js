@@ -7,22 +7,28 @@ import "./../styles/Add-Car.css";
 const AddCar = () => {
     const [searchType, setSearchType] = useState("VIN");
     const [vin, setVin] = useState("");
-    const [carImage, setCarImage] = useState(null);
+    const [carImage, setCarImage] = useState("");
     const [year, setYear] = useState("");
     const [make, setMake] = useState("");
     const [model, setModel] = useState("");
-    const [cost, setPrice] = useState("");
+    const [price, setPrice] = useState("");
     const [mileage, setMileage] = useState("");
     const [zipCode, setZipCode] = useState("");
     const [color, setColor] = useState("");
     const [engine, setEngine] = useState("");
   
-    const handleRadioChange = (e) => setSearchType(e.target.value);
+    const handleRadioChange= (e) => setSearchType(e.target.value);
   
     const handleImageChange = (e) => {
       const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setCarImage(reader.result); // Save Base64 string to state
+      };
+
       if (file) {
-        setCarImage(URL.createObjectURL(file));
+          reader.readAsDataURL(file); // Convert image to Base64
       }
     };
 
@@ -34,10 +40,46 @@ const AddCar = () => {
       if (searchType === "VIN") {
         console.log("Searching by VIN:", vin);
       } else if (searchType === "Make/Model") {
-        console.log("Adding Car:", { year, make, model, cost, mileage, zipCode });
+        console.log("Adding Car:", { year, make, model, price, mileage, zipCode });
       }
     };
-  
+
+  {/* Handle Save Search */}
+  // Save Filters to Storage
+  const carInfo = {
+    image: carImage,
+    year: year,
+    make: make,
+    model: model,
+    price: price,
+    mileage: mileage,
+    zipCode: zipCode,
+    color: color,
+    engine: engine,
+  };
+
+  // Handle Save Search
+  const handleAddCars = () => {
+    // Take existing cars
+    const existingCars = JSON.parse(localStorage.getItem("addedCars")) || [];
+
+    // Give unique IDs to each car added
+    const newId = existingCars.length > 0 
+      ? Math.max(...existingCars.map((s) => s.id)) + 1 
+      : 1;
+    
+    // Renew array
+    const newCar = {
+      id: newId,
+      ...carInfo,
+    };
+
+    const updatedCars = [newCar, ...existingCars];
+
+    localStorage.setItem("addedCars", JSON.stringify(updatedCars));
+    alert("Car added successfully!");
+  };
+
     return (
       <div>
         {/* Navigation Header */}
@@ -153,7 +195,7 @@ const AddCar = () => {
                       name="price"
                       id="price"
                       placeholder="Price"
-                      value={cost}
+                      value={price}
                       onChange={(e) => setPrice(e.target.value)}
                     />
                   </div>
@@ -192,7 +234,7 @@ const AddCar = () => {
                       onChange={(e) => setEngine(e.target.value)}
                     />
                   </div>
-                  <button type="button" className="make-go-btn" onClick={handleGoClick}>
+                  <button type="button" className="make-go-btn" onClick={handleAddCars}>
                       Add Car
                     </button>
                 </div>

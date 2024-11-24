@@ -105,7 +105,8 @@ const ResultsPage = () => {
     );
   });
 
-  {/* Handle Save Search */}
+  {/* Miguel's Code
+    Handle Save Search */}
   // Save Filters to Storage
   const filters = {
     make: make,
@@ -145,6 +146,7 @@ const ResultsPage = () => {
     alert("Search saved!");
   };
 
+
   return (
     <div className="results-page">
       <h2 className="results-title">Search Results</h2>
@@ -159,7 +161,8 @@ const ResultsPage = () => {
           >
               Save Search
           </button>
-
+          { /* End of Miguel's Code */}
+          
           <div className="form-section">
             <label>Make:</label>
             <select value={make} onChange={(e) => { setMake(e.target.value); setModel(''); }}>
