@@ -33,6 +33,7 @@ const FavoriteList = () => {
       <div className="headerNav-container">
         <nav>
           <ul className="header-nav-list">
+            <li><a href="my-cars">My Cars</a></li>
             <li><a href="add-car">Add Cars</a></li>
             <li><a href="favorited-cars" className="active">Favorited Cars</a></li>
             <li><a href="saved-searches">Saved Searches</a></li>

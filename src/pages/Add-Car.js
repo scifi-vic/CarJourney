@@ -16,8 +16,6 @@ const AddCar = () => {
     const [zipCode, setZipCode] = useState("");
     const [color, setColor] = useState("");
     const [engine, setEngine] = useState("");
-    const [licensePlate, setLicensePlate] = useState("");
-    const [state, setState] = useState("");
   
     const handleRadioChange = (e) => setSearchType(e.target.value);
   
@@ -37,8 +35,6 @@ const AddCar = () => {
         console.log("Searching by VIN:", vin);
       } else if (searchType === "Make/Model") {
         console.log("Adding Car:", { year, make, model, cost, mileage, zipCode });
-      } else if (searchType === "LicensePlate") {
-        console.log("Searching by License Plate:", { licensePlate, state });
       }
     };
   
@@ -48,17 +44,10 @@ const AddCar = () => {
         <div className="headerNav-container">
           <nav>
             <ul className="header-nav-list">
-              <li>
-                <a href="add-car" className="active">
-                  Add Cars
-                </a>
-              </li>
-              <li>
-                <a href="favorited-cars">Favorited Cars</a>
-              </li>
-              <li>
-                <a href="saved-searches">Saved Searches</a>
-              </li>
+              <li><a href="my-cars">My Cars</a></li>
+              <li><a href="add-car" className="active">Add Cars</a></li>
+              <li><a href="favorited-cars">Favorited Cars</a></li>
+              <li><a href="saved-searches">Saved Searches</a></li>
             </ul>
           </nav>
         </div>
@@ -96,21 +85,12 @@ const AddCar = () => {
                 />
                 <label htmlFor="makeModel">Make/Model</label>
   
-                <input
-                  type="radio"
-                  id="licensePlate"
-                  name="searchType"
-                  value="LicensePlate"
-                  checked={searchType === "LicensePlate"}
-                  onChange={handleRadioChange}
-                />
-                <label htmlFor="licensePlate">License Plate</label>
               </div>
   
               {searchType === "VIN" && (
                 <div id="vin-inputs" className="car-details-inputs">
                   <p className="vin-description">
-                    Your <u>VIN</u> or license plate will allow for more accurate
+                    Your <u>VIN</u> will allow for more accurate
                     details.
                   </p>
                   <div className="vin-input-group">
@@ -126,9 +106,6 @@ const AddCar = () => {
                       Go
                     </button>
                   </div>
-                  <a href="#" className="vin-help-link">
-                    Where do I find my VIN?
-                  </a>
                 </div>
               )}
   
@@ -221,39 +198,6 @@ const AddCar = () => {
                 </div>
               )}
   
-              {searchType === "LicensePlate" && (
-                <div id="licensePlate-inputs" className="car-details-inputs">
-                  <p className="license-description">
-                    Your VIN or <u>license plate</u> will allow for more accurate
-                    details.
-                  </p>
-                  <div className="license-input-group">
-                    <input
-                      type="text"
-                      name="licensePlate"
-                      id="licensePlate"
-                      placeholder="Enter your plate"
-                      value={licensePlate}
-                      onChange={(e) => setLicensePlate(e.target.value)}
-                    />
-                    <select
-                      name="state"
-                      id="state"
-                      value={state}
-                      onChange={(e) => setState(e.target.value)}
-                    >
-                      <option value="" disabled>
-                        State
-                      </option>
-                      <option value="CA">CA</option>
-                      <option value="TX">TX</option>
-                    </select>
-                    <button type="button" className="license-go-btn" onClick={handleGoClick}>
-                      Go
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </main>

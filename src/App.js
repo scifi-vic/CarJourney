@@ -15,6 +15,7 @@ const LocateDealer = lazy(() => import('./pages/LocateDealer'));
 
 // Miguel
 const Finance = lazy(() => import('./pages/Finance'));
+const AddedCarsGarage = lazy(() => import('./pages/AddedCars-Garage'));
 const AddCar = lazy(() => import('./pages/Add-Car'));
 const FavoriteCar = lazy(() => import('./pages/Favorite-Car'));
 const SaveSearch = lazy(() => import('./pages/SaveSearch'));
@@ -45,6 +46,7 @@ function App() {
                 <Route path="/locate-dealer" element={<LocateDealer />} />
                 {/* Miguel */}
                 <Route path="/finance" element={<Finance />} />
+                <Route path="/my-cars" element={<AddedCarsGarage />} />
                 <Route path="/add-car" element={<AddCar />} />
                 <Route path="/favorited-cars" element={<FavoriteCar />} />
                 <Route path="/saved-searches" element={<SaveSearch />} />

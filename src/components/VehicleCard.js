@@ -9,7 +9,8 @@ import { faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';   // So
 
 const VehicleCard = ({ vehicle, detailed = false }) => {
 
-  { /* Favorite Function */ }
+  { /* Miguel's Code
+    Favorite Function */ }
   // Define details of car
   const carDetails = {
     make: vehicle.make,
@@ -70,6 +71,7 @@ const VehicleCard = ({ vehicle, detailed = false }) => {
         {/* Move the Contact Seller button here */}
         <button className="contact-button">Contact Seller</button>
       </div>
+      { /* End of Miguel's Code */ }
 
       <div className="image-box">
         <img src={vehicle.image} alt={`${vehicle.make} ${vehicle.model}`} className="vehicle-image" />
