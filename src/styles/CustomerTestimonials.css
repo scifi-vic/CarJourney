@@ -1,0 +1,53 @@
+/* General Styles */
+.customer-testimonials {
+    background: #f8f9fa;
+    padding: 50px 20px;
+    text-align: center;
+    font-family: "Roboto", sans-serif;
+  }
+  
+  /* Header */
+  .customer-testimonials h1 {
+    font-size: 2.5rem;
+    color: #242058;
+    margin-bottom: 30px;
+  }
+  
+  /* Testimonials Container */
+  .testimonials-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    justify-items: center;
+  }
+  
+  /* Testimonial Card */
+  .testimonial-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 350px;
+    text-align: center;
+  }
+  
+  /* Star Rating */
+  .stars {
+    margin-bottom: 15px;
+  }
+  
+  /* Review Text */
+  .review-text {
+    font-size: 1.1rem;
+    color: #555;
+    margin: 15px 0;
+    font-style: italic;
+  }
+  
+  /* Reviewer Name */
+  .reviewer-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #242058;
+  }
+  

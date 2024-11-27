@@ -5,6 +5,7 @@ import { auth, db } from "../firebaseConfig";
 import "./../styles/Add-Car.css";
 
 const AddCar = () => {
+    // Initialize variables
     const [searchType, setSearchType] = useState("VIN");
     const [vin, setVin] = useState("");
     const [carImage, setCarImage] = useState("");
@@ -16,9 +17,12 @@ const AddCar = () => {
     const [zipCode, setZipCode] = useState("");
     const [color, setColor] = useState("");
     const [engine, setEngine] = useState("");
-  
+    const [message, setMessage] = useState("");
+
+    // Handle tabs
     const handleRadioChange= (e) => setSearchType(e.target.value);
-  
+
+    // Handle images
     const handleImageChange = (e) => {
       const file = e.target.files[0];
       const reader = new FileReader();
@@ -36,12 +40,45 @@ const AddCar = () => {
       document.getElementById('car-image-input').click();
     };
 
+    // Handle Go Button
     const handleGoClick = () => {
       if (searchType === "VIN") {
         console.log("Searching by VIN:", vin);
       } else if (searchType === "Make/Model") {
         console.log("Adding Car:", { year, make, model, price, mileage, zipCode });
       }
+    };
+
+    // Handle VIN
+    const handleVinLookup = () => {
+      const url = `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/${vin}?format=json`;
+
+      fetch(url)
+          .then((response) => response.json())
+          .then((data) => {
+              const results = data.Results;
+              console.log(data.Results)
+              const carMake = results.find((r) => r.Variable === "Make")?.Value;
+              const carModel = results.find((r) => r.Variable === "Model")?.Value;
+              const carYear = results.find((r) => r.Variable === "Model Year")?.Value;
+              const engine = results.find((r) => r.Variable === "Engine Number of Cylinders")?.Value
+
+              if (carMake && carModel && carYear) {
+                  setMake(carMake);
+                  setModel(carModel);
+                  setYear(carYear);
+                  setEngine(engine);
+                  setMessage("Car details fetched successfully!");
+              } else {
+                  setMessage("Failed to fetch car details. Please check the VIN.");
+              }
+
+          })
+          .catch((error) => {
+              console.error("Error fetching VIN details:", error);
+              setMessage("An error occurred. Please try again.");
+          });
+
     };
 
   {/* Handle Save Search */}
@@ -80,6 +117,7 @@ const AddCar = () => {
     alert("Car added successfully!");
   };
 
+  // HTML
     return (
       <div>
         {/* Navigation Header */}
@@ -144,7 +182,7 @@ const AddCar = () => {
                       value={vin}
                       onChange={(e) => setVin(e.target.value)}
                     />
-                    <button type="button" className="vin-go-btn" onClick={handleGoClick}>
+                    <button type="button" className="vin-go-btn" onClick={handleVinLookup}>
                       Go
                     </button>
                   </div>

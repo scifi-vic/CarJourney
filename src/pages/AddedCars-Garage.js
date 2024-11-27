@@ -10,12 +10,18 @@ import { faPlus as fasPlus, faXmark as fasXMark} from '@fortawesome/free-solid-s
 
 // My Cars
 const MyCars = () => {
-
     // Initiate variables
-    const [selectedCar, setSelectedCar] = useState(null);
+    const [selectedCar, setSelectedCar] = useState(0);  // Set ID as 0
   
     // Load saved cars from localStorage (Initiate array)
     const [savedCars, setSavedCars] = useState([]);
+
+    // Automatically selects the first car on Garage load
+    useEffect(() => {
+      if (savedCars.length > 0) {
+          setSelectedCar(savedCars[0]); // Select the first car in the list
+      }
+    }, [savedCars]); // Runs whenever the `cars` array changes
 
     // Load saved searches from localStorage on component mount
     useEffect(() => {
@@ -30,10 +36,12 @@ const MyCars = () => {
       localStorage.setItem("addedCars", JSON.stringify(updatedCars));
     };
 
+    // Select Car
     const handleCarSelect = (car) => {
       setSelectedCar(car);
     };
 
+  // HTML
   return (
     <div>
 

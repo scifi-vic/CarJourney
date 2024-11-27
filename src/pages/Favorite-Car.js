@@ -10,22 +10,24 @@ import { faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';   // So
 import {faArrowUpRightFromSquare} from '@fortawesome/free-solid-svg-icons'; 
 
 const FavoriteList = () => {
+  // Initialize variables
   const [favorites, setFavorites] = useState([]);
 
+  // Load favorites from localStorage when the component mounts
   useEffect(() => {
-    // Load favorites from localStorage when the component mounts
     const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
     setFavorites(storedFavorites);
   }, []);
 
-  const removeFromFavorites = (index) => {
-    // Remove the selected car from favorites
-    const updatedFavorites = [...favorites];
-    updatedFavorites.splice(index, 1);
+  // Remove the selected car from favorites
+  const removeFromFavorites = (id) => {
+    const updatedFavorites = favorites.filter((car) => car.id !== id);
+    // updatedFavorites.splice(id, 1);
     setFavorites(updatedFavorites);
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
   };
 
+  // HTML
   return (
     <div className="favorite-list">
 
@@ -49,8 +51,8 @@ const FavoriteList = () => {
             {favorites.length === 0 ? (
               <p>No favorited cars found.</p>
             ) : (
-              favorites.map((car, index) => (
-                <div key={index} className="car-item">
+              favorites.map((car) => (
+                <div key={car.id} className="car-item">
                   <div className="car-image">
                     <a href={`car-listing?make=${car.make}&model=${car.model}`}>
                       <img src={car.image} alt={car.make} />
@@ -58,7 +60,7 @@ const FavoriteList = () => {
                     <FontAwesomeIcon
                       icon={fasHeart}
                       className="heart-icon"
-                      onClick={() => removeFromFavorites(index)}
+                      onClick={() => removeFromFavorites(car.id)}
                     />
                   </div>
                   <div className="car-details">

@@ -25,7 +25,20 @@ const VehicleCard = ({ vehicle, detailed = false }) => {
 
   // Function to toggle the favorite state of a car
   const toggleFavorite = () => {
+    // Define favorites
     let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+    // Give unique IDs to each car added
+    const newId = favorites.length > 0 
+      ? Math.max(...favorites.map((s) => s.id)) + 1 
+      : 1;
+    
+    // Renew array
+    const newCar = {
+      id: newId,
+      ...carDetails,
+    };
+    const updatedFavorites = [newCar, ...favorites];
 
     // Check if the car is already in favorites
     const carIndex = favorites.findIndex((car) => car.make === carDetails.make);
@@ -69,7 +82,9 @@ const VehicleCard = ({ vehicle, detailed = false }) => {
           <span>{isLiked ? 'Saved' : 'Save'}</span>
         </div>
         {/* Move the Contact Seller button here */}
-        <button className="contact-button">Contact Seller</button>
+        <button className="contact-button" onClick={() => window.location.href = "/contact-seller"}>
+          Contact Seller
+        </button>
       </div>
       { /* End of Miguel's Code */ }
 

@@ -27,6 +27,8 @@ const AdvancedSearchPage = lazy(() => import('./pages/AdvancedSearchPage'));
 
 // Huy
 const CarListingPage = lazy(() => import('./pages/CarListingPage')); // New CarListingPage
+const ContactSeller = lazy(() => import('./pages/ContactSeller'));
+const CustomerTestimonials = lazy(() => import('./pages/CustomerTestimonials'));
 
 function App() {
   return (
@@ -56,6 +58,8 @@ function App() {
                 <Route path="/advanced-search" element={<AdvancedSearchPage />} /> {/* Route for AdvancedSearchPage */}
                 {/* Huy */}
                 <Route path="/car-listing" element={<CarListingPage />} /> {/* New Route */}
+                <Route path="/contact-seller" element={<ContactSeller />} />
+                <Route path="/customer-testimonials" element={<CustomerTestimonials />} />
               </Routes>     
             </div>
           </Suspense>
