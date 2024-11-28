@@ -7,7 +7,7 @@ import "./../styles/Add-Car.css";
 // Add car
 const AddCar = () => {
     // Initialize variables
-    const [searchType, setSearchType] = useState("VIN");  // Start as the VIN Tab
+    const [activeTab, setActiveTab] = useState("VIN");  // Start as the VIN Tab
     const [carImage, setCarImage] = useState("");
     const [year, setYear] = useState("");
     const [make, setMake] = useState("");
@@ -27,9 +27,6 @@ const AddCar = () => {
     const [loading, setLoading] = useState(false);
     const [carDetails, setCarDetails] = useState(null);
 
-    // Handle tabs
-    const handleRadioChange= (e) => setSearchType(e.target.value);
-
     // Handle images
     const handleImageChange = (e) => {
       const file = e.target.files[0];
@@ -48,14 +45,6 @@ const AddCar = () => {
       document.getElementById('car-image-input').click();
     };
 
-    // Handle Go Button
-    const handleGoClick = () => {
-      if (searchType === "VIN") {
-        console.log("Searching by VIN:", vin);
-      } else if (searchType === "Make/Model") {
-        console.log("Adding Car:", { year, make, model, price, mileage, zipCode });
-      }
-    };
 
     // Handle VIN
     const handleVinLookup = () => {
@@ -80,12 +69,17 @@ const AddCar = () => {
             const make = results.find((r) => r.Variable === "Make")?.Value || "Unknown";
             const model = results.find((r) => r.Variable === "Model")?.Value || "Unknown";
             const year = results.find((r) => r.Variable === "Model Year")?.Value || "Unknown";
+            const category = results.find((r) => r.Variable === "Body Class")?.Value || "Unknown";
+            const series = results.find((r) => r.Variable === "Series")?.Value || "Unknown";
+            const doors = results.find((r) => r.Variable === "Doors")?.Value || "Unknown";
             const engine = results.find((r) => r.Variable === "Engine Number of Cylinders")?.Value || "Unknown";
+            const displacement = results.find((r) => r.Variable === "Displacement (L)")?.Value || "Unknown";
             const transmission = results.find((r) => r.Variable === "Transmission Style")?.Value || "Unknown";
-            const drivetrain = results.find((r) => r.Variable === "Drive Type")?.Value || "Unknown";
+            const transmissionSpeed = results.find((r) => r.Variable === "Transmission Speeds")?.Value || "Unknown";
+            const driveType = results.find((r) => r.Variable === "Drive Type")?.Value || "";
 
             if (make && model && year) {
-              setCarDetails({ make, model, year, engine, transmission, drivetrain });
+              setCarDetails({ make, model, year, category, series, doors, engine, displacement, transmission, transmissionSpeed, driveType});
             } else {
               setError("Failed to fetch car details. Please check the VIN.");
             }
@@ -136,6 +130,123 @@ const AddCar = () => {
     alert("Car added successfully!");
   };
 
+  // Tab configuration object
+  const tabs = {
+    "VIN": (
+      <div id="vin-inputs" className="car-details-inputs">
+        <p className="vin-description">
+          Your <u>VIN</u> will allow for more accurate
+          details.
+        </p>
+        <div className="vin-input-group">
+          <input
+            type="text"
+            name="vinNumber"
+            id="vinNumber"
+            placeholder="Enter your 17-digit VIN"
+            value={vin}
+            onChange={(e) => setVin(e.target.value)}
+            className={`vin-input ${error ? "error" : ""}`}
+          />
+          <button type="button" className="vin-go-btn" onClick={handleVinLookup} disabled={loading}>
+            {loading ? "Loading..." : "Go"}
+          </button>
+        </div>
+        { /* Error Message */ }
+        {error && <p className="error-message">{error}</p>}
+      </div>
+    ),
+
+    "Make/Model": (
+      <div id="makeModel-inputs" className="car-details-inputs">
+        <p className="make-description">Make your own car.</p>
+        <div className="car-image">
+          <div className="image-upload" onClick={handleImageClick}>
+            {carImage ? (
+              <img src={carImage} alt="Car Preview" />
+            ) : (
+              <span>Click to add image</span>
+            )}
+          </div>
+          { /* Do not display the "Choose File" button */ }
+          <input id="car-image-input" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }}/>
+        </div>
+        <div className="additional-input-group">
+          <input
+            type="text"
+            name="year"
+            id="year"
+            placeholder="Year"
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+          />
+          <input
+            type="text"
+            name="make"
+            id="make"
+            placeholder="Make"
+            value={make}
+            onChange={(e) => setMake(e.target.value)}
+          />
+          <input
+            type="text"
+            name="model"
+            id="model"
+            placeholder="Model"
+            value={model}
+            onChange={(e) => setModel(e.target.value)}
+          />
+          <input
+            type="number"
+            name="price"
+            id="price"
+            placeholder="Price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+          />
+        </div>
+        { /* 2nd Row */ }
+        <div className="additional-input-group">
+          <input
+            type="number"
+            name="mileage"
+            id="mileage"
+            placeholder="Mileage"
+            value={mileage}
+            onChange={(e) => setMileage(e.target.value)}
+          />
+          <input
+            type="number"
+            name="zipCode"
+            id="zipCode"
+            placeholder="ZIP Code"
+            value={zipCode}
+            onChange={(e) => setZipCode(e.target.value)}
+          />
+          <input
+            type="text"
+            name="color"
+            id="color"
+            placeholder="Color"
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+          />
+          <input
+            type="text"
+            name="engine"
+            id="engine"
+            placeholder="Engine"
+            value={engine}
+            onChange={(e) => setEngine(e.target.value)}
+          />
+        </div>
+        <button type="button" className="make-go-btn" onClick={handleAddCars}>
+            Add Car
+          </button>
+      </div>
+    ),
+  }
+
   // HTML
     return (
       <div>
@@ -153,154 +264,133 @@ const AddCar = () => {
 
         {/* Main Body */}
         <main>
+          { /* Add a Car Text */ }
           <div className="container car-details">
+
             <h2 className="car-name">
               <strong>Add a Car</strong>
             </h2>
             <p className="instruction-text">
               Add a car to the listing by filling in the information below.
             </p>
-  
+
+            {!carDetails ? (
+            <>
+             { /* Tab Navigation */ }
             <div className="container add-car-section">
               <h2>Option Select</h2>
               <div className="input-toggle">
-                <input
-                  type="radio"
-                  id="vin"
-                  name="searchType"
-                  value="VIN"
-                  checked={searchType === "VIN"}
-                  onChange={handleRadioChange}
-                />
-                <label htmlFor="vin">VIN</label>
-  
-                <input
-                  type="radio"
-                  id="makeModel"
-                  name="searchType"
-                  value="Make/Model"
-                  checked={searchType === "Make/Model"}
-                  onChange={handleRadioChange}
-                />
-                <label htmlFor="makeModel">Make/Model</label>
-  
-              </div>
-  
-              {searchType === "VIN" && (
-                <div id="vin-inputs" className="car-details-inputs">
-                  <p className="vin-description">
-                    Your <u>VIN</u> will allow for more accurate
-                    details.
-                  </p>
-                  <div className="vin-input-group">
+
+                {Object.keys(tabs).map((tabName) => (
+                  <div key={tabName}>
                     <input
-                      type="text"
-                      name="vinNumber"
-                      id="vinNumber"
-                      placeholder="Enter your 17-digit VIN"
-                      value={vin}
-                      onChange={(e) => setVin(e.target.value)}
-                      className={`vin-input ${error ? "error" : ""}`}
+                      type="radio"
+                      id={tabName}
+                      name="option"
+                      value={tabName}
+                      checked={activeTab === tabName}
+                      onChange={() => setActiveTab(tabName)}
                     />
-                    <button type="button" className="vin-go-btn" onClick={handleVinLookup} disabled={loading}>
-                      {loading ? "Loading..." : "Go"}
-                    </button>
-                  </div>
-                  { /* Error Message */ }
-                  {error && <p className="error-message">{error}</p>}
+                  <label htmlFor={tabName}>{tabName}</label>
                 </div>
-              )}
-  
-              {searchType === "Make/Model" && (
-                <div id="makeModel-inputs" className="car-details-inputs">
-                  <p className="make-description">Make your own car.</p>
-                  <div className="car-image">
-                    <div className="image-upload" onClick={handleImageClick}>
-                      {carImage ? (
-                        <img src={carImage} alt="Car Preview" />
-                      ) : (
-                        <span>Click to add image</span>
-                      )}
-                    </div>
-                    { /* Do not display the "Choose File" button */ }
-                    <input id="car-image-input" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }}/>
-                  </div>
-                  <div className="additional-input-group">
-                    <input
-                      type="text"
-                      name="year"
-                      id="year"
-                      placeholder="Year"
-                      value={year}
-                      onChange={(e) => setYear(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      name="make"
-                      id="make"
-                      placeholder="Make"
-                      value={make}
-                      onChange={(e) => setMake(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      name="model"
-                      id="model"
-                      placeholder="Model"
-                      value={model}
-                      onChange={(e) => setModel(e.target.value)}
-                    />
-                    <input
+
+              ))}
+              </div>
+
+              {/* Tab content */}
+              {tabs[activeTab]}
+
+            </div>
+            </>
+            ) : (
+
+            // VIN Results Screen
+            <div className="vin-results">
+              <p className="vin-details-text">Car Details</p>
+              <p className="vin-vin-text">VIN: <strong>{vin}</strong></p>
+              <p className="vin-car-text">{carDetails.year} {carDetails.make} {carDetails.model}</p>
+              
+              <div className="vin-extra-details">
+                <p>Category: <strong>{carDetails.category}</strong></p>
+
+                {carDetails.series && carDetails.category && carDetails.doors &&
+                <p>Style: <strong>{carDetails.series} {carDetails.category} {carDetails.doors}-D</strong>
+                </p>}
+
+                <p>Engine: <strong>V{carDetails.engine}, {carDetails.displacement} Liter</strong></p>
+                <p>Transmission: <strong>{carDetails.transmission}
+                    {carDetails.transmissionSpeed && `, ${carDetails.transmissionSpeed}-Spd`}
+                  </strong>
+                </p>
+                {carDetails.driveType && <p>Drive Type: <strong>{carDetails.driveType}</strong></p>}
+              </div>
+
+              <p className="vin-additional-details">Additional Details</p>
+              
+              { /* Input */ }
+              <div className="vin-extra-inputs">
+
+                { /* Image */ }
+                <div className="vin-image-upload" onClick={handleImageClick}>
+                  {carImage ? (
+                    <img src={carImage} alt="Car Preview" />
+                  ) : (
+                    <span>Click to add image</span>
+                  )}
+                <input id="car-image-input" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }}/>
+                </div>
+                
+                { /* Additional Details */ }
+                <div className="vin-additional-input">
+                  <input
+                    type="number"
+                    className="vin-input-btn"
+                    placeholder="Mileage"
+                    value={mileage}
+                    onChange={(e) => setMileage(e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    className="vin-input-btn"
+                    placeholder="ZIP Code"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value)}
+                  />
+                </div>
+
+                <div className="vin-additional-input">
+                  <input
                       type="number"
-                      name="price"
-                      id="price"
+                      className="vin-input-btn"
                       placeholder="Price"
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
-                    />
-                  </div>
-                  { /* 2nd Row */ }
-                  <div className="additional-input-group">
-                    <input
-                      type="number"
-                      name="mileage"
-                      id="mileage"
-                      placeholder="Mileage"
-                      value={mileage}
-                      onChange={(e) => setMileage(e.target.value)}
-                    />
-                    <input
-                      type="number"
-                      name="zipCode"
-                      id="zipCode"
-                      placeholder="ZIP Code"
-                      value={zipCode}
-                      onChange={(e) => setZipCode(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      name="color"
-                      id="color"
-                      placeholder="Color"
-                      value={color}
-                      onChange={(e) => setColor(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      name="engine"
-                      id="engine"
-                      placeholder="Engine"
-                      value={engine}
-                      onChange={(e) => setEngine(e.target.value)}
-                    />
-                  </div>
-                  <button type="button" className="make-go-btn" onClick={handleAddCars}>
-                      Add Car
-                    </button>
+                  />
+                  <input
+                    type="text"
+                    className="vin-input-btn"
+                    placeholder="Color"
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                  />
                 </div>
-              )}
-  
+
+              </div>
+
+              { /* Button */ }
+              <div className="vin-buttons">
+                <button className="back-button" onClick={() => setCarDetails(null)}>
+                  Back
+                </button>
+                <button className="add-button">
+                  Add
+                </button>
+              </div>
+
             </div>
+          )}
+
+            
           </div>
         </main>
   

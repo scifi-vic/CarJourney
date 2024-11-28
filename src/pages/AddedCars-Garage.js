@@ -86,7 +86,7 @@ const MyCars = () => {
                       <img src={car.image} alt={car.name} className="car-image" />
                       <div className="car-info">
                         <h3>{car.year} {car.make} {car.model}</h3>
-                        <p>Mileage: {car.mileage} miles</p>
+                        <p>Mileage: {Number(car.mileage).toLocaleString()} miles</p>
                       </div>
                     </li>
                   ))}
