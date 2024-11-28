@@ -11,7 +11,7 @@ import { faPlus as fasPlus, faXmark as fasXMark} from '@fortawesome/free-solid-s
 // My Cars
 const MyCars = () => {
     // Initiate variables
-    const [selectedCar, setSelectedCar] = useState(0);  // Set ID as 0
+    const [selectedCar, setSelectedCar] = useState(null);  // Set ID as 0
   
     // Load saved cars from localStorage (Initiate array)
     const [savedCars, setSavedCars] = useState([]);
@@ -117,10 +117,10 @@ const MyCars = () => {
                         <div class="car-image-container">
                           <img src={selectedCar.image} alt={selectedCar.name} className="car-image-large" />
                         </div>
-                        
+                         
                         <div className="car-details-text">
-                          <p>Price: <span>${selectedCar.price}</span></p>
-                          <p>Mileage: <span>{selectedCar.mileage} miles</span></p>
+                          <p>Price: <span>${Number(selectedCar.price).toLocaleString()}</span></p>
+                          <p>Mileage: <span>{Number(selectedCar.mileage).toLocaleString()} miles</span></p>
                           <p>ZIP Code: <span>{selectedCar.zipCode}</span></p>
                           <p>Color: <span>{selectedCar.color}</span></p>
                           <p>Engine: <span>{selectedCar.engine}</span></p>

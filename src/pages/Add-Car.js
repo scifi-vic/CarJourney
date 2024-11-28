@@ -4,10 +4,10 @@ import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import "./../styles/Add-Car.css";
 
+// Add car
 const AddCar = () => {
     // Initialize variables
-    const [searchType, setSearchType] = useState("VIN");
-    const [vin, setVin] = useState("");
+    const [searchType, setSearchType] = useState("VIN");  // Start as the VIN Tab
     const [carImage, setCarImage] = useState("");
     const [year, setYear] = useState("");
     const [make, setMake] = useState("");
@@ -17,7 +17,15 @@ const AddCar = () => {
     const [zipCode, setZipCode] = useState("");
     const [color, setColor] = useState("");
     const [engine, setEngine] = useState("");
+
+    // Messages
     const [message, setMessage] = useState("");
+    const [error, setError] = useState("");
+
+    // VIN
+    const [vin, setVin] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [carDetails, setCarDetails] = useState(null);
 
     // Handle tabs
     const handleRadioChange= (e) => setSearchType(e.target.value);
@@ -51,40 +59,51 @@ const AddCar = () => {
 
     // Handle VIN
     const handleVinLookup = () => {
+      // VIN must be exactly 17 characters
+      if (vin.length !== 17) {
+        setError("A VIN must contain exactly 17 characters. Please re-enter your VIN.");
+        return;
+      } 
+      
+      setError(""); // Clears error message if VIN is valid
+      setLoading(true); // API Call in Progress
+
+      // API URL
       const url = `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/${vin}?format=json`;
 
+      // Fetch
       fetch(url)
-          .then((response) => response.json())
-          .then((data) => {
-              const results = data.Results;
-              console.log(data.Results)
-              const carMake = results.find((r) => r.Variable === "Make")?.Value;
-              const carModel = results.find((r) => r.Variable === "Model")?.Value;
-              const carYear = results.find((r) => r.Variable === "Model Year")?.Value;
-              const engine = results.find((r) => r.Variable === "Engine Number of Cylinders")?.Value
+        .then((response) => response.json())
+        .then((data) => {
+            const results = data.Results;
+            console.log(data.Results)
+            const make = results.find((r) => r.Variable === "Make")?.Value || "Unknown";
+            const model = results.find((r) => r.Variable === "Model")?.Value || "Unknown";
+            const year = results.find((r) => r.Variable === "Model Year")?.Value || "Unknown";
+            const engine = results.find((r) => r.Variable === "Engine Number of Cylinders")?.Value || "Unknown";
+            const transmission = results.find((r) => r.Variable === "Transmission Style")?.Value || "Unknown";
+            const drivetrain = results.find((r) => r.Variable === "Drive Type")?.Value || "Unknown";
 
-              if (carMake && carModel && carYear) {
-                  setMake(carMake);
-                  setModel(carModel);
-                  setYear(carYear);
-                  setEngine(engine);
-                  setMessage("Car details fetched successfully!");
-              } else {
-                  setMessage("Failed to fetch car details. Please check the VIN.");
-              }
+            if (make && model && year) {
+              setCarDetails({ make, model, year, engine, transmission, drivetrain });
+            } else {
+              setError("Failed to fetch car details. Please check the VIN.");
+            }
 
-          })
-          .catch((error) => {
-              console.error("Error fetching VIN details:", error);
-              setMessage("An error occurred. Please try again.");
-          });
-
+        })
+        // Catch Errors
+        .catch((error) => {
+            console.error("Error fetching VIN details:", error);
+            setError("An error occurred. Please try again.");
+        })
+        // Final Phase
+        .finally(() => setLoading(false));
     };
 
   {/* Handle Save Search */}
   // Save Filters to Storage
   const carInfo = {
-    image: carImage,
+    image: carImage || "/images/no-image.png", // No Image Placeholder
     year: year,
     make: make,
     model: model,
@@ -181,11 +200,14 @@ const AddCar = () => {
                       placeholder="Enter your 17-digit VIN"
                       value={vin}
                       onChange={(e) => setVin(e.target.value)}
+                      className={`vin-input ${error ? "error" : ""}`}
                     />
-                    <button type="button" className="vin-go-btn" onClick={handleVinLookup}>
-                      Go
+                    <button type="button" className="vin-go-btn" onClick={handleVinLookup} disabled={loading}>
+                      {loading ? "Loading..." : "Go"}
                     </button>
                   </div>
+                  { /* Error Message */ }
+                  {error && <p className="error-message">{error}</p>}
                 </div>
               )}
   
@@ -229,7 +251,7 @@ const AddCar = () => {
                       onChange={(e) => setModel(e.target.value)}
                     />
                     <input
-                      type="text"
+                      type="number"
                       name="price"
                       id="price"
                       placeholder="Price"
@@ -240,7 +262,7 @@ const AddCar = () => {
                   { /* 2nd Row */ }
                   <div className="additional-input-group">
                     <input
-                      type="text"
+                      type="number"
                       name="mileage"
                       id="mileage"
                       placeholder="Mileage"
@@ -248,7 +270,7 @@ const AddCar = () => {
                       onChange={(e) => setMileage(e.target.value)}
                     />
                     <input
-                      type="text"
+                      type="number"
                       name="zipCode"
                       id="zipCode"
                       placeholder="ZIP Code"
