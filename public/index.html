@@ -1,139 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CarJourney</title>
-  <link rel="stylesheet" href="styles.css">
-  <!-- Google Fonts blah blah blah -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@600&display=swap" rel="stylesheet">
-  <!-- Font Awesome (Optional for icons) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-  <header>
-    <div class="container">
-      <h1>CarJourney</h1>
-      <nav>
-        <ul>
-          <li><a href="#" class="active"><i class="fas fa-home"></i> Home</a></li>
-          <li><a href="#"><i class="fas fa-search"></i> Search</a></li>
-          <li><a href="#" id="login-btn"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-          <li><a href="#" id="register-btn"><i class="fas fa-user-plus"></i> Register</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
 
-  <main>
-    <!-- Hero Section -->
-    <section id="hero">
-      <div class="hero-content">
-        <h2>Your Journey Begins Here</h2>
-        <p>Find your dream car with ease and confidence.</p>
-        <a href="#search-section" class="btn">Start Searching</a>
-      </div>
-    </section>
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <title>CarJourney</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
 
-    <!-- Search Section -->
-    <section id="search-section">
-      <div class="container">
-        <h2>Find Your Dream Car</h2>
-        <form id="search-form">
-          <div class="form-group">
-            <label for="make">Make:</label>
-            <input type="text" id="make" name="make" placeholder="e.g. Toyota">
-          </div>
-          
-          <div class="form-group">
-            <label for="model">Model:</label>
-            <input type="text" id="model" name="model" placeholder="e.g. Corolla">
-          </div>
-          
-          <div class="form-group">
-            <label for="year">Year:</label>
-            <input type="number" id="year" name="year" min="1900" max="2024" placeholder="e.g. 2018">
-          </div>
-          
-          <div class="form-group">
-            <label for="price">Price Range:</label>
-            <div class="price-range">
-              <input type="number" id="min-price" name="min-price" placeholder="Min">
-              <span> - </span>
-              <input type="number" id="max-price" name="max-price" placeholder="Max">
-            </div>
-          </div>
-          
-          <button type="submit" class="btn">Search</button>
-        </form>
-      </div>
-    </section>
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
 
-    <!-- Vehicle Listings -->
-    <section id="vehicle-listings">
-      <div class="container">
-        <h2>Available Vehicles</h2>
-        <div id="listings-container" class="listings-grid">
-          <!-- Vehicle cards will be dynamically added here -->
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Login Modal -->
-  <div id="login-modal" class="modal">
-    <div class="modal-content">
-      <span class="close" id="login-close">&times;</span>
-      <h2>Login</h2>
-      <form id="login-form">
-        <label for="login-email">Email:</label>
-        <input type="email" id="login-email" name="email" required>
-
-        <label for="login-password">Password:</label>
-        <input type="password" id="login-password" name="password" required>
-
-        <button type="submit" class="btn">Login</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Register Modal -->
-  <div id="register-modal" class="modal">
-    <div class="modal-content">
-      <span class="close" id="register-close">&times;</span>
-      <h2>Register</h2>
-      <form id="register-form">
-        <label for="first-name">First Name:</label>
-        <input type="text" id="first-name" name="first-name" required>
-
-        <label for="last-name">Last Name:</label>
-        <input type="text" id="last-name" name="last-name" required>
-
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-
-        <label for="register-email">Email:</label>
-        <input type="email" id="register-email" name="email" required>
-
-        <label for="register-password">Password:</label>
-        <input type="password" id="register-password" name="password" required>
-
-        <button type="submit" class="btn">Register</button>
-      </form>
-    </div>
-  </div>
-
-  <footer>
-    <div class="container">
-      <p>&copy; 2024 CarJourney. All rights reserved.</p>
-      <div class="social-icons">
-        <a href="#"><i class="fab fa-facebook-f"></i></a>
-        <a href="#"><i class="fab fa-twitter"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-      </div>
-    </div>
-  </footer>
-  
-  <script src="scripts.js"></script>
-</body>
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  </body>
 </html>

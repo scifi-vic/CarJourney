@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+.app {
+  font-family: 'calibri'
+}
+
+
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Lato', sans-serif;
+}
+
+.home, .garage, .about, .user {
+  display: flex;
+  height: 90vh;
+  align-items: baseline;
+  font-size: 1.2rem;
+}

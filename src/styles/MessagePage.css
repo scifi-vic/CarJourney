@@ -1,0 +1,22 @@
+/* src/styles/MessagePage.css */
+html, body {
+    overflow: hidden;
+}
+.message-page {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .inbox {
+    width: 300px;
+    border-right: 1px solid #ccc;
+    padding: 10px;
+    overflow: hidden;
+  }
+  
+  .message-view {
+    flex-grow: 1;
+    padding: 20px;
+  }
+  
