@@ -423,6 +423,12 @@
     font-size: 1em;
   }
   
+  .make-input:disabled {
+    background-color: #ffffff;
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
   .make-model-input {
     display: flex;
     gap: 10px;
@@ -433,6 +439,12 @@
     border: 1px solid #ccc;
     width: calc(50% - 10px); /* Model input takes up half the width */
     font-size: 1em;
+  }
+
+  .make-model-input:disabled {
+    background-color: #ffffff;
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   /* Make description text */

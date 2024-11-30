@@ -1,5 +1,5 @@
 // src/pages/Add-Car.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import "./../styles/Add-Car.css";
@@ -67,6 +67,56 @@ const AddCar = () => {
       "V24",
       "V32",
     ];
+
+    { /* Fetch Car Models */ }
+    const [yearList, setYearList] = useState([]); // Available years
+    const [makeList, setMakeList] = useState([]); // Available makes for the selected year
+    const [modelList , setModelList] = useState([]); // Available models for the selected make and year
+  
+    // Generate a range of years between 1992 and the current year
+    const getYearRange = () => {
+      const currentYear = new Date().getFullYear();
+      const range = [];
+      for (let year = currentYear; year >= 1992; year--) {
+        range.push(year.toString());
+      }
+      return range;
+    };
+  
+    useEffect(() => {
+      // Use a programmatically generated range for years
+      const filteredYears = getYearRange();
+      setYearList(filteredYears);
+    }, []);
+  
+    // Fetch Makes for Selected Year
+    useEffect(() => {
+      if (year) {
+        fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/GetMakesForVehicleType/car?format=json`)
+          .then((response) => response.json())
+          .then((data) => {
+            const makeValues = data.Results.map((item) => item.MakeName);
+            setMakeList(makeValues);
+            setModelList([]); // Clear models when year or make changes
+          })
+          .catch((error) => console.error("Error fetching makes:", error));
+      }
+    }, [year]);
+  
+    // Fetch Models for Selected Make and Year
+    useEffect(() => {
+      if (year && make) {
+        fetch(
+          `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/${make}/modelyear/${year}?format=json`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            const modelValues = data.Results.map((item) => item.Model_Name);
+            setModelList(modelValues);
+          })
+          .catch((error) => console.error("Error fetching models:", error));
+      }
+    }, [year, make]);
 
     // Handle images
     const handleImageChange = (e) => {
@@ -235,33 +285,56 @@ const AddCar = () => {
         <p className="make-description">Make your own car.</p>
 
         <div className="make-input-container">
-          <input
-            type="text"
-            name="year"
-            id="year"
-            placeholder="Year"
+          {/* Year Dropdown */}
+          <select
             value={year}
-            className="make-input"
             onChange={(e) => setYear(e.target.value)}
-          />
-          <input
-            type="text"
-            name="make"
-            id="make"
-            placeholder="Make"
-            value={make}
+            disabled={!yearList.length}
             className="make-input"
-            onChange={(e) => setMake(e.target.value)}
-          />
-          <input
-            type="text"
-            name="model"
-            id="model"
-            placeholder="Model"
+          >
+            <option value="" disabled>
+              Year
+            </option>
+            {yearList.map((selectedYear) => (
+              <option key={selectedYear} value={selectedYear}>
+                {selectedYear}
+              </option>
+            ))}
+          </select>
+
+          {/* Make Dropdown */}
+          <select
+            value={make}
+            onChange={(e) => { setMake(e.target.value); setModel("")}}
+            disabled={!makeList.length}
+            className="make-input"
+          >
+            <option value="" disabled>
+              Make
+            </option>
+            {makeList.map((selectedMake) => (
+              <option key={selectedMake} value={selectedMake}>
+                {selectedMake}
+              </option>
+            ))}
+          </select>
+
+          {/* Model Dropdown */}
+          <select 
             value={model}
-            className="make-model-input"
             onChange={(e) => setModel(e.target.value)}
-          />
+            disabled={!modelList.length} 
+            className="make-model-input">
+            <option value="" disabled>
+              Model
+            </option>
+            {modelList.map((selectedModel) => (
+              <option key={selectedModel} value={selectedModel}>
+                {selectedModel}
+              </option>
+            ))}
+          </select>
+
         </div>
         { /* 2nd Row */ }
         <div className="make-input-container">
@@ -289,7 +362,7 @@ const AddCar = () => {
             type="button" 
             className="make-go-btn" 
             onClick={handleGo}
-            disabled={!year || !make || !model || !mileage ||!zipCode }
+            disabled={!year || !make || !mileage ||!zipCode }
             >
             Go
           </button>
