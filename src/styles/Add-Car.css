@@ -112,7 +112,7 @@
   }
   
   .add-car-section {
-    background-color: #244375; /* Same blue as car-details */
+    background-color: rgb(44, 40, 110);; /* Same purple as CarJourney */
     color: #ffffff; /* White text */
     padding: 20px;
     border-radius: 10px;
@@ -238,7 +238,7 @@
     text-decoration: underline;
   }
   
-  /* Results Section Styling */
+  /* VIN Results Section Styling */
   .vin-results {
     background-color: #ffffff;
     color: #000000;
@@ -249,23 +249,9 @@
     width: 900px;
   }
 
-  .vin-results-btn {
-    margin-top: 20px;
-    background-color: #007bff;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  .vin-results-btn:hover {
-    background-color: #0056b3;
-  }
-
   /* VIN Details Text */
   .vin-details-text {
-    font-size: 1.5em;
+    font-size: 1.2em;
     color: #000000; 
     font-weight: bold;
   }
@@ -277,7 +263,7 @@
 
   .vin-car-text {
     font-size: 2em;
-    font-weight: bold;
+    font-weight: 900;
     margin-top: 10px;
   }
 
@@ -295,7 +281,7 @@
   .vin-additional-details {
     font-size: 2em;
     color: #000000;
-    font-weight: bold;
+    font-weight: 900;
     margin-top: 40px;
   }
 
@@ -400,7 +386,7 @@
 
   /* Next button styling */
   .vin-buttons .add-button {
-    background-color: #f8c291; /* Light peach */
+    background-color: #e58e26; /* Darker peach */
     color: #ffffff; /* White text */
     border: none; /* Remove border */
     padding: 15px 25px; /* Button padding */
@@ -412,45 +398,43 @@
   }
 
   .vin-buttons .add-button:hover {
-    background-color: #e58e26; /* Darker peach on hover */
+    background-color: #d35400; /* Darker color on hover */
+  }
+
+  .vin-buttons .add-button:disabled {
+    background-color: #f8c291; /* Light peach for disabled button */
+    cursor: not-allowed; /* Show not-allowed cursor */
   }
 
   /* Styling for the Make/Model input group */
-  .make-input-group, .additional-input-group {
+  .make-input-container {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
   }
-  
-  .make-input-group input, .additional-input-group input {
+
+  .make-input {
     background-color: #ffffff;
     color: #000000;
     padding: 15px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    width: calc(33.33% - 10px); /* Each input field takes up one-third of the width */
+    width: calc(25% - 10px); /* Adjust for a quarter width in the second row */
     font-size: 1em;
   }
   
-  .additional-input-group input {
-    width: calc(25% - 10px); /* Adjust for a quarter width in the second row */
-  }
-  
-  .additional-input-group button {
-    background-color: #e67e22; /* Orange color */
-    color: white;
+  .make-model-input {
+    display: flex;
+    gap: 10px;
+    background-color: #ffffff;
+    color: #000000;
     padding: 15px;
     border-radius: 5px;
-    border: none;
-    cursor: pointer;
+    border: 1px solid #ccc;
+    width: calc(50% - 10px); /* Model input takes up half the width */
     font-size: 1em;
-    width: calc(25% - 10px); /* Same width as input fields */
   }
-  
-  .additional-input-group button:hover {
-    background-color: #d35400; /* Darker color on hover */
-  }
-  
+
   /* Make description text */
   .make-description {
     font-size: 0.9em;
@@ -467,41 +451,19 @@
     border: none;
     cursor: pointer;
     font-size: 1em;
-    width: 100%; /* Full width */
+    width: calc(50% - 10px); /* Half a width */
   }
   
   .make-go-btn:hover {
     background-color: #d35400; /* Darker color on hover */
   }
-
-  /* Add Car Image */
-  .car-image {
-    margin-bottom: 20px;
+  
+  .make-go-btn:disabled {
+    background-color: #e67e22; /* Orange color */
+    opacity: 0.6;
+    cursor: not-allowed; /* Show not-allowed cursor */
   }
-
-  .image-upload {
-    width: 100%;
-    height: 150px;
-    background-color: #c0c0c0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    border-radius: 8px;
-  }
-
-  /* Image Text */
-  .image-upload span{
-    font-weight: bold;
-  }
-
-  .image-upload img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* Ensure the entire image is visible */
-    border-radius: 8px;
-  }
-
+  
   .add-car-button {
     background-color: #ff7f32;
     color: #ffffff;
@@ -511,54 +473,302 @@
     cursor: pointer;
   }
 
-  /* License Plate Section */
-  .license-input-group {
+  /* Make/Model Results Section Styling */
+  .make-results {
+    background-color: #ffffff;
+    color: #000000;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+    width: 900px;
+  }
+
+  /* Make Details Text */
+  .make-details-text {
+    font-size: 1.2em;
+    color: #000000; 
+    font-weight: bold;
+  }
+
+  .make-car-text {
+    font-size: 2em;
+    font-weight: 900;
+    margin-top: 5px;
+  }
+
+  /* Make Description */
+  .make-extra-description {
+    margin-top: 5px;
+    font-size: 0.9em;
+    font-weight: 700;
+    color: gray;
+  }
+
+  .make-extra-details p {
+    margin-top: 15px;
+    font-size: 1em;
+    color: rgb(0, 0, 0);
+  }
+
+  .make-extra-details strong {
+    font-size: 1em;
+    color: #000000;
+  }
+
+  /* Images */
+  .make-image-text {
+    font-size: 2.5em;
+    color: #000000;
+    font-weight: 900;
+    margin-top: 30px;
+  }
+
+  /* Image Container */
+  .make-image-container {
     display: flex;
-    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  /* Styling for the image button */
+  .make-image-upload {
+    height: 250px;
+    width: 500px;
+    background-color: #e0e0e0;
+    display: flex;
+    justify-content: center;
     align-items: center;
-  }
-  
-  .license-input-group input {
-    background-color: #ffffff;
-    color: #000000;
-    padding: 15px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    width: 250px; /* Adjust width of the license plate input */
-    font-size: 1em;
-  }
-  
-  .license-input-group select {
-    background-color: #ffffff;
-    color: #000000;
-    padding: 15px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 1em;
-    width: 150px; /* Width for the state dropdown */
-  }
-  
-  .license-go-btn {
-    background-color: #e67e22; /* Orange color */
-    color: white;
-    padding: 15px 20px;
-    border-radius: 5px;
-    border: none;
     cursor: pointer;
+    border-radius: 8px;
+    text-align: center;
     font-size: 1em;
-    width: 250px; /* Adjust button width */
+    font-weight: bold;
+    color: #535353;
+  }
+
+  /* Image Text */
+  .make-image-upload span{
+    font-weight: bold;
+  }
+
+  .make-image-upload img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Ensure the entire image is visible */
+    border-radius: 8px;
+  }
+
+  /* Color Selector */
+  .make-color {
+    font-size: 2.5em;
+    color: #000000;
+    font-weight: 900;
+    margin-top: 40px;
+  }
+
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Responsive grid */
+    gap: 15px;
+    justify-content: center;
+    margin-top: 10px;
   }
   
-  .license-go-btn:hover {
+  .color-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .color-box:hover {
+    transform: scale(1.05);
+  }
+  
+  .color-box.selected {
+    border-color: #007bff; /* Highlight selected color */
+  }
+  
+  .color-swatch {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* Circle shape for the color swatch */
+    margin-bottom: 10px;
+  }
+  
+  .color-name {
+    font-size: 0.9em;
+    text-align: center;
+    margin: 0;
+  }
+
+  /* Engine Selector */
+  .make-engine {
+    font-size: 2.5em;
+    color: #000000;
+    font-weight: 900;
+    margin-top: 40px;
+  }
+
+  .make-engine-description {
+    font-size: 0.9em;
+    color: gray;
+    margin-top: 5px;
+  }
+
+  .make-engine-description span {
+    font-size: 0.9em;
+    color: gray;
+    font-weight: 800;
+  }
+
+  .engine-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .engine-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1em;
+    font-weight: 800;
+  }
+  
+  .engine-box:hover {
+    border-color: #007bff;
+  }
+  
+  .engine-box.selected {
+    border-color: #007bff;
+    background-color: #e6f7ff;
+  }
+  
+  .engine-box input[type="radio"] {
+    display: none; /* Hide the radio button */
+  }
+
+  /* Price */
+  .make-price {
+    font-size: 2.5em;
+    color: #000000;
+    font-weight: 900;
+    margin-top: 40px;
+  }
+
+  .make-price-description {
+    font-size: 0.9em;
+    color: gray;
+    margin-top: 5px;
+  }
+
+  .make-price-description span {
+    font-size: 0.9em;
+    color: gray;
+    font-weight: 800;
+  }
+
+  .price-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .price-symbol {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-right: 10px;
+    color: #333;
+  }
+
+  .price-input {
+    background-color: #ffffff; /* White background */
+    color: #000000; /* Black text */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 15px; /* Padding to look like a button */
+    font-size: 1em; /* Font size for better readability */
+    width: 100%; /* Full width */
+    cursor: pointer; /* Pointer cursor for button-like feel */
+    text-align: left; /* Center text */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+    transition: all 0.3s ease; /* Smooth transition */
+  }
+
+  .price-input:hover {
+    background-color: #ffffff;
+    border-color: #000000; /* Light gray on hover */
+  }
+
+  .price-input:focus {
+    outline: none; /* Remove default outline */
+    border-color: #007bff; /* Blue border on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Subtle shadow on focus */
+  }
+
+  /* Container for the Make/Model Buttons */
+  .make-buttons {
+    display: flex;
+    justify-content: space-between; /* Positions buttons at opposite ends */
+    margin-top: 50px; /* Add some spacing above the buttons */
+  }
+
+  /* Back button styling */
+  .make-buttons .back-button {
+    background-color: #ffffff; /* White background */
+    color: #2c3e50; /* Dark text */
+    border: 1px solid #ccc; /* Light border */
+    padding: 15px 25px; /* Button padding */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 1em;
+    font-weight: bold;
+  }
+
+  .make-buttons .back-button:hover {
+    background-color: #f1f1f1; /* Light gray background on hover */
+    color: #000000; /* Darker text on hover */
+    font-weight: bold;
+  }
+
+  /* Next button styling */
+  .make-buttons .add-button {
+    background-color: #e58e26; /* Darker peach */
+    color: #ffffff; /* White text */
+    border: none; /* Remove border */
+    padding: 15px 25px; /* Button padding */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s ease;
+    font-size: 1em;
+    font-weight: bold;
+  }
+
+  .make-buttons .add-button:hover {
     background-color: #d35400; /* Darker color on hover */
   }
-  
-  .license-description {
-    font-size: 0.9em;
-    color: #ffffff; /* White text */
-    margin-bottom: 15px;
+
+  .make-buttons .add-button:disabled {
+    background-color: #f8c291; /* Light peach for disabled button */
+    cursor: not-allowed; /* Show not-allowed cursor */
   }
-  
+
   /* Add spacing below each section */
   .car-details-inputs {
     margin-bottom: 30px;
