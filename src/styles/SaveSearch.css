@@ -1,0 +1,357 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Body Styling */
+  body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Main Section */
+  main {
+    flex-grow: 1;
+  }
+  
+  /* Container */
+  .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Navigation Header */
+  .headerNav {
+    background-color: #fff;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .headerNav-container {
+    display: flex;
+    justify-content: flex-start; /* Aligns the nav list to the left */
+    padding-left: 360px; /* Optional: Adds some padding from the left */
+    margin-top: 20px; /* This will bring the navigation down */
+    border-bottom: 2px solid #ddd; /* Add a light gray horizontal line */
+    padding-bottom: 10px; /* Add some space under the navigation */
+  }
+  
+  .header-nav-list {
+    list-style-type: none;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .header-nav-list li {
+    display: inline;
+  }
+  
+  .header-nav-list li a {
+    text-decoration: none;
+    color: #000000;
+    font-weight: bold;
+    padding: 8px 12px;
+    position: relative; /* This allows us to position the underline */
+    transition: color 0.3s ease; /* Smooth color transition */
+  }
+  
+  /* Add underline effect on hover */
+  .header-nav-list li a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -5px; /* Adjusts the position of the underline */
+    width: 100%;
+    height: 2px; /* Thickness of the underline */
+    background-color: #000000; /* Navy blue color */
+    transform: scaleX(0); /* Initially hidden */
+    transform-origin: right;
+    transition: transform 0.3s ease; /* Smooth scaling */
+  }
+  
+  .header-nav-list li a:hover::after {
+    transform: scaleX(1); /* Show the underline on hover */
+    transform-origin: left;
+  }
+  
+  .header-nav-list a.active {
+    background-color: transparent; /* No background color */
+    color: #0d47a1; /* Or your desired active link color */
+    border-bottom: 2px solid #0d47a1; /* Optional: underline the active link */
+  }
+  
+  .header-nav-list li a.active {
+    color: #0d47a1;
+    border-bottom: none; /* Remove border-bottom to avoid duplicate lines */
+  }
+  
+  .header-nav-list li a.active::after {
+    transform: scaleX(1); /* Keep the pseudo-element underline */
+  }
+  
+  /* Change color when hovered */
+  .header-nav-list li a:hover {
+    color: #0d47a1; /* Change the text color to your desired color */
+    background-color: transparent; /* This removes the blue background on hover */
+  }
+
+/* Main Section Styling */
+.saved-searches {
+    text-align: left;
+    padding: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+    margin-left: 330px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.saved-searches h2 {
+    font-size: 2em;
+    font-weight: bold;
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+.saved-searches p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.saved-searches ul {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.saved-searches ul li {
+    font-size: 1em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.new-search-button {
+    background-color: #ff6600;
+    color: #fff;
+    font-size: 1em;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.new-search-button:hover {
+    background-color: #e55b00;
+}
+
+.re-search {
+  text-align: left;
+  padding: 40px;
+  max-width: 900px;
+  margin: 0 auto;
+  margin-left: 330px;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Style for the search number text */
+.search-number {
+  font-size: 2rem;
+  color: #000000; 
+  font-weight: bold;
+}
+
+.re-search-button {
+  background-color: #fff; /* White background */
+  color: #333; /* Dark text */
+  font-size: 0.9em; /* Text size */
+  font-weight: bold; /* Bold text */
+  padding: 10px 20px; /* Button padding */
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 4px; /* Slightly rounded corners */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  margin-top: 20px; /* Add space above */
+  margin-bottom: 30px; /* Add space below */
+}
+
+.re-search-button:hover {
+  background-color: #f8f9fa; /* Slightly darker background on hover */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow on hover */
+}
+
+/* Header for the search filters */
+.search-header {
+  display: flex; /* Use flexbox to align items horizontally */
+  justify-content: space-between; /* Push items to far ends */
+  align-items: center; /* Vertically center-align items */
+  margin-bottom: 10px; /* Add some spacing below the header */
+}
+
+/* Style for the title text */
+.search-title {
+  font-size: 1.5rem;
+  color: #000000; 
+  font-weight: bold;
+}
+
+/* Style for the Remove text */
+.remove-text {
+  display: inline-flex; /* Align text and icon horizontally */
+  align-items: center; /* Vertically center align the text and icon */
+  font-size: 0.9em; /* Slightly smaller font size */
+  color: #0056b3; /* Blue text color */
+  text-decoration: none; /* Remove underline */
+  font-weight: bold; /* Bold text for emphasis */
+  cursor: pointer; /* Pointer cursor for interactivity */
+}
+
+.remove-text:hover {
+  text-decoration: underline; /* Underline on hover for interactivity */
+}
+
+/* Style for the creation date text */
+.created-text {
+  font-size: 0.95em; /* Slightly smaller text size */
+  color: #666; /* Light gray color */
+  font-weight: bold; /* Bold for the label */
+  margin-top: 5px; /* Add some spacing above */
+  margin-bottom: 15px; /* Add space below */
+}
+
+.created-text span {
+  font-weight: normal; /* Normal weight for the date */
+}
+
+/* Style for the search criteria text */
+.search-criteria {
+  font-size: 1em; 
+  color: #000000; 
+  font-weight: bold; /* Bold for the label */
+  margin-top: 5px; /* Add some spacing above */
+  margin-bottom: 10px; /* Add space below */
+}
+
+/* Search Criteria Styling */
+.search-filters {
+  display: grid;
+}
+
+/* Style for the search filters text */
+.search-filters p {
+  font-size: 0.9em; 
+  color: #666; /* Light gray color */
+  font-weight: bold; /* Bold for the label */
+}
+
+.search-filters span {
+  color: #000000; 
+  font-weight: normal; /* Normal weight */
+}
+
+/* View Search Button */
+.view-search-button {
+  background-color: #f56200;
+  color: #fff;
+  font-size: 0.9em;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold; /* Bold for the label */
+  transition: background-color 0.3s ease;
+  width: 200px; /* Adjust button width */
+  margin-top: 15px; /* Add some spacing above */
+  margin-bottom: 5px; /* Add space below */
+}
+
+.view-search-button:hover {
+  background-color: #e55b00;
+}
+
+/* Style for the horizontal line */
+.horizontal-line {
+  border: none; /* Remove default border styling */
+  border-top: 1.1px solid #ccc; /* Light gray line */
+  margin: 20px 0; /* Add spacing above and below */
+  width: 100%; /* Full width */
+}
+
+/* Header / Top Task Bar */
+header {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 20px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  header h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2em;
+  }
+  
+  nav ul {
+    list-style-type: none;
+    display: flex;
+    gap: 15px;
+  }
+  
+  nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 12px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  nav ul li a:hover,
+  nav ul li a.active {
+    background-color: #34495e;
+    border-radius: 4px;
+  }
+  
+  /* Footer / Bottom Task Bar */
+  footer {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+    margin-top: auto;
+  }
+  
+  footer .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  footer p {
+    margin-bottom: 10px;
+  }
+  
+  .social-icons {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .social-icons a {
+    color: #fff;
+    font-size: 1.2em;
+    transition: color 0.3s;
+  }
+  
+  .social-icons a:hover {
+    color: #e74c3c;
+  }
