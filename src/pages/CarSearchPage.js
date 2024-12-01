@@ -86,14 +86,8 @@ const CarSearchPage = () => {
               <option value="500">500 miles</option>
             </select>
           </div>
-
           <button type="submit" className="search-button">Search</button>
         </form>
-
-        {/* Redirect to Advanced Search Page */}
-        <button onClick={handleAdvancedSearchRedirect} className="advanced-search-button">
-          Advanced Search
-        </button>
       </div>
     </div>
   );

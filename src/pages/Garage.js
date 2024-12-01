@@ -1,219 +1,216 @@
-import React, { useState } from 'react';
+// src/pages/AddedCars-Garage.js
+import React, { useEffect, useState } from "react";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../firebaseConfig";
+import { collection, getDocs, query, where, deleteDoc } from "firebase/firestore";
+import "./../styles/AddedCars-Garage.css";
+
+/* FontAwesome Icons */
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  Typography,
-  Box,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
-  Divider,
-  Paper,
-  IconButton,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+  faPlus as fasPlus,
+  faXmark as fasXMark,
+} from "@fortawesome/free-solid-svg-icons";
 
-export default function Garage() {
-  // Sample data for owned cars
-  const [cars] = useState([
-    {
-      id: 1,
-      make: 'Toyota',
-      model: 'Camry',
-      year: 2019,
-      color: 'Blue',
-      mileage: 15000,
-      imageUrl:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRENy11OwlDkxdwjalVia9uY4HXEBNEfdhMIsaGJZCOEZuKL5Zc',
-    },
-    {
-      id: 2,
-      make: 'Honda',
-      model: 'Civic',
-      year: 2018,
-      color: 'Red',
-      mileage: 20000,
-      imageUrl: 'https://via.placeholder.com/400x300?text=Honda+Civic',
-    },
-    {
-      id: 3,
-      make: 'Ford',
-      model: 'Mustang',
-      year: 2020,
-      color: 'Black',
-      mileage: 5000,
-      imageUrl: 'https://via.placeholder.com/400x300?text=Ford+Mustang',
-    },
-    {
-      id: 4,
-      make: 'Chevrolet',
-      model: 'Malibu',
-      year: 2017,
-      color: 'White',
-      mileage: 30000,
-      imageUrl: 'https://via.placeholder.com/400x300?text=Chevrolet+Malibu',
-    },
-    {
-      id: 5,
-      make: 'Nissan',
-      model: 'Altima',
-      year: 2021,
-      color: 'Silver',
-      mileage: 10000,
-      imageUrl: '',
-    },
-    {
-      id: 6,
-      make: 'BMW',
-      model: '3 Series',
-      year: 2016,
-      color: 'Grey',
-      mileage: 40000,
-      imageUrl: '',
-    },
-    // Add more cars as needed
-  ]);
+// My Cars
+const Garage = () => {
+  // Initiate variables
+  const [selectedCar, setSelectedCar] = useState(null); // Set ID as 0
 
-  const [selectedCar, setSelectedCar] = useState(null);
+  // Load saved cars from localStorage (Initiate array)
+  const [savedCars, setSavedCars] = useState([]);
 
-  const handleCarClick = (car) => {
+  // Automatically selects the first car on Garage load
+  useEffect(() => {
+    if (savedCars.length > 0) {
+      setSelectedCar(savedCars[0]); // Select the first car in the list
+    }
+  }, [savedCars]); // Runs whenever the `cars` array changes
+
+  // Load saved searches from localStorage on component mount
+  useEffect(() => {
+    auth.onAuthStateChanged(async (user) => {
+      const carsCollection = collection(db, "cars");
+      const q = query(
+        carsCollection,
+        where("owner_id", "==", await auth.currentUser.uid)
+      );
+
+      const snapshot = await getDocs(q);
+
+      const storedCars = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log(storedCars);
+      setSavedCars(storedCars);
+    });
+  }, []);
+
+  // Remove a search by the ID
+  const handleRemoveCar = (id) => {
+    deleteDoc(doc(db, "cars", id));
+    setSavedCars(savedCars.filter((car) => car.id !== id));
+  };
+
+  // Select Car
+  const handleCarSelect = (car) => {
     setSelectedCar(car);
   };
 
-  const handleCloseDetails = () => {
-    setSelectedCar(null);
-  };
-
+  // HTML
   return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
-      {/* TITLE OF MAIN AREA */}
-      <Typography variant="h4" component="h1" gutterBottom>
-        My Car Garage
-      </Typography>
+    <div>
+      {/* Navigation Headbar */}
+      <div className="headerNav-container">
+        <nav>
+          <ul className="header-nav-list">
+            <li>
+              <a href="my-cars" className="active">
+                My Cars
+              </a>
+            </li>
+            <li>
+              <a href="add-car">Add Cars</a>
+            </li>
+            <li>
+              <a href="favorited-cars">Favorited Cars</a>
+            </li>
+            <li>
+              <a href="saved-searches">Saved Searches</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
 
-      {/* CONTAINER FOR LISTS AND DETAILS */}
-      <Box sx={{ display: 'flex', mt: 2 }}>
-        {/* Left side: List of cars */}
-        <Box
-          sx={{
-            width: '40%',
-            mr: 2,
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {/* CONTAINERS FOR HEIGHT */}
-          <Box
-            component={Paper}
-            sx={{
-              height: 400, 
-              overflowY: 'auto',
-            }}
-          >
-            {/* CARS LIST */}
-            <List>
-              {cars.map((car, index) => (
-                <React.Fragment key={car.id}>
-                  <ListItem
-                    button
-                    onClick={() => handleCarClick(car)}
-                    sx={{
-                      backgroundColor:
-                        selectedCar && selectedCar.id === car.id ? 'lightblue' : 'transparent',
-                    }}
-                  >
-                    <ListItemAvatar sx={{ pr: 2 }}>
-                      <Box
-                        sx={{
-                          width: 56,
-                          height: 56,
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <Box
-                          component="img"
-                          src={car.imageUrl || 'https://via.placeholder.com/56x56?text=No+Image'}
-                          alt={`${car.make} ${car.model}`}
-                          sx={{
-                            maxWidth: '100%',
-                            maxHeight: '100%',
-                            objectFit: 'contain',
-                          }}
-                        />
-                      </Box>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={`${car.year} ${car.make} ${car.model}`}
-                      secondary={`Mileage: ${car.mileage} miles`}
-                    />
-                  </ListItem>
-                  {index < cars.length - 1 && <Divider component="li" />}
-                </React.Fragment>
-              ))}
-            </List>
-          </Box>
-        </Box>
+      {/* Main Content */}
+      <main>
+        <section className="car-amount">
+          <h2>
+            You Have {savedCars.length} Saved Car
+            {savedCars.length !== 1 ? "s" : ""}
+          </h2>
+        </section>
 
-        {/* CAR DETAILS BOX */}
-        <Box
-          sx={{
-            width: '60%',
-          }}
-        >
-          {selectedCar ? (
-            <Paper sx={{ p: 2, position: 'relative' }}>
-              <IconButton
-                aria-label="close"
-                onClick={handleCloseDetails}
-                sx={{ position: 'absolute', top: 8, right: 8 }}
-              >
-                <CloseIcon />
-              </IconButton>
+        <div className="my-cars-container">
+          <div>
+            {savedCars.length === 0 ? (
+              <p>No cars found.</p>
+            ) : (
+              <>
+                <div class="my-cars-header">
+                  <h2 class="my-cars-title">My Cars</h2>
 
-              {/* Car Image */}
-              <Box
-                component="img"
-                src={selectedCar.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image'}
-                alt={`${selectedCar.make} ${selectedCar.model}`}
-                sx={{
-                  width: 400,
-                  height: 300,
-                  objectFit: 'contain',
-                  display: 'block',
-                  margin: '0 auto 16px',
-                }}
-              />
-
-              <Typography variant="h5" component="h2" gutterBottom>
-                Car Details
-              </Typography>
-              <Typography variant="body1">
-                <strong>Make:</strong> {selectedCar.make}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Model:</strong> {selectedCar.model}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Year:</strong> {selectedCar.year}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Color:</strong> {selectedCar.color}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Mileage:</strong> {selectedCar.mileage} miles
-              </Typography>
-            </Paper>
+                  {/* Remove Car Option */}
+                  <div className="add-car-container">
+                    <FontAwesomeIcon
+                      className="plus-icon"
+                      icon={fasPlus}
+                    ></FontAwesomeIcon>
+                    <a href="add-car" class="add-car-link">
+                      Add another car
+                    </a>
+                  </div>
+                </div>
+                <div className="car-list-view">
+                  {savedCars.map((car) => (
+                    <li
+                      key={car.id}
+                      className="car-item"
+                      onClick={() => handleCarSelect(car)}
+                    >
+                      <img
+                        src={car.image}
+                        alt={car.name}
+                        className="car-image"
+                      />
+                      <div className="car-info">
+                        <h3>
+                          {car.year} {car.make} {car.model}
+                        </h3>
+                        <p>
+                          Mileage: {Number(car.mileage).toLocaleString()} miles
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+          {savedCars.length === 0 ? (
+            <p></p>
           ) : (
-            <Paper sx={{ p: 2 }}>
-              <Typography variant="h5" component="h2" gutterBottom>
-                Select a car to view details
-              </Typography>
-            </Paper>
+            <div class="car-details-container">
+              {/* Car Details Header */}
+              <div class="car-details-header">
+                <h2 class="car-details-title">Car Details</h2>
+
+                {/* Remove Car Option */}
+                <div className="remove-car-container">
+                  <FontAwesomeIcon
+                    className="x-icon"
+                    icon={fasXMark}
+                  ></FontAwesomeIcon>
+                  <p
+                    className="remove-car"
+                    onClick={() => handleRemoveCar(selectedCar.id)}
+                  >
+                    Remove this car
+                  </p>
+                </div>
+              </div>
+
+              {/* Car Details Card */}
+              <div className="car-details-card">
+                {selectedCar ? (
+                  <div className="car-details-info">
+                    <h2 class="car-info-title">
+                      {selectedCar.year} {selectedCar.make} {selectedCar.model}
+                    </h2>
+
+                    <div class="car-image-container">
+                      <img
+                        src={selectedCar.image}
+                        alt={selectedCar.name}
+                        className="car-image-large"
+                      />
+                    </div>
+
+                    <div className="car-details-text">
+                      <p>
+                        Price:{" "}
+                        <span>
+                          ${Number(selectedCar.price).toLocaleString()}
+                        </span>
+                      </p>
+                      <p>
+                        Mileage:{" "}
+                        <span>
+                          {Number(selectedCar.mileage).toLocaleString()} miles
+                        </span>
+                      </p>
+                      <p>
+                        ZIP Code: <span>{selectedCar.zipCode}</span>
+                      </p>
+                      <p>
+                        Color: <span>{selectedCar.color}</span>
+                      </p>
+                      <p>
+                        Engine: <span>{selectedCar.engine}</span>
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <p>Select a car to view details</p>
+                )}
+              </div>
+            </div>
           )}
-        </Box>
-      </Box>
-    </Box>
+        </div>
+      </main>
+    </div>
   );
-}
+};
+
+export default Garage;

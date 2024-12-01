@@ -71,8 +71,11 @@ function RegisterModal({ open, onClose }) {
       // create users with email, name, conversations (for messaging)
       await setDoc(doc(db, "users", user.uid), {
         email: formData.email,
-        name: `${formData.firstName} ${formData.lastName}`,
+        firstName: `${formData.firstName}`,
+        lastName: `${formData.lastName}`,
+        uid: user.uid, 
         conversations: [],
+        cargarage: []
       });
 
       await sendEmailVerification(user)

@@ -1,6 +1,7 @@
 // src/pages/Add-Car.js
 import React, { useState, useEffect } from "react";
-import { doc, setDoc } from "firebase/firestore";
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
+import { doc, setDoc, addDoc, collection } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import "./../styles/Add-Car.css";
 
@@ -11,12 +12,17 @@ const AddCar = () => {
     const [carImage, setCarImage] = useState("");
     const [year, setYear] = useState("");
     const [make, setMake] = useState("");
+    const [category, setCategory] = useState("");
+    const [series, setSeries] = useState("");
     const [model, setModel] = useState("");
     const [price, setPrice] = useState("");
     const [mileage, setMileage] = useState("");
     const [zipCode, setZipCode] = useState("");
     const [color, setColor] = useState("");
-    const [carEngine, setEngine] = useState("");
+    const [engine, setEngine] = useState("");
+    const [doors, setDoors] = useState("");
+    const [displacement, setDisplacement] = useState("");
+    const [driveType, setDriveType] = useState("");
 
     // Messages
     const [message, setMessage] = useState("");
@@ -25,7 +31,6 @@ const AddCar = () => {
     // VIN
     const [vin, setVin] = useState("");
     const [loading, setLoading] = useState(false);
-    const [carDetails, setCarDetails] = useState(null);
 
     // Results Section
     const [showResults, setShowResults] = useState(false);
@@ -152,7 +157,7 @@ const AddCar = () => {
           zipCode,
           price,
           color,
-          carEngine,
+           engine,
           message: "Make/Model Results: Successfully added!",
         });
       }
@@ -178,24 +183,16 @@ const AddCar = () => {
         .then((response) => response.json())
         .then((data) => {
             const results = data.Results;
-            console.log(data.Results)
-            const make = results.find((r) => r.Variable === "Make")?.Value || "Unknown";
-            const model = results.find((r) => r.Variable === "Model")?.Value || "Unknown";
-            const year = results.find((r) => r.Variable === "Model Year")?.Value || "Unknown";
-            const category = results.find((r) => r.Variable === "Body Class")?.Value || "Unknown";
-            const series = results.find((r) => r.Variable === "Series")?.Value || "Unknown";
-            const doors = results.find((r) => r.Variable === "Doors")?.Value || "Unknown";
-            const engine = results.find((r) => r.Variable === "Engine Number of Cylinders")?.Value || "Unknown";
-            const displacement = results.find((r) => r.Variable === "Displacement (L)")?.Value || "Unknown";
-            const transmission = results.find((r) => r.Variable === "Transmission Style")?.Value || "Unknown";
-            const transmissionSpeed = results.find((r) => r.Variable === "Transmission Speeds")?.Value || "Unknown";
-            const driveType = results.find((r) => r.Variable === "Drive Type")?.Value || "";
-
-            if (make && model && year) {
-              setCarDetails({ make, model, year, category, series, doors, engine, displacement, transmission, transmissionSpeed, driveType});
-            } else {
-              setError("Failed to fetch car details. Please check the VIN.");
-            }
+            console.log(results);
+            setMake(results.find((r) => r.Variable === "Make")?.Value || "Unknown");
+            setModel(results.find((r) => r.Variable === "Model")?.Value || "Unknown");
+            setYear(results.find((r) => r.Variable === "Model Year")?.Value || "Unknown");
+            setCategory(results.find((r) => r.Variable === "Body Class")?.Value || "Unknown");
+            setSeries(results.find((r) => r.Variable === "Series")?.Value || "Unknown");
+            setDoors(results.find((r) => r.Variable === "Doors")?.Value || "Unknown");
+            setEngine(results.find((r) => r.Variable === "Engine Number of Cylinders")?.Value || "Unknown");
+            setDisplacement(results.find((r) => r.Variable === "Displacement (L)")?.Value || "Unknown");
+            setDriveType(results.find((r) => r.Variable === "Drive Type")?.Value || "Unknown");
 
             // Trigger handleGo after successful lookup
             handleGo();
@@ -211,38 +208,46 @@ const AddCar = () => {
 
   {/* Handle Save Search */}
   // Handle Save Search
-  const handleAddCars = () => {
+  const handleAddCars = async () => {
     // Save Filters to Storage
     const carInfo = {
       image: carImage || "/images/no-image.png", // No Image Placeholder
       year: year,
       make: make,
+      category: category,
+      series: series,
       model: model,
+      doors: doors,
+      driveType: driveType,
       price: price,
       mileage: mileage,
       zipCode: zipCode,
       color: color,
-      engine: carEngine,
+      engine:  engine,
+      owner_id: auth.currentUser.uid,
+      forSale: false
     };
 
     // Take existing cars
-    const existingCars = JSON.parse(localStorage.getItem("addedCars")) || [];
+    // const existingCars = JSON.parse(localStorage.getItem("addedCars")) || [];
 
-    // Give unique IDs to each car added
-    const newId = existingCars.length > 0 
-      ? Math.max(...existingCars.map((s) => s.id)) + 1 
-      : 1;
+    // // Give unique IDs to each car added
+    // const newId = existingCars.length > 0 
+    //   ? Math.max(...existingCars.map((s) => s.id)) + 1 
+    //   : 1;
     
-    // Renew array
-    const newCar = {
-      id: newId,
-      ...carInfo,
-    };
+    // // Renew array
+    // const newCar = {
+    //   id: newId,
+    //   ...carInfo,
+    // };
 
-    const updatedCars = [newCar, ...existingCars];
+    // const updatedCars = [newCar, ...existingCars];
 
-    localStorage.setItem("addedCars", JSON.stringify(updatedCars));
-
+    // localStorage.setItem("addedCars", JSON.stringify(updatedCars));
+      
+    await addDoc(collection(db, "cars"), carInfo);
+  
     // Optionally reset the input fields
     setMileage("");
     setZipCode("");
@@ -380,20 +385,16 @@ const AddCar = () => {
       <div className="vin-results">
         <p className="vin-details-text">Car Details</p>
         <p className="vin-vin-text">VIN: <strong>{vin}</strong></p>
-        <p className="vin-car-text">{carDetails.year} {carDetails.make} {carDetails.model}</p>
+        <p className="vin-car-text">{year} {make} {model}</p>
         <div className="vin-extra-details">
-          <p>Category: <strong>{carDetails.category}</strong></p>
+          <p>Category: <strong>{category}</strong></p>
 
-          {carDetails.series && carDetails.category && carDetails.doors &&
-          <p>Style: <strong>{carDetails.series} {carDetails.category} {carDetails.doors}D</strong>
+          { series &&  category &&  doors &&
+          <p>Style: <strong>{series} {category} {doors}D</strong>
           </p>}
 
-          <p>Engine: <strong>V{carDetails.engine}, {carDetails.displacement} Liter</strong></p>
-          <p>Transmission: <strong>{carDetails.transmission}
-              {carDetails.transmissionSpeed && `, ${carDetails.transmissionSpeed}-Spd`}
-            </strong>
-          </p>
-          {carDetails.driveType && <p>Drive Type: <strong>{carDetails.driveType}</strong></p>}
+          <p>Engine: <strong>V{ engine}, { displacement} Liter</strong></p>
+          { driveType && <p>Drive Type: <strong>{ driveType}</strong></p>}
         </div>
 
         <p className="vin-additional-details">Additional Details</p>
@@ -450,7 +451,7 @@ const AddCar = () => {
 
         { /* Button */ }
         <div className="vin-buttons">
-          <button className="back-button" onClick={() => {setShowResults(false); setCarDetails(null); }}>
+          <button className="back-button" onClick={() => {setShowResults(false); }}>
             Back
           </button>
           <button 
@@ -503,13 +504,13 @@ const AddCar = () => {
         {engines.map((engine) => (
           <label
             key={engine}
-            className={`engine-box ${carEngine === engine ? "selected" : ""}`}
+            className={`engine-box ${ engine === engine ? "selected" : ""}`}
           >
             <input
               type="radio"
               name="engine"
               value={engine}
-              checked={carEngine === engine}
+              checked={ engine === engine}
               onChange={() => setEngine(engine)}
             />
             {engine}
@@ -553,12 +554,12 @@ const AddCar = () => {
 
         { /* Button */ }
         <div className="make-buttons">
-          <button className="back-button" onClick={() => {setShowResults(false); setCarDetails(null); }}>
+          <button className="back-button" onClick={() => {setShowResults(false); }}>
             Back
           </button>
           <button 
             className="add-button"
-            disabled={!carImage || !carEngine || !color || !price }
+            disabled={!carImage || ! engine || !color || !price }
             onClick={handleAddCars}>
             Add
           </button>

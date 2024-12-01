@@ -29,37 +29,6 @@ const ContactSeller = () => {
 
   return (
     <div className="contact-seller">
-      {/* Header */}
-      <header className="header">
-        <div className="container">
-          <h1>CarJourney</h1>
-          <nav>
-            <ul>
-              <li>
-                <a href="/" className="active">
-                  <FaHome /> Home
-                </a>
-              </li>
-              <li>
-                <a href="/car-listing">
-                  <FaSearch /> Used & New Cars
-                </a>
-              </li>
-              <li>
-                <a href="/login">
-                  <FaSignInAlt /> Login
-                </a>
-              </li>
-              <li>
-                <a href="/register">
-                  <FaUserPlus /> Register
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </header>
-
       {/* Main Section */}
       <main>
         <div className="container car-details">
@@ -76,23 +45,6 @@ const ContactSeller = () => {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer>
-        <div className="container">
-          <p>&copy; 2024 Car Listings. All rights reserved.</p>
-          <div className="social-icons">
-            <a href="https://facebook.com">
-              <FaFacebookF />
-            </a>
-            <a href="https://twitter.com">
-              <FaTwitter />
-            </a>
-            <a href="https://instagram.com">
-              <FaInstagram />
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

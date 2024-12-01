@@ -3,6 +3,7 @@ import { Box, Tabs, Tab, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import UserForm from './UserForm'; 
 import ChangePasswordForm from '../components/ChangePasswordForm';
+import DeleteAccountForm from '../components/DeleteAccountForm';
 
 // IMPORT USER FORMS TO CREATE SUBMISSION BOXES
 // COMPONENTS FOR TABS
@@ -74,6 +75,7 @@ function User( {profilePicture, setProfilePicture}) {
         <Tabs value={value} onChange={handleChange} aria-label="user tabs" centered>
           <Tab label="Update Profile" {...a11yProps(0)} />
           <Tab label="Change Password" {...a11yProps(1)} />
+          <Tab label="Delete Account" {...a11yProps(2)} />
         </Tabs>
       </Box>
 
@@ -84,6 +86,11 @@ function User( {profilePicture, setProfilePicture}) {
       <TabPanel value={value} index={1}>
         <ChangePasswordForm />
       </TabPanel>
+
+      <TabPanel value={value} index={2}>
+  <     DeleteAccountForm />
+     </TabPanel>
+      
     </Box>
   </Box>
 );

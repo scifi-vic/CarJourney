@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, TextField, Button } from '@mui/material';
 import { storage } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
+import DeleteAccountForm from '../components/DeleteAccountForm';
 // Calculate the maximum date (today's date minus 18 years)
 const getMaxDate = () => {
   const today = new Date();
@@ -12,7 +12,8 @@ const getMaxDate = () => {
 
 function UserForm( {profilePicture, setProfilePicture}) {
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     dateOfBirth: '',
     phone: '',
     email: '',
@@ -101,7 +102,9 @@ function UserForm( {profilePicture, setProfilePicture}) {
           gap: 2,
         }}
       >
-        <TextField label="Name" variant="outlined" fullWidth name="name" value={formData.name} onChange={handleChange} required />
+        <TextField label="First name" variant="outlined" fullWidth name="first-name" value={formData.firstName} onChange={handleChange} required />
+
+        <TextField label="Last name" variant="outlined" fullWidth name="last-name" value={formData.lastName} onChange={handleChange} required />
 
         <TextField label="Date of Birth" variant="outlined" type="date" fullWidth name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required InputLabelProps={{ shrink: true }} // This keeps the label from covering the placeholder
         inputProps={{ placeholder: 'mm/dd/yyyy' }} />
