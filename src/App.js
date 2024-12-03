@@ -64,10 +64,11 @@ function App() {
               <Route path="/garage" element={<Garage />} />
               <Route path="/search" element={<CarSearchPage />} />
               <Route path="/messaging" element={<MessagePage currentUserId={currentUserId}/>} />
+              <Route path="/messaging/:chatId" element={<MessagePage currentUserId={currentUserId}/>} />
 
               <Route path="/my-cars" element={<Garage />} />
               <Route path="/add-car" element={<AddCar />} />
-              <Route path="/carlistingpage" element={<CarListingPage />} />
+              <Route path="/carlistingpage/:carId" element={<CarListingPage />} />
               <Route path="/contactseller" element={<ContactSeller />} />
               <Route path="/resultspage" element={<ResultsPage />} />
               {/* <Route path="/addedcarsgarage" element={<AddedCarsGarage />} /> */}

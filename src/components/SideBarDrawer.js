@@ -28,7 +28,10 @@ export default function SideBarDrawer({drawerOpen, setDrawerOpen}) {
 
   const DrawerList = (
     <Box
-      sx={{ width: 250 }}
+      sx={{
+        width: 250, 
+        marginTop: "24",
+      }}
       role="presentation"
       onClick={() => toggleDrawer(false)}
       onKeyDown={() => toggleDrawer(false)}

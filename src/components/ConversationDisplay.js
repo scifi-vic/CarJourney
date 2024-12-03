@@ -1,38 +1,67 @@
 // src/components/ConversationDisplay.js
 import React, { useState, useRef, useEffect } from 'react';
 import { Box, TextField, Button, Typography, Paper } from '@mui/material';
+import { listenToMessages } from '../helpers/MessageService';
+import {auth, db, serverTimestamp } from '../firebaseConfig';
+import { collection, addDoc, getDoc, doc } from 'firebase/firestore';
 
-function ConversationDisplay({ conversationId, messages, addMessage }) {
+function ConversationDisplay({ chatId, messages, addMessage }) {
   const [newMessage, setNewMessage] = useState('');
-  const messageEndRef = useRef(null);
+  const chatWindowRef = useRef(null);
+  const [chatNames, setChatNames] = useState({});
+  const [otherUserNames, setOtherUserNames] = useState("");
 
   useEffect(() => {
-    messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    setChatNames(getChatNames());
+  }, [])
+
+  useEffect(() => {
+    //scroll to the bottom of the chat window
+    chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
   }, [messages]);
+
 
   const formatTimestamp = (date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const handleSendMessage = () => {
-    if (!newMessage.trim()) return;
+  const getChatNames = async () => {
+    const chatRef = doc(db, 'chats', chatId);
+    const chatSnapshot = await getDoc(chatRef);
+    const chatIds = Object.keys(chatSnapshot.data().members);
+    const idToName = chatIds.map((id) => {
+      getDoc(doc(db, 'users', id)).then((userSnapshot) => {
+        const userData = userSnapshot.data();
+        const name = userData.firstName + " " + userData.lastName;
+        if (id !== auth.currentUser.uid) {
+          setOtherUserNames(name);
+        }
+        setChatNames((prevNames) => ({ ...prevNames, [id]: name }));
+      })
+    })
+  };
 
+  const handleSendMessage = async () => {
+    if (!newMessage.trim()) return;
+    console.log(auth.currentUser);
     {/* creates new message object */}
     const message = {
-      sender: 'Me',
-      text: newMessage,
-      timestamp: formatTimestamp(new Date()),
+      sender_id: auth.currentUser.uid,
+      sender_name: "something",
+      text: newMessage, 
+      timestamp: serverTimestamp(),
     };
 
     {/* add message to the selected conversation */}
-    addMessage(conversationId, message);
+    addDoc(collection(db, 'messages', chatId, 'messages'), message);
+    //clear the message box
     setNewMessage('');
   };
 
   return (
     <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%', padding: 2 }}>
       <Typography variant="h6" gutterBottom>
-        Conversation with {conversationId === '1' ? 'Henry' : conversationId === '2' ? 'Jill' : 'Victoria'}
+        Conversation with {otherUserNames}
       </Typography>
 
       {/* Scrollable Message Display Box */}
@@ -40,36 +69,37 @@ function ConversationDisplay({ conversationId, messages, addMessage }) {
         sx={{
           flexGrow: 1,
           overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
           padding: 2,
           paddingLeft: 4,
           paddingRight: 4,
           border: '1px solid #ccc',
           borderRadius: '4px',
-          maxHeight: '300px',
+          maxHeight: '600px',
         }}
+        ref={chatWindowRef}
       >
         {messages.map((msg, index) => (
           <Box
             key={index}
             sx={{
-              textAlign: msg.sender === 'Me' ? 'right' : 'left',
-              backgroundColor: msg.sender === 'Me' ? '#e1f5fe' : '#f0f0f0',
+              textAlign: msg.data().sender_id === auth.currentUser.uid ? 'right' : 'left',
+              backgroundColor: msg.data().sender_id === auth.currentUser.uid ? '#e1f5fe' : '#f0f0f0',
               padding: 1,
               borderRadius: 1,
               marginY: 0.5,
-              maxWidth: '75%',
-              alignSelf: msg.sender === 'Me' ? 'flex-end' : 'flex-start',
+              alignSelf: msg.data().sender_id === auth.currentUser.uid ? 'flex-end' : 'flex-start',
             }}
           >
             <Typography variant="body2">
-              <strong>{msg.sender}:</strong> {msg.text}
+              <strong>{chatNames[msg.data().sender_id]}:</strong> {msg.data().text}
             </Typography>
             <Typography variant="caption" sx={{ display: 'block' }}>
               {msg.timestamp}
             </Typography>
           </Box>
         ))}
-        <div ref={messageEndRef} />
       </Box>
 
       {/* chat input box */}

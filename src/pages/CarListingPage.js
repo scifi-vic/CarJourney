@@ -1,8 +1,38 @@
 import React from "react";
 import VehicleCard from "../components/VehicleCard";
 import "../styles/CarListing.css";
+import { useEffect } from "react";
+import { useParams } from "react-router";
+import { auth, db } from "../firebaseConfig";
+import {
+  collection,
+  getDoc,
+  doc,
+  query,
+  where,
+  deleteDoc,
+} from "firebase/firestore";
 
 const CarListingPage = () => {
+  const {carId}= useParams();
+
+  useEffect(() => {
+    async function fetchCar() {
+      // get car data from the url param
+      const snapshot = await getDoc(doc(db, "cars", carId));
+
+      // get owner name
+      const userSnapshot = await getDoc(doc(db, "users", snapshot.data().owner_id));
+      const fullName = userSnapshot.data().firstName + " " + userSnapshot.data().lastName; 
+
+      // returns car data with owner name
+      setCar({...snapshot.data(), seller: fullName, owner_id: snapshot.data().owner_id});
+    }
+    
+    fetchCar();
+  }, []);
+
+  const [car, setCar] = React.useState({});
   const exampleVehicle = {
     make: "Toyota",
     model: "Camry",
@@ -15,7 +45,7 @@ const CarListingPage = () => {
 
   return (
     <div className="car-listing-page">
-      <VehicleCard vehicle={exampleVehicle} detailed={true} />
+      <VehicleCard vehicle={car} detailed={true} />
     </div>
   );
 };

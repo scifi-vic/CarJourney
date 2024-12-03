@@ -1,37 +1,68 @@
-import React, { useState } from 'react';
-import { Box, TextField, Button } from '@mui/material';
-import { storage } from '../firebaseConfig';
+import React, { useState } from "react";
+import { Box, TextField, Button, Typography } from "@mui/material";
+import { db, auth } from "../firebaseConfig";
+import { updateDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import DeleteAccountForm from '../components/DeleteAccountForm';
-// Calculate the maximum date (today's date minus 18 years)
-const getMaxDate = () => {
-  const today = new Date();
-  today.setFullYear(today.getFullYear() - 18);
-  return today.toISOString().split('T')[0]; // Format as yyyy-mm-dd
-};
+import DeleteAccountForm from "../components/DeleteAccountForm";
 
-function UserForm( {profilePicture, setProfilePicture}) {
+function UserForm({ profilePicture, setProfilePicture }) {
+  // Calculate the maximum date (today's date minus 18 years)
+  const getMaxDate = () => {
+    const today = new Date();
+    today.setFullYear(today.getFullYear() - 18);
+    return today.toISOString().split("T")[0]; // Format as yyyy-mm-dd
+  };
+
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    phone: '',
-    email: '',
+    firstName: "",
+    lastName: "",
+    dateOfBirth: "",
+    phone: "",
+    email: "",
   });
 
+  const [updateMessage, successfulUpdateMessage] = useState(false); 
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+
+    if (name === "phone") {
+      // Restrict input to numbers only and limit to 10 characters
+      if (!/^\d*$/.test(value) || value.length > 10) {
+        return; // Ignore invalid input
+      }
+    }
+
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('Form submitted');
-    localStorage.setItem('userData', JSON.stringify(formData));
+
+    try {
+      const currentUser = auth.currentUser.uid;
+      const userInfo = doc(db, "users", currentUser);
+
+      // Update the Firestore document
+      await updateDoc(userInfo, {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        dateOfBirth: formData.dateOfBirth,
+        phone: formData.phone,
+        email: formData.email,
+      });
+
+      console.log("User profile updated successfully");
+      successfulUpdateMessage(true); 
+      
+      setTimeout(() => successfulUpdateMessage(false), 4000); 
+
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+    }
   };
 
-  const handleProfilePictureChange = (event) => {
+  const handleProfilePictureChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -43,10 +74,10 @@ function UserForm( {profilePicture, setProfilePicture}) {
   };
 
   return (
-    <Box 
-      sx={{ 
-        display: 'flex',
-        alignItems: 'flex-start',
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "flex-start",
         gap: 5,
         marginTop: 5,
         marginLeft: 2,
@@ -55,31 +86,31 @@ function UserForm( {profilePicture, setProfilePicture}) {
     >
       {/* Wrapper for the Left Section to add margin without affecting internal alignment */}
       <Box sx={{ marginRight: 4 }}>
-        <Box 
+        <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
             gap: 2,
           }}
         >
-          <Box 
+          <Box
             component="img"
             src={profilePicture} // Ensure the src uses the updated state
             alt="Profile Picture"
-            sx={{ 
+            sx={{
               width: 165,
               height: 165,
-              borderRadius: '50%',
+              borderRadius: "50%",
               marginBottom: 2,
-            }} 
+            }}
           />
-          
+
           <input
             accept="image/*"
             type="file"
             onChange={handleProfilePictureChange}
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             id="upload-photo"
           />
           <label htmlFor="upload-photo">
@@ -95,27 +126,87 @@ function UserForm( {profilePicture, setProfilePicture}) {
         component="form"
         onSubmit={handleSubmit}
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          width: '100%',
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
           maxWidth: 300,
           gap: 2,
         }}
       >
-        <TextField label="First name" variant="outlined" fullWidth name="first-name" value={formData.firstName} onChange={handleChange} required />
+        <TextField
+          label="First name"
+          variant="outlined"
+          fullWidth
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+          required
+        />
 
-        <TextField label="Last name" variant="outlined" fullWidth name="last-name" value={formData.lastName} onChange={handleChange} required />
+        <TextField
+          label="Last name"
+          variant="outlined"
+          fullWidth
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+          required
+        />
 
-        <TextField label="Date of Birth" variant="outlined" type="date" fullWidth name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required InputLabelProps={{ shrink: true }} // This keeps the label from covering the placeholder
-        inputProps={{ placeholder: 'mm/dd/yyyy' }} />
+        <TextField
+          label="Date of Birth"
+          variant="outlined"
+          type="date"
+          fullWidth
+          name="dateOfBirth"
+          value={formData.dateOfBirth}
+          onChange={handleChange}
+          required
+          InputLabelProps={{ shrink: true }} // This keeps the label from covering the placeholder
+          inputProps={{ placeholder: "mm/dd/yyyy" }}
+        />
 
-        <TextField label="Phone Number" variant="outlined" fullWidth name="phone" value={formData.phone} onChange={handleChange} required />
+        <TextField
+          label="Phone Number"
+          variant="outlined"
+          fullWidth
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          required
+          inputProps={{
+            inputMode: "numeric", // Optimized for numeric keyboards on mobile
+            pattern: "[0-9]*",    // Ensure only numeric input is accepted
+            maxLength: 10,        // Limit input length to 10 characters
+          }}
+        />
 
-        <TextField label="Email" variant="outlined" fullWidth name="email" value={formData.email} onChange={handleChange} required />
-        
+        <TextField
+          label="Email"
+          variant="outlined"
+          fullWidth
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+
         <Button type="submit" variant="contained" fullWidth>
           Submit
         </Button>
+
+        {updateMessage && (
+          <Typography
+            variant="body2"
+            sx={{
+              color: "blue",
+              marginTop: 2,
+              textAlign: "center",
+            }}
+            >
+            Profile updated successfully!
+          </Typography>
+        )}
       </Box>
     </Box>
   );

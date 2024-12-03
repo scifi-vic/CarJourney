@@ -106,7 +106,6 @@
     text-align: left;
     margin-top: 15px;
     max-width: 800px;
-    margin-left: 370px;
     margin-bottom: 15px;
     font-family: 'Roboto', sans-serif;
 }
@@ -171,7 +170,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 1090px;
-    margin-left: 370px; /* Same margin as car-amount */
+    margin: auto; /* Same margin as car-amount */
     display: flex;
     gap: 20px;
     align-items: stretch;

@@ -211,7 +211,7 @@ const AddCar = () => {
   const handleAddCars = async () => {
     // Save Filters to Storage
     const carInfo = {
-      image: carImage || "/images/no-image.png", // No Image Placeholder
+      image: carImage || "/assets/no-image.png", // No Image Placeholder
       year: year,
       make: make,
       category: category,

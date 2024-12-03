@@ -68,6 +68,7 @@ function Navbar({ profilePicture }) {
             sx={{ display: "flex", alignItems: "center" }}
           >
             <MenuIcon onClick={() => toggleDrawer()} />
+            <img src={logo} alt="Logo" className="logo-image" />
             <Typography
               variant="h6"
               component={Link}
@@ -76,7 +77,6 @@ function Navbar({ profilePicture }) {
             >
               CarJourney
             </Typography>
-            <img src={logo} alt="Logo" className="logo-image" />
           </Box>
         </Box>
 
