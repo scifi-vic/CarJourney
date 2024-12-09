@@ -1,0 +1,173 @@
+/* Chatbot Container */
+.chatbot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px; /* Increased width for better readability */
+    height: 500px; /* Increased height for more content */
+    background-color: #ffffff; /* Clean white background */
+    border: 1px solid #ccc;
+    border-radius: 15px; /* Softer rounded edges */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25); /* Stronger shadow for a modern look */
+    z-index: 1000;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Minimized Chatbot */
+.chatbot-container.minimized {
+    height: 50px; /* Show only the header when minimized */
+    overflow: hidden;
+    border-radius: 15px; /* Keep the rounded edges consistent */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+/* Chatbot Header */
+.chatbot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #007bff; /* Vibrant blue */
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.chatbot-header:hover {
+    background-color: #0056b3; /* Slightly darker blue on hover */
+}
+
+/* Header Buttons (Minimize and Close) */
+.header-buttons {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+}
+
+.chatbot-header button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s, color 0.3s;
+}
+
+.chatbot-header button:hover {
+    transform: scale(1.2); /* Subtle scaling effect */
+    color: #ffcccc; /* Light red for hover effect */
+}
+
+/* Chatbox Messages */
+.chatbox {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: #f9f9f9; /* Light gray for contrast */
+    scrollbar-width: thin; /* Thin scrollbar for modern look */
+    scrollbar-color: #007bff #f9f9f9; /* Custom scrollbar colors */
+}
+
+.chatbox::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chatbox::-webkit-scrollbar-thumb {
+    background-color: #007bff;
+    border-radius: 10px;
+}
+
+/* User Messages */
+.user-message {
+    text-align: right;
+    margin: 8px 0;
+    padding: 10px 15px;
+    background-color: #d1e7dd;
+    color: #333;
+    border-radius: 15px 15px 0 15px; /* Tail style */
+    max-width: 75%;
+    display: inline-block;
+    font-size: 0.9rem;
+}
+
+/* Bot Messages */
+.bot-message {
+    text-align: left;
+    margin: 8px 0;
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    color: #333;
+    border-radius: 15px 15px 15px 0; /* Tail style */
+    max-width: 75%;
+    display: inline-block;
+    font-size: 0.9rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Input Box */
+.input-box {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #ffffff;
+    border-top: 1px solid #ccc;
+}
+
+.input-box input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    outline: none;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.input-box input:focus {
+    border-color: #007bff;
+}
+
+.input-box button {
+    margin-left: 10px;
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.input-box button:hover {
+    background-color: #0056b3;
+    transform: scale(1.1); /* Slight scaling effect */
+}
+
+/* Minimized State Text */
+.chatbot-header span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Add Animation */
+.chatbot-container {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
