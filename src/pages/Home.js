@@ -1,15 +1,36 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Garage from "../pages/Garage";
-//import BannerImage from "../assets/pizza.jpeg";
 import "../styles/Home.css";
 
 function Home() {
   return (
     <div className="home">
-      <div className="headerContainer">
-        <h1> CarJourney </h1>
-        <Garage/>
+      {/* Hero Section */}
+      <div className="hero-section">
+        <div className="hero-text">
+          <h1>Welcome to CarJourney</h1>
+          <p>Discover the car that fits your lifestyle or locate trusted dealers nearby.</p>
+        </div>
+      </div>
+
+      {/* Features Section */}
+      <div className="features-section">
+        <div className="features">
+          <div className="feature">
+            <h3>Car Quiz</h3>
+            <p>Take our quiz to find the car that matches your lifestyle and preferences.</p>
+            <Link to="/car-quiz" className="cta-button">
+              Take the Quiz
+            </Link>
+          </div>
+          <div className="feature">
+            <h3>Locate Dealers</h3>
+            <p>Find trusted car dealerships near you with our dealer locator.</p>
+            <Link to="/locate-dealer" className="cta-button">
+              Locate Dealers
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

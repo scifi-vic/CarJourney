@@ -1,3 +1,101 @@
+/* General Styles */
 .home {
-    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+    color: #242058;
+}
+
+/* Hero Section */
+.hero-section {
+    background-image: url('../assets/hero-image.jpg');
+    position: relative;
+    height: 50vh; /* Adjust height as needed */
+    background-size: cover; /* Ensures the image covers the area */
+    background-position: center 70%; /* Focuses on the car */
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+}
+
+/* For portrait orientation (tall screens) */
+@media (max-aspect-ratio: 1/1) {
+    .hero-section {
+        background-position: center 60%; /* Shifts focus upwards for portrait screens */
+    }
+}
+
+/* For landscape orientation (wide screens) */
+@media (min-aspect-ratio: 3/2) {
+    .hero-section {
+        background-position: center 68%; /* Adjusts focus to keep the car visible */
+    }
+}
+
+.hero-text h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.hero-text p {
+    font-size: 1.25rem;
+    margin-bottom: 0;
+}
+
+/* Features Section */
+.features-section {
+    padding: 50px 20px;
+    background-color: #f5f5f5;
+    text-align: center;
+}
+
+.features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.feature {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 300px;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.feature:hover {
+    transform: scale(1.05);
+}
+
+.feature h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: rgb(36, 32, 88);
+}
+
+.feature p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+
+/* Call-to-Action Button */
+.cta-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #7c47db;
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.cta-button:hover {
+    background-color: #5b36a4;
+    transform: scale(1.05);
 }

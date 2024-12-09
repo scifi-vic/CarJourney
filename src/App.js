@@ -8,7 +8,8 @@ import MessagePage from './components/MessagePage';
 import SideBarDrawer from './components/SideBarDrawer';
 import './styles/Footer.css'; // Ensure CSS is imported to apply the styles
 import UserInbox from './components/UserInbox';
-import { auth } from './firebaseConfig'; 
+import { auth } from './firebaseConfig';
+import Chatbot from './components/Chatbot'; // Import the Chatbot component
 
 // Lazy load page components
 const Home = lazy(() => import('./pages/Home'));
@@ -34,7 +35,6 @@ const AdvancedSearchPage = lazy(() => import('./pages/AdvancedSearchPage'));
 const CarListingPage = lazy(() => import('./pages/CarListingPage')); // New CarListingPage
 const ContactSeller = lazy(() => import('./pages/ContactSeller'));
 const CustomerTestimonials = lazy(() => import('./pages/CustomerTestimonials'));
-
 
 function App() {
   // Load initial profile picture from localStorage or use default if not found
@@ -75,14 +75,16 @@ function App() {
               <Route path="/results" element={<ResultsPage />} />
               <Route path="/car-quiz" element={<CarQuiz />} />
               <Route path="/locate-dealer" element={<LocateDealer />} />
-              <Route path="/user" element={<User profilePicture={profilePicture} setProfilePicture={setProfilePicture} />}
-/>
+              <Route path="/user" element={<User profilePicture={profilePicture} setProfilePicture={setProfilePicture} />}/>
             </Routes>
           </Suspense>
         </Box>
 
         {/* Footer */}
         <Footer />
+
+        {/* Chatbot */}
+        <Chatbot /> {/* Add the chatbot component here */}
       </Box>
     </Router>
   );

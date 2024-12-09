@@ -6,16 +6,25 @@ const Chatbot = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [isMinimized, setIsMinimized] = useState(false);
-    const [isVisible, setIsVisible] = useState(true); // Add visibility state
+    const [isVisible, setIsVisible] = useState(true);
+
+    // Greeting message for the chatbot
+    const greetingMessage = {
+        text: "👋 Hi there! I'm here to help you. Ask me a question and I'll do my best to assist you!",
+        sender: 'bot',
+    };
 
     // Initialize chatbot with a greeting message
     useEffect(() => {
-        const greetingMessage = {
-            text: "👋 Hi there! I'm here to help you. Ask me a question and I'll do my best to assist you!",
-            sender: 'bot',
-        };
         setMessages([greetingMessage]);
     }, []);
+
+    const parseApiResponse = (response) => {
+        return (
+            response?.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+            'No response from API.'
+        );
+    };
 
     const sendMessage = async () => {
         if (!input.trim()) return;
@@ -30,9 +39,7 @@ const Chatbot = () => {
                 {
                     contents: [
                         {
-                            parts: [
-                                { text: input },
-                            ],
+                            parts: [{ text: input }],
                         },
                     ],
                 },
@@ -42,12 +49,14 @@ const Chatbot = () => {
                 }
             );
 
-            const botMessage =
-                response?.data?.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from API.';
+            const botMessage = parseApiResponse(response);
             setMessages([...newMessages, { text: botMessage, sender: 'bot' }]);
         } catch (error) {
             console.error('Error communicating with Gemini API:', error.response?.data || error.message);
-            setMessages([...newMessages, { text: 'Sorry, something went wrong.', sender: 'bot' }]);
+            const errorMessage = error.response
+                ? 'The chatbot is currently unavailable. Please try again later.'
+                : 'Network error. Please check your connection.';
+            setMessages([...newMessages, { text: errorMessage, sender: 'bot' }]);
         }
     };
 
@@ -57,7 +66,15 @@ const Chatbot = () => {
         }
     };
 
-    if (!isVisible) return null; // Hide the chatbot when not visible
+    // Auto-scroll to the latest message
+    useEffect(() => {
+        const chatbox = document.querySelector('.chatbox');
+        if (chatbox) {
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    }, [messages]);
+
+    if (!isVisible) return null;
 
     return (
         <div className={`chatbot-container ${isMinimized ? 'minimized' : ''}`}>
@@ -89,8 +106,11 @@ const Chatbot = () => {
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={handleKeyDown}
                             placeholder="Type your message..."
+                            aria-label="Chat input"
                         />
-                        <button onClick={sendMessage}>Send</button>
+                        <button onClick={sendMessage} aria-label="Send message">
+                            Send
+                        </button>
                     </div>
                 </>
             )}
