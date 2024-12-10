@@ -1,42 +1,50 @@
 // src/pages/Add-Car.js
 import React, { useState, useEffect } from "react";
-import { ref, uploadString, getDownloadURL } from "firebase/storage";
-import { doc, setDoc, addDoc, collection } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import "./../styles/Add-Car.css";
+import { useNavigate } from "react-router-dom";
 
 // Add car
 const AddCar = () => {
     // Initialize variables
     const [activeTab, setActiveTab] = useState("VIN");  // Start as the VIN Tab
-    const [carImage, setCarImage] = useState("");
-    const [year, setYear] = useState("");
-    const [make, setMake] = useState("");
-    const [category, setCategory] = useState("");
-    const [series, setSeries] = useState("");
-    const [model, setModel] = useState("");
-    const [price, setPrice] = useState("");
-    const [mileage, setMileage] = useState("");
-    const [zipCode, setZipCode] = useState("");
-    const [color, setColor] = useState("");
-    const [engine, setEngine] = useState("");
-    const [doors, setDoors] = useState("");
-    const [displacement, setDisplacement] = useState("");
-    const [driveType, setDriveType] = useState("");
+    const navigate = useNavigate();
 
     // Messages
-    const [message, setMessage] = useState("");
     const [error, setError] = useState("");
 
     // VIN
     const [vin, setVin] = useState("");
     const [loading, setLoading] = useState(false);
+    const [vinDetails, setVinDetails] = useState(null);
+    const [vinData, setVinData] = useState({
+      image: "",
+      year: "",
+      make: "",
+      model: "",
+      price: "",
+      mileage: "",
+      zipCode: "",
+      color: "",
+      engine: "",
+    });
 
     // Results Section
     const [showResults, setShowResults] = useState(false);
-    const [results, setResults] = useState([]);
+    const [makeModelData, setMakeModelData] = useState({
+      image: "",
+      year: "",
+      make: "",
+      model: "",
+      price: "",
+      mileage: "",
+      zipCode: "",
+      color: "",
+      engine: "",
+    });
 
-    // Color
+    // Colors
     const colors = [
       { name: "Beige", hex: "#F5F5DC" },
       { name: "Black", hex: "#000000" },
@@ -77,7 +85,8 @@ const AddCar = () => {
     const [yearList, setYearList] = useState([]); // Available years
     const [makeList, setMakeList] = useState([]); // Available makes for the selected year
     const [modelList , setModelList] = useState([]); // Available models for the selected make and year
-  
+    const [loadingModels, setLoadingModels] = useState(false);  // Loading state for Models
+
     // Generate a range of years between 1992 and the current year
     const getYearRange = () => {
       const currentYear = new Date().getFullYear();
@@ -96,7 +105,7 @@ const AddCar = () => {
   
     // Fetch Makes for Selected Year
     useEffect(() => {
-      if (year) {
+      if (makeModelData.year) {
         fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/GetMakesForVehicleType/car?format=json`)
           .then((response) => response.json())
           .then((data) => {
@@ -106,62 +115,103 @@ const AddCar = () => {
           })
           .catch((error) => console.error("Error fetching makes:", error));
       }
-    }, [year]);
+    }, [makeModelData.year]);
   
     // Fetch Models for Selected Make and Year
     useEffect(() => {
-      if (year && make) {
+      if (makeModelData.year && makeModelData.make) {
+        setLoadingModels(true); // Start loading
         fetch(
-          `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/${make}/modelyear/${year}?format=json`
+          `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/${makeModelData.make}/modelyear/${makeModelData.year}?format=json`
         )
           .then((response) => response.json())
           .then((data) => {
             const modelValues = data.Results.map((item) => item.Model_Name);
             setModelList(modelValues);
+            setLoadingModels(false); // End loading
           })
           .catch((error) => console.error("Error fetching models:", error));
+          setLoadingModels(false); // End loading even on error
       }
-    }, [year, make]);
+    }, [makeModelData.year, makeModelData.make]);
 
     // Handle images
     const handleImageChange = (e) => {
       const file = e.target.files[0];
       const reader = new FileReader();
 
+      // Read Image
       reader.onloadend = () => {
-        setCarImage(reader.result); // Save Base64 string to state
+
+        if (activeTab === "VIN") {
+          setVinData((prevState) => ({
+            ...prevState,
+            image: reader.result, // Save Base64 string to makeModelData
+          }));
+
+        } else if (activeTab === "Make/Model") {
+          setMakeModelData((prevState) => ({
+            ...prevState,
+            image: reader.result, // Save Base64 string to makeModelData
+          }));
+        }
+
       };
 
+      // Convert Image
       if (file) {
           reader.readAsDataURL(file); // Convert image to Base64
       }
+
     };
 
+    // Handle Image File Click
     const handleImageClick = () => {
       document.getElementById('car-image-input').click();
     };
 
     // Handle Go Button
     const handleGo = () => {
-      if (activeTab === "VIN" && vin) {
-        setResults({
-          vin,
-          message: "VIN Results: Successfully fetched!",
+      setShowResults(true); // Show the results section
+    };
+
+    // Determine if the "Go" button should be enabled
+    const enableGoButton =
+      !loadingModels && // Ensure models are not loading
+      makeModelData.year && // Year is required
+      makeModelData.make && // Make is required
+      makeModelData.mileage && // Mileage is required
+      makeModelData.zipCode && // ZIP Code is required
+      (modelList.length === 0 || makeModelData.model); // Either no models available, or a model is selected
+      
+    // Handle Back Button (Reset Data)
+    const handleBack = () => {
+      if (activeTab === "VIN") {
+        // Reset vinData
+        setVinData({
+          ...vinData,
+          image: "",
+          mileage: "",
+          zipCode: "",
+          color: "",
+          price: "",
         });
-      } else if (activeTab === "Make/Model" && make && model && year) {
-        setResults({
-          year,
-          make,
-          model,
-          mileage,
-          zipCode,
-          price,
-          color,
-           engine,
-          message: "Make/Model Results: Successfully added!",
+        // Reset vinDetails
+        setVinDetails(null);
+
+      } else if (activeTab === "Make/Model") {
+        // Reset makeModelData
+        setMakeModelData({
+          ...makeModelData,
+          image: "",
+          engine: "",
+          color: "",
+          price: "",
         });
       }
-      setShowResults(true); // Show the results section
+
+      // Unshow Results Section
+      setShowResults(false);
     };
 
     // Handle VIN
@@ -183,16 +233,24 @@ const AddCar = () => {
         .then((response) => response.json())
         .then((data) => {
             const results = data.Results;
-            console.log(results);
-            setMake(results.find((r) => r.Variable === "Make")?.Value || "Unknown");
-            setModel(results.find((r) => r.Variable === "Model")?.Value || "Unknown");
-            setYear(results.find((r) => r.Variable === "Model Year")?.Value || "Unknown");
-            setCategory(results.find((r) => r.Variable === "Body Class")?.Value || "Unknown");
-            setSeries(results.find((r) => r.Variable === "Series")?.Value || "Unknown");
-            setDoors(results.find((r) => r.Variable === "Doors")?.Value || "Unknown");
-            setEngine(results.find((r) => r.Variable === "Engine Number of Cylinders")?.Value || "Unknown");
-            setDisplacement(results.find((r) => r.Variable === "Displacement (L)")?.Value || "Unknown");
-            setDriveType(results.find((r) => r.Variable === "Drive Type")?.Value || "Unknown");
+            console.log(data.Results)
+            const make = results.find((r) => r.Variable === "Make")?.Value || "Unknown";
+            const model = results.find((r) => r.Variable === "Model")?.Value || "Unknown";
+            const year = results.find((r) => r.Variable === "Model Year")?.Value || "Unknown";
+            const category = results.find((r) => r.Variable === "Body Class")?.Value || "Unknown";
+            const series = results.find((r) => r.Variable === "Series")?.Value || "Unknown";
+            const doors = results.find((r) => r.Variable === "Doors")?.Value || "Unknown";
+            const engine = results.find((r) => r.Variable === "Engine Number of Cylinders")?.Value || "Unknown";
+            const displacement = results.find((r) => r.Variable === "Displacement (L)")?.Value || "Unknown";
+            const transmission = results.find((r) => r.Variable === "Transmission Style")?.Value || "Unknown";
+            const transmissionSpeed = results.find((r) => r.Variable === "Transmission Speeds")?.Value || "Unknown";
+            const driveType = results.find((r) => r.Variable === "Drive Type")?.Value || "";
+
+            if (make && model && year) {
+              setVinDetails({ make, model, year, category, series, doors, engine, displacement, transmission, transmissionSpeed, driveType});
+            } else {
+              setError("Failed to fetch car details. Please check the VIN.");
+            }
 
             // Trigger handleGo after successful lookup
             handleGo();
@@ -208,54 +266,55 @@ const AddCar = () => {
 
   {/* Handle Save Search */}
   // Handle Save Search
-  const handleAddCars = async () => {
-    // Save Filters to Storage
-    const carInfo = {
-      image: carImage || "/assets/no-image.png", // No Image Placeholder
-      year: year,
-      make: make,
-      category: category,
-      series: series,
-      model: model,
-      doors: doors,
-      driveType: driveType,
-      price: price,
-      mileage: mileage,
-      zipCode: zipCode,
-      color: color,
-      engine:  engine,
-      owner_id: auth.currentUser.uid,
-      forSale: false
-    };
+  const handleAddCars = () => {
+    // Empty Array
+    const carInfo = {};
+
+    // Check activeTab and populate carInfo accordingly
+    if (activeTab === "VIN") {  // VIN uses values from vinData and vinDetails respectfully
+      carInfo.image = vinData.image; // If you save the image in vinData
+      carInfo.year = vinDetails.year;
+      carInfo.make = vinDetails.make;
+      carInfo.model = vinDetails.model;
+      carInfo.price = vinData.price;
+      carInfo.mileage = vinData.mileage;
+      carInfo.zipCode = vinData.zipCode;
+      carInfo.color = vinData.color?.name; // Assuming vinData.color contains {name, hex}
+      carInfo.engine = "V" + vinDetails.engine;
+
+    } else if (activeTab === "Make/Model") {
+      carInfo.image = makeModelData.image; // If you save the image in makeModelData
+      carInfo.year = makeModelData.year;
+      carInfo.make = makeModelData.make;
+      carInfo.model = makeModelData.model;
+      carInfo.price = makeModelData.price;    
+      carInfo.mileage = makeModelData.mileage;
+      carInfo.zipCode = makeModelData.zipCode;
+      carInfo.color = makeModelData.color?.name; // Assuming makeModelData.color contains {name, hex}
+      carInfo.engine = makeModelData.engine;
+
+    }
 
     // Take existing cars
-    // const existingCars = JSON.parse(localStorage.getItem("addedCars")) || [];
+    const existingCars = JSON.parse(localStorage.getItem("addedCars")) || [];
 
-    // // Give unique IDs to each car added
-    // const newId = existingCars.length > 0 
-    //   ? Math.max(...existingCars.map((s) => s.id)) + 1 
-    //   : 1;
+    // Give unique IDs to each car added
+    const newId = existingCars.length > 0 
+      ? Math.max(...existingCars.map((s) => s.id)) + 1 
+      : 1;
     
-    // // Renew array
-    // const newCar = {
-    //   id: newId,
-    //   ...carInfo,
-    // };
+    // Renew array
+    const newCar = {
+      id: newId,
+      ...carInfo,
+    };
 
-    // const updatedCars = [newCar, ...existingCars];
+    const updatedCars = [newCar, ...existingCars];
 
-    // localStorage.setItem("addedCars", JSON.stringify(updatedCars));
-      
-    await addDoc(collection(db, "cars"), carInfo);
-  
-    // Optionally reset the input fields
-    setMileage("");
-    setZipCode("");
-    setPrice("");
-    setColor("");
-    setCarImage(null);
+    localStorage.setItem("addedCars", JSON.stringify(updatedCars));
 
-    alert("Car added successfully!");
+    // Navigate to "My Cars"
+    navigate("/my-cars");
   };
 
   // Tab configuration object
@@ -292,8 +351,8 @@ const AddCar = () => {
         <div className="make-input-container">
           {/* Year Dropdown */}
           <select
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
+            value={makeModelData.year}
+            onChange={(e) => setMakeModelData({ ...makeModelData, year: e.target.value, make: "", model: "" })}
             disabled={!yearList.length}
             className="make-input"
           >
@@ -309,8 +368,10 @@ const AddCar = () => {
 
           {/* Make Dropdown */}
           <select
-            value={make}
-            onChange={(e) => { setMake(e.target.value); setModel("")}}
+            value={makeModelData.make}
+            onChange={ (e) => { // Make value and reset Model whenever Make changes
+              setMakeModelData({ ...makeModelData, make: e.target.value, model: "" }); 
+            }}
             disabled={!makeList.length}
             className="make-input"
           >
@@ -326,8 +387,8 @@ const AddCar = () => {
 
           {/* Model Dropdown */}
           <select 
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
+            value={makeModelData.model}
+            onChange={(e) => setMakeModelData({ ...makeModelData, model: e.target.value })}
             disabled={!modelList.length} 
             className="make-model-input">
             <option value="" disabled>
@@ -348,18 +409,18 @@ const AddCar = () => {
             name="mileage"
             id="mileage"
             placeholder="Mileage"
-            value={mileage}
+            value={makeModelData.mileage}
             className="make-input"
-            onChange={(e) => setMileage(e.target.value)}
+            onChange={(e) => setMakeModelData({ ...makeModelData, mileage: e.target.value })}
           />
           <input
             type="number"
             name="zipCode"
             id="zipCode"
             placeholder="ZIP Code"
-            value={zipCode}
+            value={makeModelData.zipCode}
             className="make-input"
-            onChange={(e) => setZipCode(e.target.value)}
+            onChange={(e) => setMakeModelData({ ...makeModelData, zipCode: e.target.value })}
           />
 
           { /* Button */ }
@@ -367,7 +428,7 @@ const AddCar = () => {
             type="button" 
             className="make-go-btn" 
             onClick={handleGo}
-            disabled={!year || !make || !mileage ||!zipCode }
+            disabled={!enableGoButton}
             >
             Go
           </button>
@@ -380,83 +441,111 @@ const AddCar = () => {
 
   // Results Section
   const resultsSection = {
-    "VIN": (results) => (
+    "VIN": () => (
       // VIN Results Screen
       <div className="vin-results">
         <p className="vin-details-text">Car Details</p>
         <p className="vin-vin-text">VIN: <strong>{vin}</strong></p>
-        <p className="vin-car-text">{year} {make} {model}</p>
-        <div className="vin-extra-details">
-          <p>Category: <strong>{category}</strong></p>
+        <p className="vin-car-text">{vinDetails.year} {vinDetails.make} {vinDetails.model}</p>
 
-          { series &&  category &&  doors &&
-          <p>Style: <strong>{series} {category} {doors}D</strong>
+        { /* Extra Details */}
+        <p className="vin-extra-description"> Here's what we got from your VIN number.</p>
+        <div className="vin-extra-details">
+          <p>Category: <strong>{vinDetails.category}</strong></p>
+
+          {vinDetails.series && vinDetails.category && vinDetails.doors &&
+          <p>Style: <strong>{vinDetails.series} {vinDetails.category} {vinDetails.doors}D</strong>
           </p>}
 
-          <p>Engine: <strong>V{ engine}, { displacement} Liter</strong></p>
-          { driveType && <p>Drive Type: <strong>{ driveType}</strong></p>}
+          <p>Engine: <strong>V{vinDetails.engine}, {vinDetails.displacement} Liter</strong></p>
+          <p>Transmission: <strong>{vinDetails.transmission}
+              {vinDetails.transmissionSpeed && `, ${vinDetails.transmissionSpeed}-Spd`}
+            </strong>
+          </p>
+          {vinDetails.driveType && <p>Drive Type: <strong>{vinDetails.driveType}</strong></p>}
         </div>
 
-        <p className="vin-additional-details">Additional Details</p>
-        
-        { /* Input */ }
-        <div className="vin-extra-inputs">
+        { /* Image */ }
+        <p className="vin-image-text">What does Your Vehicle Look Like?</p>
 
-          { /* Image */ }
+        <div className="vin-image-container">
+
           <div className="vin-image-upload" onClick={handleImageClick}>
-            {carImage ? (
-              <img src={carImage} alt="Car Preview" />
+            {vinData.image ? (
+              <img src={vinData.image} alt="Car Preview" />
             ) : (
               <span>Click to add image</span>
             )}
           <input id="car-image-input" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }}/>
           </div>
+    
+        </div>
+
+        { /* Color Selector */ }
+        <p className="vin-color">What Color is Your Vehicle?</p>
+
+        <div className="color-grid">
+          {colors.map((selectedColor) => (
+            <div
+              key={selectedColor.name}
+              className={`color-box ${vinData.color?.name === selectedColor.name ? "selected" : ""}`}
+              onClick={() => setVinData({ ...vinData, color: selectedColor })}
+            >
+              <div className="color-swatch" style={{ backgroundColor: selectedColor.hex }}></div>
+              <p className="color-name">{selectedColor.name}</p>
+            </div>
+          ))}
+        </div>
+
+        { /* Price */ }
+        <p className="vin-price">What's Your Desired Price?</p>
+
+        <p className="vin-price-description">
+          The price for your vehicle is listed in <span>dollars</span> (<span>$</span>).
+        </p>
+
+        <div className="price-container">
+          <p className="price-symbol">$</p>
+          <input
+            type="number"
+            placeholder="Price"
+            value={vinData.price}
+            onChange={(e) => setVinData({ ...vinData, price: e.target.value })}
+            className="price-input"
+          />
+        </div>
+
+        { /* Mileage and ZIP Code */ }
+        <p className="vin-extra-text">What's Your Mileage and ZIP Code?</p>
           
-          { /* Additional Details */ }
           <div className="vin-additional-input">
+            { /* Mileage */ }
             <input
               type="number"
               className="vin-input-btn"
               placeholder="Mileage"
-              value={mileage}
-              onChange={(e) => setMileage(e.target.value)}
+              value={vinData.mileage}
+              onChange={(e) => setVinData({ ...vinData, mileage: e.target.value })}
             />
-            <input
-              type="number"
-              className="vin-input-btn"
-              placeholder="ZIP Code"
-              value={zipCode}
-              onChange={(e) => setZipCode(e.target.value)}
-            />
-          </div>
-
-          <div className="vin-additional-input">
+            { /* ZIP Code */ }
             <input
                 type="number"
                 className="vin-input-btn"
-                placeholder="Price"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-            />
-            <input
-              type="text"
-              className="vin-input-btn"
-              placeholder="Color"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
+                placeholder="ZIP Code"
+                value={vinData.zipCode}
+                onChange={(e) => setVinData({ ...vinData, zipCode: e.target.value })}
             />
           </div>
 
-        </div>
 
         { /* Button */ }
         <div className="vin-buttons">
-          <button className="back-button" onClick={() => {setShowResults(false); }}>
+          <button className="back-button" onClick={handleBack}>
             Back
           </button>
           <button 
             className="add-button"
-            disabled={!vin || !mileage || !zipCode || !price || !color}
+            disabled={!vin || !vinData.mileage || !vinData.zipCode || !vinData.price || !vinData.color}
             onClick={handleAddCars}>
             Add
           </button>
@@ -465,17 +554,17 @@ const AddCar = () => {
       </div>
     ),
 
-    "Make/Model": (results) => (
+    "Make/Model": () => (
       // Make/Model Results Section
       <div className="make-results">
         <p className="make-details-text">Car Details</p>
-        <p className="make-car-text">{results.year} {results.make} {results.model}</p>
+        <p className="make-car-text">{makeModelData.year} {makeModelData.make} {makeModelData.model}</p>
 
         { /* Description */ }
         <p className="make-extra-description"> Here's what you inputted.</p>
         <div className="make-extra-details">
-          <p>Mileage: <strong>{Number(results.mileage).toLocaleString()}</strong> miles</p>
-          <p>ZIP Code: <strong>{results.zipCode}</strong></p>
+          <p>Mileage: <strong>{Number(makeModelData.mileage).toLocaleString()}</strong> miles</p>
+          <p>ZIP Code: <strong>{makeModelData.zipCode}</strong></p>
         </div>
 
         { /* Image */ }
@@ -484,8 +573,8 @@ const AddCar = () => {
         <div className="make-image-container">
 
           <div className="make-image-upload" onClick={handleImageClick}>
-            {carImage ? (
-              <img src={carImage} alt="Car Preview" />
+            {makeModelData.image ? (
+              <img src={makeModelData.image} alt="Car Preview" />
             ) : (
               <span>Click to add image</span>
             )}
@@ -495,7 +584,7 @@ const AddCar = () => {
         </div>
 
         { /* Engine */ }
-        <p className="make-engine">What is Your Vehicle's Engine?</p>
+        <p className="make-engine">What's Your Vehicle's Engine?</p>
         <p className="make-engine-description">
           Engines are described with "<span>V#</span> notation", where # represents the number of cylinders
         </p>
@@ -504,14 +593,14 @@ const AddCar = () => {
         {engines.map((engine) => (
           <label
             key={engine}
-            className={`engine-box ${ engine === engine ? "selected" : ""}`}
+            className={`engine-box ${makeModelData.engine === engine ? "selected" : ""}`}
           >
             <input
               type="radio"
               name="engine"
               value={engine}
-              checked={ engine === engine}
-              onChange={() => setEngine(engine)}
+              checked={makeModelData.engine === engine}
+              onChange={(e) => setMakeModelData({ ...makeModelData, engine: e.target.value })}
             />
             {engine}
           </label>
@@ -525,8 +614,8 @@ const AddCar = () => {
           {colors.map((selectedColor) => (
             <div
               key={selectedColor.name}
-              className={`color-box ${color === selectedColor.name ? "selected" : ""}`}
-              onClick={() => setColor(selectedColor.name)}
+              className={`color-box ${makeModelData.color?.name === selectedColor.name ? "selected" : ""}`}
+              onClick={() => setMakeModelData({ ...makeModelData, color: selectedColor })}
             >
               <div className="color-swatch" style={{ backgroundColor: selectedColor.hex }}></div>
               <p className="color-name">{selectedColor.name}</p>
@@ -535,9 +624,9 @@ const AddCar = () => {
         </div>
         
         { /* Price */ }
-        <p className="make-price">What is Your Desired Price?</p>
+        <p className="make-price">What's Your Desired Price?</p>
 
-        <p className="make-engine-description">
+        <p className="make-price-description">
           The price for your vehicle is listed in <span>dollars</span> (<span>$</span>).
         </p>
 
@@ -546,20 +635,20 @@ const AddCar = () => {
           <input
             type="number"
             placeholder="Price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            value={makeModelData.price}
+            onChange={(e) => setMakeModelData({ ...makeModelData, price: e.target.value })}
             className="price-input"
           />
         </div>
 
         { /* Button */ }
         <div className="make-buttons">
-          <button className="back-button" onClick={() => {setShowResults(false); }}>
+          <button className="back-button" onClick={handleBack}>
             Back
           </button>
           <button 
             className="add-button"
-            disabled={!carImage || ! engine || !color || !price }
+            disabled={!makeModelData.image || !makeModelData.engine || !makeModelData.color || !makeModelData.price }
             onClick={handleAddCars}>
             Add
           </button>
@@ -627,7 +716,7 @@ const AddCar = () => {
             ) : (
 
             // Dynamically render the results section based on the active tab
-            resultsSection[activeTab](results)
+            resultsSection[activeTab]()
           
             )}
             

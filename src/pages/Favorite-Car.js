@@ -45,13 +45,20 @@ const FavoriteList = () => {
 
       {/* Main Content */}
       <main>
-        <div className="container car-details">
-          <h2>Favorited Cars</h2>
-          <div id="favorite-cars-container" className="car-list">
-            {favorites.length === 0 ? (
-              <p>No favorited cars found.</p>
-            ) : (
-              favorites.map((car) => (
+        {favorites.length === 0 ? (
+          <div className="no-cars-container">
+            <p className="no-cars-text">No Favorited Cars Found</p>
+            <p className="no-cars-instructions">Save the cars you like by organizing them here in just one click!</p>
+            <p className="no-cars-instructions">Here's how:</p>
+            <p className="no-cars-steps"><strong>Step 1:</strong> Go to any listed car and visit its page.</p>
+            <p className="no-cars-steps"><strong>Step 2:</strong> Click on the "Save" button next to the "Contact Seller".</p>
+            <p className="no-cars-steps"><strong>Step 3:</strong> Your favorited car should save here.</p>
+          </div>  
+        ) : (
+          <div className="container car-details">
+            <h2>Favorited Cars</h2>
+            <div id="favorite-cars-container" className="car-list">
+              {favorites.map((car) => (
                 <div key={car.id} className="car-item">
                   <div className="car-image">
                     <a href={`car-listing?make=${car.make}&model=${car.model}`}>
@@ -68,7 +75,7 @@ const FavoriteList = () => {
                       <h3>{car.make} {car.model}</h3>
                       <p className="car-cost">${Number(car.cost).toLocaleString()}</p>
                     </div>
-                    <p className="odometer">{Number(car.odometer).toLocaleString()} miles</p> 
+                    <p className="odometer">{Number(car.odometer).toLocaleString()} miles</p>
                     <p className="seller">{car.seller}</p>
                     <p className="contact-seller">
                       <a href="contact-seller" className="contact-seller-link">
@@ -77,10 +84,10 @@ const FavoriteList = () => {
                     </p>
                   </div>
                 </div>
-              ))
-            )}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </main>
 
     </div>
