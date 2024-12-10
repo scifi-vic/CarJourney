@@ -100,7 +100,39 @@
     color: #0d47a1; /* Change the text color to your desired color */
     background-color: transparent; /* This removes the blue background on hover */
   }
-  
+
+/* No Cars Found Section */
+/* Main Section Styling */
+.no-cars-container {
+  display: grid;
+  align-items: center;
+  justify-content: left;
+  max-width: 800px;
+  margin: 0 auto;
+  margin-left: 370px;
+  margin-top: 40px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.no-cars-text {
+  font-size: 2em;
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+.no-cars-instructions {
+  font-size: 1.1em;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.no-cars-steps {
+  font-size: 1em;
+  color: #333;
+  margin-bottom: 10px;
+}
+
 /* Car Details Section */
 .car-details {
     background-color: #fff;

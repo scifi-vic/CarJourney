@@ -261,6 +261,14 @@
     margin-top: 2px;
   }
 
+  /* VIN Description */
+  .vin-extra-description {
+    margin-top: 5px;
+    font-size: 0.9em;
+    font-weight: 700;
+    color: gray;
+  }
+
   .vin-car-text {
     font-size: 2em;
     font-weight: 900;
@@ -278,26 +286,25 @@
     color: #000000;
   }
 
-  .vin-additional-details {
-    font-size: 2em;
+  /* Images */
+  .vin-image-text {
+    font-size: 2.5em;
     color: #000000;
     font-weight: 900;
-    margin-top: 40px;
+    margin-top: 30px;
   }
 
-  /* Three-column layout for inputs */
-  .vin-extra-inputs {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* Three equal columns */
-    gap: 10px; /* Add spacing between columns */
-    align-items: start; /* Align items to the top */
+  /* Image Container */
+  .vin-image-container {
+    display: flex;
+    justify-content: center;
     margin-top: 20px;
   }
 
   /* Styling for the image button */
   .vin-image-upload {
-    height: 150px;
-    width: 300px;
+    height: 250px;
+    width: 500px;
     background-color: #e0e0e0;
     display: flex;
     justify-content: center;
@@ -322,14 +329,50 @@
     border-radius: 8px;
   }
 
+  /* Color Selector */
+  .vin-color {
+    font-size: 2.5em;
+    color: #000000;
+    font-weight: 900;
+    margin-top: 40px;
+  }
+
+  /* Price */
+  .vin-price {
+    font-size: 2.5em;
+    color: #000000;
+    font-weight: 900;
+    margin-top: 40px;
+  }
+
+  .vin-price-description {
+    font-size: 0.9em;
+    color: gray;
+    margin-top: 5px;
+  }
+
+  .vin-price-description span {
+    font-size: 0.9em;
+    color: gray;
+    font-weight: 800;
+  }
+
+  /* Mileage and ZIP Code */
+  .vin-extra-text {
+    font-size: 2.5em;
+    color: #000000;
+    font-weight: 900;
+    margin-top: 40px;
+  }
+
   /* Styling for input fields */
   .vin-additional-input {
     display: flex;
-    flex-direction: column; /* Stack inputs vertically */
-    justify-content: center; /* Center inputs vertically */
+    justify-content: space-between;
+    align-items: center;
     height: 100%; /* Match the height of the parent grid cell */
     gap: 20px;
-    max-width: 300px; /* Optional max width for responsiveness */
+    margin-top: 10px;
   }
 
   /* Input buttons (styled like buttons) */
@@ -362,7 +405,7 @@
   .vin-buttons {
     display: flex;
     justify-content: space-between; /* Positions buttons at opposite ends */
-    margin-top: 30px; /* Add some spacing above the buttons */
+    margin-top: 60px; /* Add some spacing above the buttons */
   }
 
   /* Back button styling */
@@ -733,11 +776,19 @@
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Subtle shadow on focus */
   }
 
+  /* Mileage and ZIP Code */
+  .make-price {
+    font-size: 2.5em;
+    color: #000000;
+    font-weight: 900;
+    margin-top: 40px;
+  }
+
   /* Container for the Make/Model Buttons */
   .make-buttons {
     display: flex;
     justify-content: space-between; /* Positions buttons at opposite ends */
-    margin-top: 50px; /* Add some spacing above the buttons */
+    margin-top: 60px; /* Add some spacing above the buttons */
   }
 
   /* Back button styling */

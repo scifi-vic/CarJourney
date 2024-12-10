@@ -100,12 +100,96 @@
     color: #0d47a1; /* Change the text color to your desired color */
     background-color: transparent; /* This removes the blue background on hover */
   }
+
+/* No Cars Found Section */
+.no-cars-container {
+    display: grid;
+    align-items: center;
+    justify-content: left;
+    max-width: 1000px;
+    margin: 0 auto;
+    margin-left: 370px;
+    margin-top: 40px;
+    font-family: 'Roboto', sans-serif;
+  }
   
+  .no-cars-text {
+    font-size: 2em;
+    font-weight: bold;
+    color: #000000;
+    margin-bottom: 10px;
+  }
+  
+  .no-cars-instructions {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 15px;
+  }
+
+/* Button Container */
+.redirect-button-container {
+    display: flex;
+    justify-content: left; /* Left-align buttons */
+    gap: 20px; /* Space between buttons */
+    margin-top: 5px;
+  }
+
+.add-car-button {
+    background-color: #ff6600;
+    color: #fff;
+    font-size: 1em;
+    font-weight: 550;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 150px;
+    height: 40px;
+}
+
+.add-car-button:hover {
+    background-color: #e55b00;
+}
+
+.favorite-car-button {
+    background-color: #fff;
+    color: #e67e22;
+    border: 2px solid #e67e22;
+    font-size: 1em;
+    font-weight: 550;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 150px;
+    height: 40px;
+}
+
+.saved-searches-button {
+    background-color: #fff;
+    color: #e67e22;
+    border: 2px solid #e67e22;
+    font-size: 1em;
+    font-weight: 550;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 150px;
+    height: 40px;
+}
+
+.favorite-car-button:hover, .saved-searches-button:hover {
+    background-color: white;
+    color: #e67e22;
+    border: 2px solid #e67e22;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
+}
+
 /* Main Section Styling */
 .car-amount {
     text-align: left;
     margin-top: 15px;
     max-width: 800px;
+    margin-left: 370px;
     margin-bottom: 15px;
     font-family: 'Roboto', sans-serif;
 }
@@ -170,7 +254,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 1090px;
-    margin: auto; /* Same margin as car-amount */
+    margin-left: 370px; /* Same margin as car-amount */
     display: flex;
     gap: 20px;
     align-items: stretch;
@@ -319,6 +403,15 @@
     display: flex;
     flex-direction: column;
 }
+
+/* Style for the horizontal line */
+.horizontal-line {
+    border: none; /* Remove default border styling */
+    border-top: 1.1px solid #ccc; /* Light gray line */
+    margin-top: 5px; /* Add spacing above  */
+    margin-bottom: 10px; /* Add spacing below  */
+    width: 100%; /* Full width */
+  }
 
 /* Style for the car details text */
 .car-details-text p {
