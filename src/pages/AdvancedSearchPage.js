@@ -16,7 +16,6 @@ const AdvancedSearchPage = () => {
   const [driveType, setDriveType] = useState('');
   const [color, setColor] = useState('');
   const [keyword, setKeyword] = useState('');
-  const [isCpo, setIsCpo] = useState(false);
   const [condition, setCondition] = useState('');
   const [features, setFeatures] = useState({
     bluetooth: false,
@@ -49,7 +48,6 @@ const AdvancedSearchPage = () => {
       driveType,
       color,
       keyword,
-      isCpo: isCpo ? 'true' : 'false',
       condition,
       ...Object.entries(features)
         .filter(([_, value]) => value)
@@ -64,6 +62,7 @@ const AdvancedSearchPage = () => {
       <h2>Advanced Search</h2>
       <form onSubmit={handleSearch} className="advanced-search-form">
 
+        {/* Keyword Search */}
         <div className="form-group">
           <label>Keyword</label>
           <input 
@@ -74,6 +73,7 @@ const AdvancedSearchPage = () => {
           />
         </div>
 
+        {/* Make and Model */}
         <div className="form-group">
           <label>Make</label>
           <select value={make} onChange={(e) => setMake(e.target.value)}>
@@ -99,6 +99,7 @@ const AdvancedSearchPage = () => {
           </select>
         </div>
 
+        {/* Vehicle Condition */}
         <div className="form-group">
           <label>Condition</label>
           <select value={condition} onChange={(e) => setCondition(e.target.value)}>
@@ -109,15 +110,7 @@ const AdvancedSearchPage = () => {
           </select>
         </div>
 
-        <div className="form-group checkbox-group">
-          <input 
-            type="checkbox" 
-            checked={isCpo} 
-            onChange={() => setIsCpo(!isCpo)} 
-          />
-          <label>Certified Pre-Owned</label>
-        </div>
-
+        {/* Price Range */}
         <div className="form-group">
           <label>Price Range</label>
           <select value={minPrice} onChange={(e) => setMinPrice(e.target.value)}>

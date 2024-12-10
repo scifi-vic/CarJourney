@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../styles/ResultsPage.css';
-import { NestCamWiredStand } from '@mui/icons-material';
 
 const ResultsPage = () => {
   const sampleCars = [
@@ -45,17 +44,17 @@ const ResultsPage = () => {
   const [model, setModel] = useState(queryParams.get('model') || '');
   const [zip, setZip] = useState(queryParams.get('location') || '');
   const [radius, setRadius] = useState('10'); 
-  const [minYear, setMinYear] = useState(queryParams.get('minYear') || '');
-  const [maxYear, setMaxYear] = useState(queryParams.get('maxYear') || '');
-  const [minPrice, setMinPrice] = useState(queryParams.get('minPrice') || '');
-  const [maxPrice, setMaxPrice] = useState(queryParams.get('maxPrice') || '');
-  const [mileage, setMileage] = useState(queryParams.get('mileage') || '');
-  const [transmission, setTransmission] = useState(queryParams.get('transmission') || '');
-  const [fuelType, setFuelType] = useState(queryParams.get('fuelType') || '');
-  const [driveType, setDriveType] = useState(queryParams.get('driveType') || '');
-  const [bodyStyle, setBodyStyle] = useState(queryParams.get('bodyStyle') || '');
-  const [engineType, setEngineType] = useState(queryParams.get('engineType') || '');
-  const [color, setColor] = useState(queryParams.get('color') || '');
+  const [minYear, setMinYear] = useState('');
+  const [maxYear, setMaxYear] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [mileage, setMileage] = useState('');
+  const [transmission, setTransmission] = useState('');
+  const [fuelType, setFuelType] = useState('');
+  const [driveType, setDriveType] = useState('');
+  const [bodyStyle, setBodyStyle] = useState('');
+  const [engineType, setEngineType] = useState('');
+  const [color, setColor] = useState('');
   const [savedCars, setSavedCars] = useState([]);
 
   useEffect(() => {
@@ -71,7 +70,7 @@ const ResultsPage = () => {
     setSavedCars(updatedSavedCars);
     localStorage.setItem('savedCars', JSON.stringify(updatedSavedCars));
   };
-  
+
   // Models based on selected make
   const modelsByMake = {
     Toyota: ['Camry', 'Corolla', 'RAV4'],
@@ -105,48 +104,6 @@ const ResultsPage = () => {
     );
   });
 
-  {/* Miguel's Code
-    Handle Save Search */}
-  // Save Filters to Storage
-  const filters = {
-    make: make,
-    model: model,
-    zipCode: zip,
-    distance: radius,
-    minYear: minYear, maxYear: maxYear,
-    minPrice: minPrice, maxPrice: maxPrice,
-    mileage: mileage,
-    transmission: transmission,
-    fuelType: fuelType,
-    driveType: driveType,
-    bodyStyle: bodyStyle,
-    engineType: engineType,
-    color: color,
-  };
-
-  // Handle Save Search
-  const handleSaveSearch = () => {
-    // Take existing searches
-    const existingSearches = JSON.parse(localStorage.getItem("savedSearches")) || [];
-
-    // Give unique IDs to each save added
-    const newId = existingSearches.length > 0 
-      ? Math.max(...existingSearches.map((s) => s.id)) + 1 
-      : 1;
-    
-    // Renew array
-    const newSearch = {
-      id: newId,
-      ...filters,
-    };
-
-    const updatedSearches = [newSearch, ...existingSearches];
-
-    localStorage.setItem("savedSearches", JSON.stringify(updatedSearches));
-    alert("Search saved!");
-  };
-
-
   return (
     <div className="results-page">
       <h2 className="results-title">Search Results</h2>
@@ -154,15 +111,6 @@ const ResultsPage = () => {
         
         {/* Filter Panel */}
         <div className="filter-panel">
-          {/* Save Search Button */}
-          <button
-              className="save-search-button"
-              onClick={handleSaveSearch}
-          >
-              Save Search
-          </button>
-          { /* End of Miguel's Code */}
-          
           <div className="form-section">
             <label>Make:</label>
             <select value={make} onChange={(e) => { setMake(e.target.value); setModel(''); }}>

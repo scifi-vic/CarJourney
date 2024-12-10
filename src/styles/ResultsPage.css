@@ -87,23 +87,3 @@
 .heart-icon:hover {
   color: #e74c3c;
 }
-
-/* Save Search Button */
-.save-search-button {
-  display: block;
-  margin-bottom: 20px;
-  padding: 10px 15px;
-  background-color: #e74c3c;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  text-align: center;
-  transition: background-color 0.3s ease;
-}
-
-.save-search-button:hover {
-  background-color: #c0392b;
-}
-

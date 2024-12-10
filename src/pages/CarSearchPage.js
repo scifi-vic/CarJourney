@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+/* global google */
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CarSearchPage.css';
 
@@ -6,7 +7,7 @@ const CarSearchPage = () => {
   const [make, setMake] = useState('');
   const [model, setModel] = useState('');
   const [location, setLocation] = useState('');
-  const [radius, setRadius] = useState('10');
+  const [distance, setDistance] = useState('10');
   const navigate = useNavigate();
 
   const modelsByMake = {
@@ -19,12 +20,75 @@ const CarSearchPage = () => {
     Mercedes: ['C-Class', 'E-Class', 'GLA'],
     Audi: ['A4', 'Q5', 'A6'],
     Hyundai: ['Elantra', 'Sonata', 'Tucson'],
-    Kia: ['Sorento', 'Sportage', 'Optima']
+    Kia: ['Sorento', 'Sportage', 'Optima'],
   };
+
+  useEffect(() => {
+    const loadGoogleMapsScript = () => {
+      const existingScript = document.getElementById('googleMaps');
+      if (!existingScript) {
+        console.log('Loading Google Maps API script...');
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`;
+        script.id = 'googleMaps';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => {
+          console.log('Google Maps API script loaded successfully.');
+          initializeAutocomplete();
+        };
+        script.onerror = () => {
+          console.error('Error loading Google Maps API script.');
+        };
+        document.body.appendChild(script);
+      } else {
+        console.log('Google Maps API script already loaded.');
+        initializeAutocomplete();
+      }
+    };
+
+    const initializeAutocomplete = () => {
+      const input = document.getElementById('location');
+      if (input) {
+        console.log('Initializing Google Places Autocomplete...');
+        const autocomplete = new google.maps.places.Autocomplete(input, {
+          types: ['(regions)'],
+          componentRestrictions: { country: 'us' },
+        });
+
+        autocomplete.addListener('place_changed', () => {
+          const place = autocomplete.getPlace();
+          if (place.geometry) {
+            setLocation(place.formatted_address);
+            console.log('Selected location:', place.formatted_address);
+          } else {
+            console.error('No geometry found for the selected place.');
+          }
+        });
+      } else {
+        console.error('Input element for location not found.');
+      }
+    };
+
+    loadGoogleMapsScript();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const query = new URLSearchParams({ make, model, location, radius }).toString();
+
+    if (!location) {
+      alert('Please select a valid location from the suggestions.');
+      return;
+    }
+
+    const query = new URLSearchParams({
+      make,
+      model,
+      location,
+      distance,
+    }).toString();
+
+    console.log('Navigating to results with query:', query);
     navigate(`/results?${query}`);
   };
 
@@ -39,10 +103,13 @@ const CarSearchPage = () => {
         <form onSubmit={handleSubmit} className="car-search-form">
           <div className="form-section">
             <label>Make:</label>
-            <select value={make} onChange={(e) => {
-              setMake(e.target.value);
-              setModel('');
-            }}>
+            <select
+              value={make}
+              onChange={(e) => {
+                setMake(e.target.value);
+                setModel('');
+              }}
+            >
               <option value="">Select Make</option>
               {Object.keys(modelsByMake).map((makeOption) => (
                 <option key={makeOption} value={makeOption}>
@@ -51,32 +118,41 @@ const CarSearchPage = () => {
               ))}
             </select>
           </div>
-          
+
           <div className="form-section">
             <label>Model:</label>
-            <select value={model} onChange={(e) => setModel(e.target.value)} disabled={!make}>
+            <select
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              disabled={!make}
+            >
               <option value="">Select Model</option>
-              {make && modelsByMake[make].map((modelOption) => (
-                <option key={modelOption} value={modelOption}>
-                  {modelOption}
-                </option>
-              ))}
+              {make &&
+                modelsByMake[make].map((modelOption) => (
+                  <option key={modelOption} value={modelOption}>
+                    {modelOption}
+                  </option>
+                ))}
             </select>
           </div>
-          
+
           <div className="form-section">
             <label>Location:</label>
             <input
               type="text"
+              id="location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="Enter ZIP code"
+              placeholder="Enter ZIP code or city"
             />
           </div>
 
           <div className="form-section">
-            <label>Radius:</label>
-            <select value={radius} onChange={(e) => setRadius(e.target.value)}>
+            <label>Distance:</label>
+            <select
+              value={distance}
+              onChange={(e) => setDistance(e.target.value)}
+            >
               <option value="10">10 miles</option>
               <option value="25">25 miles</option>
               <option value="50">50 miles</option>
@@ -86,8 +162,18 @@ const CarSearchPage = () => {
               <option value="500">500 miles</option>
             </select>
           </div>
-          <button type="submit" className="search-button">Search</button>
+
+          <button type="submit" className="search-button">
+            Search
+          </button>
         </form>
+
+        <button
+          onClick={handleAdvancedSearchRedirect}
+          className="advanced-search-button"
+        >
+          Advanced Search
+        </button>
       </div>
     </div>
   );
