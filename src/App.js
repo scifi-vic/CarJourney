@@ -63,6 +63,7 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/garage" element={<Garage />} />
               <Route path="/search" element={<CarSearchPage />} />
+              <Route path="/advanced-search" element={<AdvancedSearchPage />} />
               <Route path="/messaging" element={<MessagePage currentUserId={currentUserId}/>} />
               <Route path="/messaging/:chatId" element={<MessagePage currentUserId={currentUserId}/>} />
 

@@ -28,7 +28,10 @@ const AdvancedSearchPage = () => {
   const navigate = useNavigate();
 
   const handleFeatureChange = (feature) => {
-    setFeatures({ ...features, [feature]: !features[feature] });
+    setFeatures((prevFeatures) => ({
+      ...prevFeatures,
+      [feature]: !prevFeatures[feature],
+    }));
   };
 
   const handleSearch = (e) => {
@@ -61,19 +64,18 @@ const AdvancedSearchPage = () => {
     <div className="advanced-search-page">
       <h2>Advanced Search</h2>
       <form onSubmit={handleSearch} className="advanced-search-form">
-
         {/* Keyword Search */}
         <div className="form-group">
           <label>Keyword</label>
-          <input 
-            type="text" 
-            value={keyword} 
-            onChange={(e) => setKeyword(e.target.value)} 
+          <input
+            type="text"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
             placeholder="Enter keywords (e.g., sunroof, leather)"
           />
         </div>
 
-        {/* Make and Model */}
+        {/* Make */}
         <div className="form-group">
           <label>Make</label>
           <select value={make} onChange={(e) => setMake(e.target.value)}>
@@ -88,6 +90,7 @@ const AdvancedSearchPage = () => {
           </select>
         </div>
 
+        {/* Model */}
         <div className="form-group">
           <label>Model</label>
           <select value={model} onChange={(e) => setModel(e.target.value)} disabled={!make}>
@@ -99,7 +102,7 @@ const AdvancedSearchPage = () => {
           </select>
         </div>
 
-        {/* Vehicle Condition */}
+        {/* Condition */}
         <div className="form-group">
           <label>Condition</label>
           <select value={condition} onChange={(e) => setCondition(e.target.value)}>
@@ -115,44 +118,57 @@ const AdvancedSearchPage = () => {
           <label>Price Range</label>
           <select value={minPrice} onChange={(e) => setMinPrice(e.target.value)}>
             <option value="">Min</option>
-            {[1000, 5000, 10000, 20000, 30000].map(price => (
-              <option key={price} value={price}>${price.toLocaleString()}</option>
+            {[1000, 5000, 10000, 20000, 30000].map((price) => (
+              <option key={price} value={price}>
+                ${price.toLocaleString()}
+              </option>
             ))}
           </select>
           <select value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)}>
             <option value="">Max</option>
-            {[10000, 20000, 30000, 40000, 50000].map(price => (
-              <option key={price} value={price}>${price.toLocaleString()}</option>
+            {[10000, 20000, 30000, 40000, 50000].map((price) => (
+              <option key={price} value={price}>
+                ${price.toLocaleString()}
+              </option>
             ))}
           </select>
         </div>
 
+        {/* Year Range */}
         <div className="form-group">
           <label>Year Range</label>
           <select value={minYear} onChange={(e) => setMinYear(e.target.value)}>
             <option value="">Min Year</option>
             {[...Array(23)].map((_, i) => (
-              <option key={i} value={2000 + i}>{2000 + i}</option>
+              <option key={i} value={2000 + i}>
+                {2000 + i}
+              </option>
             ))}
           </select>
           <select value={maxYear} onChange={(e) => setMaxYear(e.target.value)}>
             <option value="">Max Year</option>
             {[...Array(23)].map((_, i) => (
-              <option key={i} value={2000 + i}>{2000 + i}</option>
+              <option key={i} value={2000 + i}>
+                {2000 + i}
+              </option>
             ))}
           </select>
         </div>
 
+        {/* Mileage */}
         <div className="form-group">
           <label>Mileage (Max)</label>
           <select value={mileage} onChange={(e) => setMileage(e.target.value)}>
             <option value="">Any Mileage</option>
-            {[10000, 20000, 30000, 40000, 50000].map(m => (
-              <option key={m} value={m}>{`${m.toLocaleString()} miles`}</option>
+            {[10000, 20000, 30000, 40000, 50000].map((m) => (
+              <option key={m} value={m}>
+                {`${m.toLocaleString()} miles`}
+              </option>
             ))}
           </select>
         </div>
 
+        {/* Transmission */}
         <div className="form-group">
           <label>Transmission</label>
           <select value={transmission} onChange={(e) => setTransmission(e.target.value)}>
@@ -162,6 +178,7 @@ const AdvancedSearchPage = () => {
           </select>
         </div>
 
+        {/* Fuel Type */}
         <div className="form-group">
           <label>Fuel Type</label>
           <select value={fuelType} onChange={(e) => setFuelType(e.target.value)}>
@@ -173,6 +190,7 @@ const AdvancedSearchPage = () => {
           </select>
         </div>
 
+        {/* Body Style */}
         <div className="form-group">
           <label>Body Style</label>
           <select value={bodyStyle} onChange={(e) => setBodyStyle(e.target.value)}>
@@ -184,6 +202,7 @@ const AdvancedSearchPage = () => {
           </select>
         </div>
 
+        {/* Drive Type */}
         <div className="form-group">
           <label>Drive Type</label>
           <select value={driveType} onChange={(e) => setDriveType(e.target.value)}>
@@ -194,6 +213,7 @@ const AdvancedSearchPage = () => {
           </select>
         </div>
 
+        {/* Color */}
         <div className="form-group">
           <label>Color</label>
           <select value={color} onChange={(e) => setColor(e.target.value)}>
@@ -206,31 +226,24 @@ const AdvancedSearchPage = () => {
           </select>
         </div>
 
+        {/* Features */}
         <div className="form-group features-container">
           <label>Features</label>
-          <div>
-            <input type="checkbox" checked={features.bluetooth} onChange={() => handleFeatureChange('bluetooth')} />
-            <label>Bluetooth</label>
-          </div>
-          <div>
-            <input type="checkbox" checked={features.backupCamera} onChange={() => handleFeatureChange('backupCamera')} />
-            <label>Backup Camera</label>
-          </div>
-          <div>
-            <input type="checkbox" checked={features.navigation} onChange={() => handleFeatureChange('navigation')} />
-            <label>Navigation</label>
-          </div>
-          <div>
-            <input type="checkbox" checked={features.sunroof} onChange={() => handleFeatureChange('sunroof')} />
-            <label>Sunroof</label>
-          </div>
-          <div>
-            <input type="checkbox" checked={features.heatedSeats} onChange={() => handleFeatureChange('heatedSeats')} />
-            <label>Heated Seats</label>
-          </div>
+          {Object.keys(features).map((feature) => (
+            <div key={feature}>
+              <input
+                type="checkbox"
+                checked={features[feature]}
+                onChange={() => handleFeatureChange(feature)}
+              />
+              <label>{feature.charAt(0).toUpperCase() + feature.slice(1)}</label>
+            </div>
+          ))}
         </div>
 
-        <button type="submit" className="search-button">Search</button>
+        <button type="submit" className="search-button">
+          Search
+        </button>
       </form>
     </div>
   );

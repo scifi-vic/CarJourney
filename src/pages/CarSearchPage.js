@@ -1,5 +1,5 @@
 /* global google */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CarSearchPage.css';
 
@@ -9,6 +9,7 @@ const CarSearchPage = () => {
   const [location, setLocation] = useState('');
   const [distance, setDistance] = useState('10');
   const navigate = useNavigate();
+  const locationInputRef = useRef(null);
 
   const modelsByMake = {
     Toyota: ['Camry', 'Corolla', 'RAV4'],
@@ -29,7 +30,7 @@ const CarSearchPage = () => {
       if (!existingScript) {
         console.log('Loading Google Maps API script...');
         const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAY4vk_b9RuHBKY89uUt_vMD7OTwAgY5TU&libraries=places`;
         script.id = 'googleMaps';
         script.async = true;
         script.defer = true;
@@ -48,25 +49,29 @@ const CarSearchPage = () => {
     };
 
     const initializeAutocomplete = () => {
-      const input = document.getElementById('location');
-      if (input) {
-        console.log('Initializing Google Places Autocomplete...');
-        const autocomplete = new google.maps.places.Autocomplete(input, {
-          types: ['(regions)'],
-          componentRestrictions: { country: 'us' },
-        });
+      if (window.google && window.google.maps && window.google.maps.places) {
+        const input = locationInputRef.current;
+        if (input) {
+          console.log('Initializing Google Places Autocomplete...');
+          const autocomplete = new window.google.maps.places.Autocomplete(input, {
+            types: ['(regions)'],
+            componentRestrictions: { country: 'us' },
+          });
 
-        autocomplete.addListener('place_changed', () => {
-          const place = autocomplete.getPlace();
-          if (place.geometry) {
-            setLocation(place.formatted_address);
-            console.log('Selected location:', place.formatted_address);
-          } else {
-            console.error('No geometry found for the selected place.');
-          }
-        });
+          autocomplete.addListener('place_changed', () => {
+            const place = autocomplete.getPlace();
+            if (place.geometry) {
+              setLocation(place.formatted_address);
+              console.log('Selected location:', place.formatted_address);
+            } else {
+              console.error('No geometry found for the selected place.');
+            }
+          });
+        } else {
+          console.error('Input element for location not found.');
+        }
       } else {
-        console.error('Input element for location not found.');
+        console.error('Google Maps API is not available.');
       }
     };
 
@@ -140,7 +145,7 @@ const CarSearchPage = () => {
             <label>Location:</label>
             <input
               type="text"
-              id="location"
+              ref={locationInputRef}
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="Enter ZIP code or city"
