@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../styles/ResultsPage.css';
-import { NestCamWiredStand } from '@mui/icons-material';
 
 /* FontAwesome Icons */
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -76,7 +75,7 @@ const ResultsPage = () => {
     setSavedCars(updatedSavedCars);
     localStorage.setItem('savedCars', JSON.stringify(updatedSavedCars));
   };
-  
+
   // Models based on selected make
   const modelsByMake = {
     Toyota: ['Camry', 'Corolla', 'RAV4'],
