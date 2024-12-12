@@ -3,6 +3,7 @@ import "../styles/CustomerTestimonials.css";
 import { FaStar } from "react-icons/fa";
 import { db } from "../firebaseConfig"; // Import Firestore
 import { collection, getDocs, addDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth"; // Import Firebase Auth
 
 const testimonialsCollection = collection(db, "testimonials");
 
@@ -14,6 +15,9 @@ const CustomerTestimonials = () => {
     review: "",
     rating: 0,
   });
+
+  const auth = getAuth(); // Initialize Firebase Auth
+  const user = auth.currentUser; // Get the current logged-in user
 
   // Fetch testimonials from Firebase
   useEffect(() => {
@@ -31,6 +35,10 @@ const CustomerTestimonials = () => {
   // Handle form submission to add a new testimonial
   const handleAddTestimonial = async (e) => {
     e.preventDefault();
+    if (!user) {
+      alert("You must be logged in to submit a review.");
+      return;
+    }
     if (newTestimonial.name && newTestimonial.review && newTestimonial.rating) {
       await addDoc(testimonialsCollection, newTestimonial);
       setTestimonials([...testimonials, newTestimonial]);
@@ -62,7 +70,13 @@ const CustomerTestimonials = () => {
       {/* Add Testimonial Button */}
       <button
         className="add-testimonial-button"
-        onClick={() => setShowForm(!showForm)}
+        onClick={() => {
+          if (!user) {
+            alert("You must be logged in to add a review.");
+            return;
+          }
+          setShowForm(!showForm);
+        }}
       >
         Add Your Review
       </button>
@@ -90,7 +104,10 @@ const CustomerTestimonials = () => {
           <select
             value={newTestimonial.rating}
             onChange={(e) =>
-              setNewTestimonial({ ...newTestimonial, rating: parseInt(e.target.value) })
+              setNewTestimonial({
+                ...newTestimonial,
+                rating: parseInt(e.target.value),
+              })
             }
             required
           >
