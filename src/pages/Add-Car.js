@@ -1,7 +1,9 @@
 // src/pages/Add-Car.js
 import React, { useState, useEffect } from "react";
-import { doc, setDoc, addDoc, collection} from "firebase/firestore";
-import { auth, db } from "../firebaseConfig";
+import { doc, setDoc, collection } from "firebase/firestore";
+import { getStorage, ref, uploadString, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getAuth } from 'firebase/auth';
+import { auth, db, storage } from "../firebaseConfig";
 import "./../styles/Add-Car.css";
 import { useNavigate } from "react-router-dom";
 
@@ -10,9 +12,10 @@ const AddCar = () => {
     // Initialize variables
     const [activeTab, setActiveTab] = useState("VIN");  // Start as the VIN Tab
     const navigate = useNavigate();
-
+    
     // Messages
-    const [error, setError] = useState("");
+    const [vinError, setVinError] = useState("");
+    const [makeError, setMakeError] = useState("");
 
     // VIN
     const [vin, setVin] = useState("");
@@ -20,6 +23,7 @@ const AddCar = () => {
     const [vinDetails, setVinDetails] = useState(null);
     const [vinData, setVinData] = useState({
       image: "",
+      previewImage: "",
       year: "",
       make: "",
       model: "",
@@ -34,6 +38,7 @@ const AddCar = () => {
     const [showResults, setShowResults] = useState(false);
     const [makeModelData, setMakeModelData] = useState({
       image: "",
+      previewImage: "",
       year: "",
       make: "",
       model: "",
@@ -135,35 +140,37 @@ const AddCar = () => {
       }
     }, [makeModelData.year, makeModelData.make]);
 
+    /* Handle Images */
     // Handle images
     const handleImageChange = (e) => {
       const file = e.target.files[0];
-      const reader = new FileReader();
 
-      // Read Image
-      reader.onloadend = () => {
-
+      if (file) {
+        const previewUrl = URL.createObjectURL(file);
         if (activeTab === "VIN") {
           setVinData((prevState) => ({
             ...prevState,
-            image: reader.result, // Save Base64 string to makeModelData
+            image: file, // Save File object to makeModelData
+            previewImage: previewUrl, // Image Preview
           }));
 
         } else if (activeTab === "Make/Model") {
           setMakeModelData((prevState) => ({
             ...prevState,
-            image: reader.result, // Save Base64 string to makeModelData
+            image: file, // Save File object to makeModelData
+            previewImage: previewUrl, // Image Preview
           }));
         }
-
-      };
-
-      // Convert Image
-      if (file) {
-          reader.readAsDataURL(file); // Convert image to Base64
       }
-
     };
+
+    // Handle Image Memory Management
+    useEffect(() => {   // Release Temporary URL for Memory
+      return () => {
+        if (vinData.previewImage) URL.revokeObjectURL(vinData.previewImage);
+        if (makeModelData.previewImage) URL.revokeObjectURL(makeModelData.previewImage);
+      };
+    }, [vinData.previewImage, makeModelData.previewImage]);
 
     // Handle Image File Click
     const handleImageClick = () => {
@@ -174,6 +181,21 @@ const AddCar = () => {
     const handleGo = () => {
       setShowResults(true); // Show the results section
     };
+
+    // Handle Make/Model Go Button
+    const handleMakeGo = () => {
+      // User must be logged in
+      if (!auth.currentUser) {
+        setMakeError("You must be logged in to add a car.");
+        return;
+      }
+
+      // Show Results Screen
+      handleGo();
+
+      // Clears error message if vvalid
+      setMakeError("");
+    }
 
     // Determine if the "Go" button should be enabled
     const enableGoButton =
@@ -216,13 +238,19 @@ const AddCar = () => {
 
     // Handle VIN
     const handleVinLookup = () => {
+      // User must be logged in
+      if (!auth.currentUser) {
+        setVinError("You must be logged in to add a car.");
+        return;
+      }
+
       // VIN must be exactly 17 characters
       if (vin.length !== 17) {
-        setError("A VIN must contain exactly 17 characters. Please re-enter your VIN.");
+        setVinError("A VIN must contain exactly 17 characters. Please re-enter your VIN.");
         return;
       } 
       
-      setError(""); // Clears error message if VIN is valid
+      setVinError(""); // Clears error message if VIN is valid
       setLoading(true); // API Call in Progress
 
       // API URL
@@ -233,7 +261,6 @@ const AddCar = () => {
         .then((response) => response.json())
         .then((data) => {
             const results = data.Results;
-            console.log(data.Results)
             const make = results.find((r) => r.Variable === "Make")?.Value || "Unknown";
             const model = results.find((r) => r.Variable === "Model")?.Value || "Unknown";
             const year = results.find((r) => r.Variable === "Model Year")?.Value || "Unknown";
@@ -249,7 +276,7 @@ const AddCar = () => {
             if (make && model && year) {
               setVinDetails({ make, model, year, category, series, doors, engine, displacement, transmission, transmissionSpeed, driveType});
             } else {
-              setError("Failed to fetch car details. Please check the VIN.");
+              setVinError("Failed to fetch car details. Please check the VIN.");
             }
 
             // Trigger handleGo after successful lookup
@@ -258,50 +285,98 @@ const AddCar = () => {
         // Catch Errors
         .catch((error) => {
             console.error("Error fetching VIN details:", error);
-            setError("An error occurred. Please try again.");
+            setVinError("An error occurred. Please try again.");
         })
         // Final Phase
         .finally(() => setLoading(false));
     };
 
-  {/* Handle Save Search */}
-  // Handle Save Search
-  const handleAddCars = async () => {
-    // Empty Array
-    const carInfo = {};
-
-    // Check activeTab and populate carInfo accordingly
-    if (activeTab === "VIN") {  // VIN uses values from vinData and vinDetails respectfully
-      carInfo.image = vinData.image; // If you save the image in vinData
-      carInfo.year = vinDetails.year;
-      carInfo.make = vinDetails.make;
-      carInfo.model = vinDetails.model;
-      carInfo.owner_id = auth.currentUser.uid;
-      carInfo.price = vinData.price;
-      carInfo.mileage = vinData.mileage;
-      carInfo.zipCode = vinData.zipCode;
-      carInfo.color = vinData.color?.name; // Assuming vinData.color contains {name, hex}
-      carInfo.engine = "V" + vinDetails.engine;
-
-    } else if (activeTab === "Make/Model") {
-      carInfo.image = makeModelData.image; // If you save the image in makeModelData
-      carInfo.owner_id = auth.currentUser.uid;
-      carInfo.year = makeModelData.year;
-      carInfo.make = makeModelData.make;
-      carInfo.model = makeModelData.model;
-      carInfo.price = makeModelData.price;    
-      carInfo.mileage = makeModelData.mileage;
-      carInfo.zipCode = makeModelData.zipCode;
-      carInfo.color = makeModelData.color?.name; // Assuming makeModelData.color contains {name, hex}
-      carInfo.engine = makeModelData.engine;
-
+  {/* Handle Added Cars */}
+  /**
+   * Uploads an image to Firebase Storage and returns its URL.
+   * @param {File} file - The image file to upload.
+   * @param {string} folder - The folder path in Firebase Storage (e.g., "cars").
+   * @returns {Promise<string>} - A promise that resolves to the image's URL.
+   */
+  const uploadImage = async (file, folder = "images") => {
+    try {
+      if (!file) throw new Error("No file provided!");
+  
+      // Step 1: Create a reference to the storage path
+      const fileName = `${auth.currentUser.uid}-${Date.now()}-${file.name}`;  
+      const storageRef = ref(storage, `${folder}/${fileName}`);
+  
+      // Step 2: Upload the file (ensure it's a File or Blob object)
+      const snapshot = await uploadBytes(storageRef, file); // This line
+  
+      // Step 3: Get the download URL
+      const downloadURL = await getDownloadURL(snapshot.ref);
+  
+      return downloadURL;
+    } catch (error) {
+      console.error("Error in uploadImage:", error);
+      throw error;
     }
-
-    await addDoc(collection(db, "cars"), carInfo);
-    // Navigate to "My Cars"
-    navigate("/my-cars");
   };
 
+  // Handle Add Cars
+  const handleAddCars = async () => {
+    try {
+      // Variables
+      const carData = {}
+      const carId = `${Date.now()}`;
+
+      // Determine Car Data
+      if (activeTab === "VIN") {  // VIN uses values from vinData and vinDetails respectfully
+        carData.image = vinData.image; // If you save the image in vinData
+        carData.year = vinDetails.year;
+        carData.make = vinDetails.make;
+        carData.model = vinDetails.model;
+        carData.price = vinData.price;
+        carData.mileage = vinData.mileage;
+        carData.zipCode = vinData.zipCode;
+        carData.color = vinData.color?.name; // Assuming vinData.color contains {name, hex}
+        carData.engine = "V" + vinDetails.engine;
+  
+      } else if (activeTab === "Make/Model") {
+        carData.image = makeModelData.image; // If you save the image in makeModelData
+        carData.year = makeModelData.year;
+        carData.make = makeModelData.make;
+        carData.model = makeModelData.model;
+        carData.price = makeModelData.price;    
+        carData.mileage = makeModelData.mileage;
+        carData.zipCode = makeModelData.zipCode;
+        carData.color = makeModelData.color?.name; // Assuming makeModelData.color contains {name, hex}
+        carData.engine = makeModelData.engine;
+      }
+
+      // Upload image to Firebase Storage
+      const imageUrl = await uploadImage(carData.image, "cars");
+
+      // Prepare data for Firestore
+      const carInfo = {
+        ...carData,
+        image: imageUrl,
+        userId: auth.currentUser.uid,
+        createdAt: new Date(),
+      };
+
+      console.log("Car Info to Save:", carInfo);
+      console.log("Saving car to path:", `users/${auth.currentUser.uid}/cars/${carId}`);
+
+      // Save car data to Firestore
+      const userCarsRef = collection(db, "users", auth.currentUser.uid, "cars");
+      await setDoc(doc(userCarsRef, carId), carInfo);
+
+      console.log("Car successfully added!");
+
+      // Navigate to "My Cars"
+      navigate("/my-cars");
+    } catch (error) {
+      console.error("Error adding car:", error);
+    }
+  };
+  
   // Tab configuration object
   const tabs = {
     "VIN": (
@@ -318,14 +393,14 @@ const AddCar = () => {
             placeholder="Enter your 17-digit VIN"
             value={vin}
             onChange={(e) => setVin(e.target.value)}
-            className={`vin-input ${error ? "error" : ""}`}
+            className={`vin-input ${vinError ? "error" : ""}`}
           />
           <button type="button" className="vin-go-btn" onClick={handleVinLookup} disabled={loading}>
             {loading ? "Loading..." : "Go"}
           </button>
         </div>
         { /* Error Message */ }
-        {error && <p className="error-message">{error}</p>}
+        {vinError && <p className="error-message">{vinError}</p>}
       </div>
     ),
 
@@ -411,14 +486,16 @@ const AddCar = () => {
           { /* Button */ }
           <button 
             type="button" 
-            className="make-go-btn" 
-            onClick={handleGo}
+            className="make-go-btn"
+            onClick={handleMakeGo}
             disabled={!enableGoButton}
             >
             Go
           </button>
 
         </div>
+        { /* Error Message */ }
+        {makeError && <p className="error-message">{makeError}</p>}
 
       </div>
     ),
@@ -456,12 +533,13 @@ const AddCar = () => {
         <div className="vin-image-container">
 
           <div className="vin-image-upload" onClick={handleImageClick}>
-            {vinData.image ? (
-              <img src={vinData.image} alt="Car Preview" />
+            {vinData.previewImage ? (
+              <img src={vinData.previewImage} alt="Car Preview" />
             ) : (
               <span>Click to add image</span>
             )}
-          <input id="car-image-input" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }}/>
+          <input 
+            id="car-image-input" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }}/>
           </div>
     
         </div>
@@ -558,8 +636,8 @@ const AddCar = () => {
         <div className="make-image-container">
 
           <div className="make-image-upload" onClick={handleImageClick}>
-            {makeModelData.image ? (
-              <img src={makeModelData.image} alt="Car Preview" />
+            {makeModelData.previewImage ? (
+              <img src={makeModelData.previewImage} alt="Car Preview" />
             ) : (
               <span>Click to add image</span>
             )}
