@@ -1,6 +1,6 @@
 // src/pages/Add-Car.js
 import React, { useState, useEffect } from "react";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, addDoc, collection} from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import "./../styles/Add-Car.css";
 import { useNavigate } from "react-router-dom";
@@ -266,7 +266,7 @@ const AddCar = () => {
 
   {/* Handle Save Search */}
   // Handle Save Search
-  const handleAddCars = () => {
+  const handleAddCars = async () => {
     // Empty Array
     const carInfo = {};
 
@@ -276,6 +276,7 @@ const AddCar = () => {
       carInfo.year = vinDetails.year;
       carInfo.make = vinDetails.make;
       carInfo.model = vinDetails.model;
+      carInfo.owner_id = auth.currentUser.uid;
       carInfo.price = vinData.price;
       carInfo.mileage = vinData.mileage;
       carInfo.zipCode = vinData.zipCode;
@@ -284,6 +285,7 @@ const AddCar = () => {
 
     } else if (activeTab === "Make/Model") {
       carInfo.image = makeModelData.image; // If you save the image in makeModelData
+      carInfo.owner_id = auth.currentUser.uid;
       carInfo.year = makeModelData.year;
       carInfo.make = makeModelData.make;
       carInfo.model = makeModelData.model;
@@ -295,24 +297,7 @@ const AddCar = () => {
 
     }
 
-    // Take existing cars
-    const existingCars = JSON.parse(localStorage.getItem("addedCars")) || [];
-
-    // Give unique IDs to each car added
-    const newId = existingCars.length > 0 
-      ? Math.max(...existingCars.map((s) => s.id)) + 1 
-      : 1;
-    
-    // Renew array
-    const newCar = {
-      id: newId,
-      ...carInfo,
-    };
-
-    const updatedCars = [newCar, ...existingCars];
-
-    localStorage.setItem("addedCars", JSON.stringify(updatedCars));
-
+    await addDoc(collection(db, "cars"), carInfo);
     // Navigate to "My Cars"
     navigate("/my-cars");
   };
