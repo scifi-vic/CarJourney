@@ -1,127 +1,191 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import React, { useState, useEffect } from "react";
 import "../styles/carDifferences-menu.css";
 
-const CarDifferencesMenu = () => {
-  const [car1, setCar1] = useState({ make: "", model: "", year: "" });
-  const [car2, setCar2] = useState({ make: "", model: "", year: "" });
-  const navigate = useNavigate(); // Initialize navigate
+const VinDecoder = () => {
+  const [numCars, setNumCars] = useState(1); // User choice: 1 or 2 cars
+  const [vin1, setVin1] = useState(""); // VIN for Car 1
+  const [vin2, setVin2] = useState(""); // VIN for Car 2
+  const [car1Details, setCar1Details] = useState(null); // Decoded details for Car 1
+  const [car2Details, setCar2Details] = useState(null); // Decoded details for Car 2
+  const [differences, setDifferences] = useState(null); // Differences between two cars
+  const [error, setError] = useState(""); // Error message
+  const [isLoading, setIsLoading] = useState(false); // Loading state
 
-  const handleCar1Change = (e) => {
-    setCar1({ ...car1, [e.target.name]: e.target.value });
+  // Variables to decode and compare
+  const selectedVariables = [
+    "Body Class",
+    "Make",
+    "Model",
+    "Model Year",
+    "Doors",
+    "Drive Type",
+    "Engine Number of Cylinders",
+    "Transmission Style",
+    "Curb Weight (lbs)",
+    "Seating Capacity",
+    "Fuel Economy (MPG)",
+  ];
+
+  // Fetch and decode VIN
+  const fetchAndDecodeVin = async (vin, setDetails) => {
+    if (!vin || vin.length !== 17) {
+      setError("Please enter a valid 17-character VIN.");
+      setDetails(null);
+      return;
+    }
+    setIsLoading(true);
+    setError("");
+    try {
+      const response = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/${vin}?format=json`);
+      const data = await response.json();
+
+      if (data.Results) {
+        const details = data.Results.reduce((acc, item) => {
+          acc[item.Variable] = item.Value || "Data not available";
+          return acc;
+        }, {});
+        setDetails(details);
+      } else {
+        setError("No results found for the VIN.");
+        setDetails(null);
+      }
+    } catch (error) {
+      setError("Error decoding VIN: " + error.message);
+      setDetails(null);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleCar2Change = (e) => {
-    setCar2({ ...car2, [e.target.name]: e.target.value });
+  // Automatically compare cars when both VINs are decoded
+  const compareCars = () => {
+    if (!car1Details || !car2Details) {
+      setError("Please decode both cars to view the differences.");
+      return;
+    }
+
+    const comparison = selectedVariables.reduce((diff, key) => {
+      if (car1Details[key] !== car2Details[key]) {
+        diff[key] = {
+          car1: car1Details[key] || "N/A",
+          car2: car2Details[key] || "N/A",
+        };
+      }
+      return diff;
+    }, {});
+
+    setDifferences(comparison);
   };
 
-  const handleCompare = () => {
-    // Save car details in localStorage
-    localStorage.setItem("car1", JSON.stringify(car1));
-    localStorage.setItem("car2", JSON.stringify(car2));
-    // Redirect to CarComparison page
-    navigate("/compare");
+  // Automatically trigger comparison when Car 2 details are updated
+  useEffect(() => {
+    if (car1Details && car2Details) {
+      compareCars();
+    }
+  }, [car2Details]);
+
+  const handleVinChange = (setter, value) => {
+    setter(value);
+    setError("");
   };
 
   return (
-    <div className="car-differences-menu">
-      {/* Header */}
-      <header>
-        <div className="container">
-          <h1>CarJourney</h1>
-          <nav>
-            <ul>
-              <li><a href="/">Home</a></li>
-              <li><a href="/cars">Used & New Cars</a></li>
-              <li><a href="/login">Login</a></li>
-              <li><a href="/register">Register</a></li>
-            </ul>
-          </nav>
-        </div>
-      </header>
+    <div className="vin-decoder">
+      <h2>VIN Decoder</h2>
+      <p>Decode vehicle information based on VIN. Compare one or two vehicles.</p>
 
-      {/* Main Section */}
-      <main>
-        <h2>Compare Cars</h2>
-        <p>Select two cars to compare side-by-side.</p>
-        <div className="car-selection-wrapper">
-          {/* Car 1 Selection */}
-          <div className="car-selection">
-            <h3>Add First Car</h3>
-            <form>
-              <label>Make</label>
-              <select name="make" value={car1.make} onChange={handleCar1Change}>
-                <option value="">Select Make</option>
-                <option value="Toyota">Toyota</option>
-                <option value="Honda">Honda</option>
-                <option value="Ford">Ford</option>
-                <option value="Chevrolet">Chevrolet</option>
-              </select>
+      {/* Number of Cars Selection */}
+      <div className="car-selection">
+        <label>Would you like to decode 1 car or 2 cars?</label>
+        <select value={numCars} onChange={(e) => setNumCars(Number(e.target.value))}>
+          <option value={1}>1 Car</option>
+          <option value={2}>2 Cars</option>
+        </select>
+      </div>
 
-              <label>Model</label>
-              <select name="model" value={car1.model} onChange={handleCar1Change}>
-                <option value="">Select Model</option>
-                <option value="Camry">Camry</option>
-                <option value="Civic">Civic</option>
-                <option value="Mustang">Mustang</option>
-                <option value="Silverado">Silverado</option>
-              </select>
-
-              <label>Year</label>
-              <select name="year" value={car1.year} onChange={handleCar1Change}>
-                <option value="">Select Year</option>
-                <option value="2024">2024</option>
-                <option value="2023">2023</option>
-                <option value="2022">2022</option>
-              </select>
-            </form>
-          </div>
-
-          {/* Car 2 Selection */}
-          <div className="car-selection">
-            <h3>Add Second Car</h3>
-            <form>
-              <label>Make</label>
-              <select name="make" value={car2.make} onChange={handleCar2Change}>
-                <option value="">Select Make</option>
-                <option value="Nissan">Nissan</option>
-                <option value="Jeep">Jeep</option>
-                <option value="Tesla">Tesla</option>
-                <option value="BMW">BMW</option>
-              </select>
-
-              <label>Model</label>
-              <select name="model" value={car2.model} onChange={handleCar2Change}>
-                <option value="">Select Model</option>
-                <option value="Altima">Altima</option>
-                <option value="Model S">Model S</option>
-                <option value="Cherokee">Cherokee</option>
-                <option value="X5">X5</option>
-              </select>
-
-              <label>Year</label>
-              <select name="year" value={car2.year} onChange={handleCar2Change}>
-                <option value="">Select Year</option>
-                <option value="2024">2024</option>
-                <option value="2023">2023</option>
-                <option value="2022">2022</option>
-              </select>
-            </form>
-          </div>
-        </div>
-        <button className="compare-button" onClick={handleCompare}>
-          Compare Now
+      {/* VIN Input for Car 1 */}
+      <div className="vin-input">
+        <h3>Car 1</h3>
+        <label>Enter VIN:</label>
+        <input
+          type="text"
+          value={vin1}
+          onChange={(e) => handleVinChange(setVin1, e.target.value)}
+          placeholder="Enter VIN for Car 1"
+        />
+        <button onClick={() => fetchAndDecodeVin(vin1, setCar1Details)} disabled={isLoading}>
+          {isLoading ? "Decoding..." : "Decode VIN"}
         </button>
-      </main>
+      </div>
 
-      {/* Footer */}
-      <footer>
-        <div className="container">
-          <p>&copy; 2024 CarJourney. All rights reserved.</p>
+      {/* VIN Input for Car 2 (if selected) */}
+      {numCars === 2 && (
+        <div className="vin-input">
+          <h3>Car 2</h3>
+          <label>Enter VIN:</label>
+          <input
+            type="text"
+            value={vin2}
+            onChange={(e) => handleVinChange(setVin2, e.target.value)}
+            placeholder="Enter VIN for Car 2"
+          />
+          <button onClick={() => fetchAndDecodeVin(vin2, setCar2Details)} disabled={isLoading}>
+            {isLoading ? "Decoding..." : "Decode VIN"}
+          </button>
         </div>
-      </footer>
+      )}
+
+      {/* Error Message */}
+      {error && <p className="error">{error}</p>}
+
+{/* Decoded Details for Car 1 and Car 2 */}
+{(car1Details || car2Details) && (
+  <div className="car-details-container">
+    {car1Details && (
+      <div className="car-details">
+        <h3 className="car-label">Car 1</h3> {/* Added label above the details */}
+        <ul>
+          {selectedVariables.map((variable) => (
+            <li key={variable}>
+              <strong>{variable}:</strong> {car1Details[variable] || "N/A"}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+    {car2Details && (
+      <div className="car-details">
+        <h3 className="car-label">Car 2</h3> {/* Added label above the details */}
+        <ul>
+          {selectedVariables.map((variable) => (
+            <li key={variable}>
+              <strong>{variable}:</strong> {car2Details[variable] || "N/A"}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+)}
+
+      {/* Differences Display */}
+      {differences && (
+        <div className="differences">
+          <h3>Differences</h3>
+          <ul>
+            {Object.keys(differences).map((key) => (
+              <li
+                key={key}
+                className={differences[key].car1 === differences[key].car2 ? "no-difference" : "difference"}
+              >
+                <strong>{key}:</strong> Car 1: {differences[key].car1}, Car 2: {differences[key].car2}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
 
-export default CarDifferencesMenu;
+export default VinDecoder;

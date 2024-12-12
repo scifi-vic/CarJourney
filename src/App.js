@@ -1,4 +1,3 @@
-// src/App.js
 import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Box } from '@mui/material'; // Ensure Box is imported from MUI
@@ -36,6 +35,7 @@ const AdvancedSearchPage = lazy(() => import('./pages/AdvancedSearchPage'));
 const CarListingPage = lazy(() => import('./pages/CarListingPage')); // New CarListingPage
 const ContactSeller = lazy(() => import('./pages/ContactSeller'));
 const CustomerTestimonials = lazy(() => import('./pages/CustomerTestimonials'));
+const CarDifferencesMenu = lazy(() => import('./pages/CarDifferencesMenu')); // Import the CarDifferencesMenu page
 
 function App() {
   // Load initial profile picture from localStorage or use default if not found
@@ -76,6 +76,7 @@ function App() {
                 <Route path="/results" element={<ResultsPage />} />
                 <Route path="/car-quiz" element={<CarQuiz />} />
                 <Route path="/locate-dealer" element={<LocateDealer />} />
+                <Route path="/compare-cars" element={<CarDifferencesMenu />} /> {/* Added Route */}
                 <Route
                   path="/user"
                   element={
