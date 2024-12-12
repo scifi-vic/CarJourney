@@ -73,13 +73,20 @@ const AdvancedSearchPage = () => {
     return models[make] || [];
   };
 
+  const handleLoadError = () => {
+    console.error('Failed to load Google Maps script.');
+  };
+
   return (
-    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY} libraries={['places']}>
+    <LoadScript
+      googleMapsApiKey="AIzaSyAY4vk_b9RuHBKY89uUt_vMD7OTwAgY5TU"
+      libraries={['places']}
+      onError={handleLoadError}
+      onLoad={() => console.log('Google Maps Script Loaded Successfully')}
+    >
       <div className="advanced-search-page">
         <h2>Advanced Search</h2>
         <form onSubmit={handleSearch} className="advanced-search-form">
-
-          {/* Keyword Search */}
           <div className="form-group">
             <label>Keyword</label>
             <input
@@ -90,7 +97,6 @@ const AdvancedSearchPage = () => {
             />
           </div>
 
-          {/* Make and Model */}
           <div className="form-group">
             <label>Make</label>
             <select value={make} onChange={(e) => setMake(e.target.value)}>
@@ -111,7 +117,6 @@ const AdvancedSearchPage = () => {
             </select>
           </div>
 
-          {/* Condition */}
           <div className="form-group">
             <label>Condition</label>
             <select value={condition} onChange={(e) => setCondition(e.target.value)}>
@@ -122,7 +127,6 @@ const AdvancedSearchPage = () => {
             </select>
           </div>
 
-          {/* Price Range */}
           <div className="form-group">
             <label>Price Range</label>
             <select value={minPrice} onChange={(e) => setMinPrice(e.target.value)}>
@@ -139,7 +143,6 @@ const AdvancedSearchPage = () => {
             </select>
           </div>
 
-          {/* Year Range */}
           <div className="form-group">
             <label>Year Range</label>
             <select value={minYear} onChange={(e) => setMinYear(e.target.value)}>
@@ -156,7 +159,6 @@ const AdvancedSearchPage = () => {
             </select>
           </div>
 
-          {/* Mileage */}
           <div className="form-group">
             <label>Mileage (Max)</label>
             <select value={mileage} onChange={(e) => setMileage(e.target.value)}>
@@ -167,7 +169,6 @@ const AdvancedSearchPage = () => {
             </select>
           </div>
 
-          {/* Transmission */}
           <div className="form-group">
             <label>Transmission</label>
             <select value={transmission} onChange={(e) => setTransmission(e.target.value)}>
@@ -177,7 +178,6 @@ const AdvancedSearchPage = () => {
             </select>
           </div>
 
-          {/* Fuel Type */}
           <div className="form-group">
             <label>Fuel Type</label>
             <select value={fuelType} onChange={(e) => setFuelType(e.target.value)}>
@@ -189,7 +189,6 @@ const AdvancedSearchPage = () => {
             </select>
           </div>
 
-          {/* Body Style */}
           <div className="form-group">
             <label>Body Style</label>
             <select value={bodyStyle} onChange={(e) => setBodyStyle(e.target.value)}>
@@ -201,7 +200,6 @@ const AdvancedSearchPage = () => {
             </select>
           </div>
 
-          {/* Drive Type */}
           <div className="form-group">
             <label>Drive Type</label>
             <select value={driveType} onChange={(e) => setDriveType(e.target.value)}>
@@ -212,7 +210,6 @@ const AdvancedSearchPage = () => {
             </select>
           </div>
 
-          {/* Color */}
           <div className="form-group">
             <label>Color</label>
             <select value={color} onChange={(e) => setColor(e.target.value)}>
@@ -225,7 +222,6 @@ const AdvancedSearchPage = () => {
             </select>
           </div>
 
-          {/* Features */}
           <div className="form-group features-container">
             <label>Features</label>
             <div>
@@ -270,11 +266,13 @@ const AdvancedSearchPage = () => {
             </div>
           </div>
 
-          {/* ZIP Code */}
           <div className="form-group">
             <label>ZIP Code</label>
             <Autocomplete
-              onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+              onLoad={(autocomplete) => {
+                console.log('Autocomplete loaded:', autocomplete);
+                autocompleteRef.current = autocomplete;
+              }}
               onPlaceChanged={() => {
                 if (autocompleteRef.current) {
                   const place = autocompleteRef.current.getPlace();
@@ -295,7 +293,6 @@ const AdvancedSearchPage = () => {
             </Autocomplete>
           </div>
 
-          {/* Distance */}
           <div className="form-group">
             <label>Distance (miles)</label>
             <select value={distance} onChange={(e) => setDistance(e.target.value)}>
