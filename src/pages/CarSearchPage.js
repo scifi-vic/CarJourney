@@ -25,57 +25,22 @@ const CarSearchPage = () => {
   };
 
   useEffect(() => {
-    const loadGoogleMapsScript = () => {
-      const existingScript = document.getElementById('googleMaps');
-      if (!existingScript) {
-        console.log('Loading Google Maps API script...');
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAY4vk_b9RuHBKY89uUt_vMD7OTwAgY5TU&libraries=places`;
-        script.id = 'googleMaps';
-        script.async = true;
-        script.defer = true;
-        script.onload = () => {
-          console.log('Google Maps API script loaded successfully.');
-          initializeAutocomplete();
-        };
-        script.onerror = () => {
-          console.error('Error loading Google Maps API script.');
-        };
-        document.body.appendChild(script);
-      } else {
-        console.log('Google Maps API script already loaded.');
-        initializeAutocomplete();
+    if (window.google && window.google.maps && window.google.maps.places) {
+      const input = locationInputRef.current;
+      if (input) {
+        const autocomplete = new window.google.maps.places.Autocomplete(input, {
+          types: ['(regions)'],
+          componentRestrictions: { country: 'us' },
+        });
+
+        autocomplete.addListener('place_changed', () => {
+          const place = autocomplete.getPlace();
+          if (place.geometry) {
+            setLocation(place.formatted_address);
+          }
+        });
       }
-    };
-
-    const initializeAutocomplete = () => {
-      if (window.google && window.google.maps && window.google.maps.places) {
-        const input = locationInputRef.current;
-        if (input) {
-          console.log('Initializing Google Places Autocomplete...');
-          const autocomplete = new window.google.maps.places.Autocomplete(input, {
-            types: ['(regions)'],
-            componentRestrictions: { country: 'us' },
-          });
-
-          autocomplete.addListener('place_changed', () => {
-            const place = autocomplete.getPlace();
-            if (place.geometry) {
-              setLocation(place.formatted_address);
-              console.log('Selected location:', place.formatted_address);
-            } else {
-              console.error('No geometry found for the selected place.');
-            }
-          });
-        } else {
-          console.error('Input element for location not found.');
-        }
-      } else {
-        console.error('Google Maps API is not available.');
-      }
-    };
-
-    loadGoogleMapsScript();
+    }
   }, []);
 
   const handleSubmit = (e) => {
@@ -93,7 +58,6 @@ const CarSearchPage = () => {
       distance,
     }).toString();
 
-    console.log('Navigating to results with query:', query);
     navigate(`/results?${query}`);
   };
 
