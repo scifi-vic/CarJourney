@@ -94,8 +94,8 @@ function Navbar({ profilePicture }) {
           <Button component={Link} to="/search" className="nav-link">
             Search
           </Button>
-          <Button component={Link} to="/about" className="nav-link">
-            About
+          <Button component={Link} to="/finance" className="nav-link">
+            Finance Calculator
           </Button>
           {isLoggedIn && (
             <Button component={Link} to="/garage" className="nav-link">

@@ -13,7 +13,7 @@ import GoogleMapsProvider from './components/GoogleMapsProvider'; // Import the 
 
 // Lazy load page components
 const Home = lazy(() => import('./pages/Home'));
-const About = lazy(() => import('./pages/About'));
+const ContactUs = lazy(() => import('./pages/Contact-Us'));
 const Garage = lazy(() => import('./pages/Garage'));
 const User = lazy(() => import('./pages/User'));
 const CarQuiz = lazy(() => import('./pages/Car-Quiz'));
@@ -62,7 +62,7 @@ function App() {
             <Suspense fallback={<div>Loading...</div>}>
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
+                <Route path="/contact-us" element={<ContactUs />} />
                 <Route path="/garage" element={<Garage />} />
                 <Route path="/search" element={<CarSearchPage />} />
                 <Route path="/advanced-search" element={<AdvancedSearchPage />} />
