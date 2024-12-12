@@ -76,7 +76,9 @@ function App() {
                 <Route path="/results" element={<ResultsPage />} />
                 <Route path="/car-quiz" element={<CarQuiz />} />
                 <Route path="/locate-dealer" element={<LocateDealer />} />
-                <Route path="/compare-cars" element={<CarDifferencesMenu />} /> {/* Added Route */}
+                <Route path="/compare-cars" element={<CarDifferencesMenu />} />
+                <Route path="/testimonials" element={<CustomerTestimonials />} /> {/* Added Route */}
+                <Route path="/finance" element={<Finance />} /> {/* Added Route */}
                 <Route
                   path="/user"
                   element={
