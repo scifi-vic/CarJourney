@@ -126,7 +126,7 @@ function ConversationDisplay({ chatId, messages, addMessage }) {
             </Typography>
             </Box>
             <Typography variant="caption" sx={{ display: "block" }}>
-              {msg.data().timestamp.seconds}
+              {"now"}
             </Typography>
           </Box>
         ))}
