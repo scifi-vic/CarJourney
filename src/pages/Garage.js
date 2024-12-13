@@ -31,13 +31,8 @@ const Garage = () => {
   useEffect(() => {
     auth.onAuthStateChanged(async (user) => {
       if (!user) return;
-      const carsCollection = collection(db, "cars");
-      const q = query(
-        carsCollection,
-        where("owner_id", "==", await auth.currentUser.uid)
-      );
-
-      const snapshot = await getDocs(q);
+      const carsCollection = collection(db, "users", auth.currentUser.uid, "cars");
+      const snapshot = await getDocs(carsCollection);
 
       const storedCars = snapshot.docs.map((doc) => ({
         id: doc.id,

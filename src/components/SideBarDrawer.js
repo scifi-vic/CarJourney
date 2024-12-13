@@ -18,8 +18,11 @@ import { Link } from 'react-router-dom';
 const menuItems = [
   { text: 'Home', path: '/', icon: <HomeIcon /> },
   { text: 'My Garage', path: '/garage', icon: <GarageIcon /> },
-  { text: 'Profile', path: '/user', icon: <UserIcon /> },
+  { text: 'My Profile', path: '/user', icon: <UserIcon /> },
   { text: 'About', path: '/about', icon: <AboutIcon /> },
+  { text: 'Finance Calculator', path: '/about', icon: <AboutIcon /> },
+  { text: 'Car Quiz', path: '/about', icon: <AboutIcon /> },
+  { text: 'Locate Dealer', path: '/about', icon: <AboutIcon /> }
 ];
 
 export default function SideBarDrawer({drawerOpen, setDrawerOpen}) {
