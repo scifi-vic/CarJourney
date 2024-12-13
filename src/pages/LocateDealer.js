@@ -5,22 +5,17 @@ const LocateDealer = () => {
   const [zipCode, setZipCode] = useState('');
   const [dealers, setDealers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [googleMapsLoaded, setGoogleMapsLoaded] = useState(false);
   const [userLocation, setUserLocation] = useState(null); // Store user location
 
   useEffect(() => {
-    if (!googleMapsLoaded) {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAY4vk_b9RuHBKY89uUt_vMD7OTwAgY5TU&libraries=places`;
-      script.async = true;
-      script.onload = () => setGoogleMapsLoaded(true);
-      document.body.appendChild(script);
+    if (!window.google?.maps) {
+      console.error('Google Maps API is not loaded. Make sure GoogleMapsProvider is wrapping the app.');
     }
-  }, [googleMapsLoaded]);
+  }, []);
 
   const handleSearch = async (event) => {
     event.preventDefault();
-    if (!zipCode || !googleMapsLoaded || !window.google) return;
+    if (!zipCode || !window.google) return;
 
     setLoading(true);
     try {
