@@ -165,7 +165,8 @@ useEffect(() => {
   useEffect(() => {
     const filterCarsByDistance = async () => {
       let userCoordinates = null;
-
+  
+      // Get user's coordinates from ZIP code
       if (zip && /^[0-9]{5}$/.test(zip)) {
         const geocoder = new window.google.maps.Geocoder();
         try {
@@ -175,13 +176,13 @@ useEffect(() => {
                 resolve(results[0].geometry.location);
               } else if (status === 'ZERO_RESULTS') {
                 console.log(`No location found for ZIP code: ${zip}`);
-                resolve(null); // Gracefully handle no results
+                resolve(null);
               } else {
                 reject(`Geocode failed due to: ${status}`);
               }
             });
           });
-
+  
           if (result) {
             userCoordinates = { lat: result.lat(), lng: result.lng() };
           }
@@ -192,8 +193,9 @@ useEffect(() => {
       }
 
       const newFilteredCars = fetchedCars.filter((car) => {
-        const matchesMake = !make || car.make === make;
-        const matchesModel = !model || car.model === model;
+        const matchesMake = !make || car.make.toLowerCase() === make.toLowerCase();
+        const matchesModel = !model || car.model.toLowerCase() === model.toLowerCase();
+        const matchesZip = !zip || car.zipCode === zip; // Match by ZIP code
         const matchesMinYear = !minYear || car.year >= parseInt(minYear, 10);
         const matchesMaxYear = !maxYear || car.year <= parseInt(maxYear, 10);
         const matchesMinPrice = !minPrice || car.price >= parseInt(minPrice, 10);
@@ -205,9 +207,9 @@ useEffect(() => {
         const matchesBodyStyle = !bodyStyle || car.bodyStyle === bodyStyle;
         const matchesEngineType = !engineType || car.engineType === engineType;
         const matchesColor = !color || car.color === color;
-
+  
         let withinDistance = true;
-        if (userCoordinates) {
+        if (userCoordinates && car.lat && car.lng) {
           const distance = calculateDistance(
             userCoordinates.lat,
             userCoordinates.lng,
@@ -216,10 +218,11 @@ useEffect(() => {
           );
           withinDistance = distance <= radius;
         }
-
+  
         return (
           matchesMake &&
           matchesModel &&
+          matchesZip && // Add ZIP code match
           matchesMinYear &&
           matchesMaxYear &&
           matchesMinPrice &&
@@ -239,7 +242,24 @@ useEffect(() => {
     };
 
     filterCarsByDistance();
-  }, [make, model, zip, minYear, maxYear, minPrice, maxPrice, maxMileage, transmission, fuelType, driveType, bodyStyle, engineType, color, radius, fetchedCars]);
+  }, [
+    make,
+    model,
+    zip,
+    minYear,
+    maxYear,
+    minPrice,
+    maxPrice,
+    maxMileage,
+    transmission,
+    fuelType,
+    driveType,
+    bodyStyle,
+    engineType,
+    color,
+    radius,
+    fetchedCars,
+  ]);
 
   if (!isLoaded) {
     return <p>Loading Google Maps...</p>;
