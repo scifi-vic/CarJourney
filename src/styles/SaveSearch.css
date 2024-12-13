@@ -37,7 +37,6 @@
     display: flex;
     justify-content: flex-start; /* Aligns the nav list to the left */
     padding-left: 360px; /* Optional: Adds some padding from the left */
-    margin-top: 20px; /* This will bring the navigation down */
     border-bottom: 2px solid #ddd; /* Add a light gray horizontal line */
     padding-bottom: 10px; /* Add some space under the navigation */
   }

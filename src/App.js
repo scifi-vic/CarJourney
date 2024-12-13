@@ -10,10 +10,11 @@ import './styles/Footer.css'; // Ensure CSS is imported to apply the styles
 import UserInbox from './components/UserInbox';
 import { auth, db } from './firebaseConfig'; 
 import {addDoc, collection, doc, getDoc, getFirestore, setDoc} from 'firebase/firestore';
+import GoogleMapsProvider from './components/GoogleMapsProvider'; // Import the provider
 
 // Lazy load page components
 const Home = lazy(() => import('./pages/Home'));
-const About = lazy(() => import('./pages/About'));
+const ContactUs = lazy(() => import('./pages/Contact-Us'));
 const Garage = lazy(() => import('./pages/Garage'));
 const User = lazy(() => import('./pages/User'));
 const CarQuiz = lazy(() => import('./pages/Car-Quiz'));
@@ -59,46 +60,56 @@ function App() {
   const currentUserId = auth.currentUser?.uid;
   
   return (
+    <GoogleMapsProvider>
     <Router>
       <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         {/* Navbar */}
         <Navbar profilePicture={profilePicture} />
         <SideBarDrawer />
 
-        {/* Main content area */}
-        <Box component="main" sx={{ flexGrow: 1, padding: 3 }}>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/garage" element={<Garage />} />
-              <Route path="/search" element={<CarSearchPage />} />
-              <Route path="/messaging" element={<MessagePage currentUserId={currentUserId}/>} />
-              <Route path="/messaging/:chatId" element={<MessagePage currentUserId={currentUserId}/>} />
+          {/* Main content area */}
+          <Box component="main" sx={{ flexGrow: 1, padding: 3 }}>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/contact-us" element={<ContactUs />} />
+                <Route path="/garage" element={<Garage />} />
+                <Route path="/search" element={<CarSearchPage />} />
+                <Route path="/advanced-search" element={<AdvancedSearchPage />} />
+                <Route path="/messaging" element={<MessagePage currentUserId={currentUserId} />} />
+                <Route path="/messaging/:chatId" element={<MessagePage currentUserId={currentUserId} />} />
+                <Route path="/my-cars" element={<Garage />} />
+                <Route path="/add-car" element={<AddCar />} />
+                <Route path="/carlistingpage/:carId" element={<CarListingPage />} />
+                <Route path="/contactseller" element={<ContactSeller />} />
                 <Route path="/resultspage" element={<ResultsPage />} />
                 <Route path="/results" element={<ResultsPage />} />
                 <Route path="/car-quiz" element={<CarQuiz />} />
                 <Route path="/locate-dealer" element={<LocateDealer />} />
-                <Route path="/compare-cars" element={<CarDifferencesMenu />} /> {/* Added Route */}
-              <Route path="/my-cars" element={<Garage />} />
-              <Route path="/add-car" element={<AddCar />} />
-              <Route path="/carlistingpage/:carId" element={<CarListingPage />} />
-              <Route path="/contactseller" element={<ContactSeller />} />
-              <Route path="/resultspage" element={<ResultsPage />} />
-              {/* <Route path="/addedcarsgarage" element={<AddedCarsGarage />} /> */}
-              <Route path="/results" element={<ResultsPage />} />
-              <Route path="/car-quiz" element={<CarQuiz />} />
-              <Route path="/locate-dealer" element={<LocateDealer />} />
-              <Route path="/user" element={<User profilePicture={profilePicture} setProfilePicture={setProfilePicture} />}
-/>
-            </Routes>
-          </Suspense>
-        </Box>
+                <Route path="/compare-cars" element={<CarDifferencesMenu />} />
+                <Route path="/testimonials" element={<CustomerTestimonials />} /> {/* Added Route */}
+                <Route path="/finance" element={<Finance />} /> {/* Added Route */}
+                <Route
+                  path="/user"
+                  element={
+                    <User
+                      profilePicture={profilePicture}
+                      setProfilePicture={setProfilePicture}
+                    />
+                  }
+                />
+              </Routes>
+            </Suspense>
+          </Box>
 
-        {/* Footer */}
-        <Footer />
-      </Box>
+          {/* Footer */}
+          <Footer />
+
+          {/* Chatbot */}
+          <Chatbot />
+        </Box>
     </Router>
+    </GoogleMapsProvider>
   );
 }
 
