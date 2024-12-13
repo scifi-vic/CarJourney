@@ -14,19 +14,19 @@ import {
 } from "firebase/firestore";
 
 const CarListingPage = () => {
-  const {carId}= useParams();
+  const {ownerId,carId}= useParams();
 
   useEffect(() => {
     async function fetchCar() {
       // get car data from the url param
-      const snapshot = await getDoc(doc(db, "cars", carId));
+      const snapshot = await getDoc(doc(db, "users", ownerId, "cars", carId));
 
       // get owner name
-      const userSnapshot = await getDoc(doc(db, "users", snapshot.data().owner_id));
+      const userSnapshot = await getDoc(doc(db, "users", ownerId));
       const fullName = userSnapshot.data().firstName + " " + userSnapshot.data().lastName; 
 
       // returns car data with owner name
-      setCar({...snapshot.data(), seller: fullName, owner_id: snapshot.data().owner_id});
+      setCar({...snapshot.data(), seller: fullName, ownerId, carId});
     }
     
     fetchCar();

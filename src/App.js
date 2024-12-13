@@ -81,7 +81,7 @@ function App() {
                 <Route path="/messaging/:chatId" element={<MessagePage currentUserId={currentUserId} />} />
                 <Route path="/my-cars" element={<Garage />} />
                 <Route path="/add-car" element={<AddCar />} />
-                <Route path="/carlistingpage/:carId" element={<CarListingPage />} />
+                <Route path="/carlistingpage/:ownerId/:carId" element={<CarListingPage />} />
                 <Route path="/contactseller" element={<ContactSeller />} />
                 <Route path="/results" element={<ResultsPage />} />
                 <Route path="/car-quiz" element={<CarQuiz />} />

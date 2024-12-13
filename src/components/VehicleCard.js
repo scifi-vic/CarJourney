@@ -29,10 +29,21 @@ const VehicleCard = ({ vehicle, detailed = false }) => {
     odometer: vehicle.mileage,
     seller: vehicle.seller,
     image: vehicle.image,
-    owner: vehicle.owner_id,
+    owner: vehicle.ownerId,
+    carId: vehicle.carId
   };
 
   const [isLiked, setIsLiked] = useState(false); // Toggle Favorite
+
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+  
+  useEffect(() => async () => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        setButtonDisabled(user.uid === carDetails.owner)
+      }
+    })
+  }, [])
 
   // Function to toggle the favorite state of a car
   const toggleFavorite = () => {
@@ -122,7 +133,7 @@ const VehicleCard = ({ vehicle, detailed = false }) => {
           <span>{isLiked ? "Saved" : "Save"}</span>
         </div>
         {/* Move the Contact Seller button here */}
-        <button className="contact-button" onClick={() => ContactSeller()}>
+        <button className="contact-button" style={{backgroundColor: buttonDisabled ? "gray" : "#007bff", color: buttonDisabled ? "lightgray" : "white", cursor: buttonDisabled ? "not-allowed" : "pointer"}} onClick={() => ContactSeller()} disabled={buttonDisabled}>
           Contact Seller
         </button>
       </div>
