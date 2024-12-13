@@ -69,7 +69,7 @@ const VehicleCard = ({ vehicle, detailed = false }) => {
       favorites.splice(carIndex, 1);
     } else {
       // If car is not favorited, add it to the list
-      favorites.push(carDetails);
+      favorites.push(newCar);
     }
 
     // Save the updated list to local storage

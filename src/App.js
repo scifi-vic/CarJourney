@@ -12,6 +12,7 @@ import { auth, db } from './firebaseConfig';
 import {addDoc, collection, doc, getDoc, getFirestore, setDoc} from 'firebase/firestore';
 import GoogleMapsProvider from './components/GoogleMapsProvider'; // Import the provider
 import Chatbot from './components/Chatbot'; 
+import { SavedSearch } from '@mui/icons-material';
 
 // Lazy load page components
 const Home = lazy(() => import('./pages/Home'));
@@ -82,6 +83,8 @@ function App() {
                 <Route path="/my-cars" element={<Garage />} />
                 <Route path="/add-car" element={<AddCar />} />
                 <Route path="/carlistingpage/:ownerId/:carId" element={<CarListingPage />} />
+                <Route path="/favorited-cars" element={<FavoriteCar />} />
+                <Route path="/saved-searches" element={<SavedSearch />} />
                 <Route path="/contactseller" element={<ContactSeller />} />
                 <Route path="/results" element={<ResultsPage />} />
                 <Route path="/car-quiz" element={<CarQuiz />} />
