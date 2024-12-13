@@ -30,6 +30,7 @@ const Garage = () => {
   // Load saved searches from localStorage on component mount
   useEffect(() => {
     auth.onAuthStateChanged(async (user) => {
+      if (!user) return;
       const carsCollection = collection(db, "cars");
       const q = query(
         carsCollection,
