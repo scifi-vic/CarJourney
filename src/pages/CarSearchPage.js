@@ -8,23 +8,57 @@ const CarSearchPage = () => {
   const [model, setModel] = useState('');
   const [location, setLocation] = useState('');
   const [distance, setDistance] = useState('10');
+  const [makeList, setMakeList] = useState([]);
+  const [modelList, setModelList] = useState([]);
+  const [loadingModels, setLoadingModels] = useState(false);
   const navigate = useNavigate();
   const locationInputRef = useRef(null);
 
-  const modelsByMake = {
-    Toyota: ['Camry', 'Corolla', 'RAV4'],
-    Honda: ['Civic', 'Accord', 'CR-V'],
-    Ford: ['F-150', 'Escape', 'Mustang'],
-    Chevrolet: ['Silverado', 'Malibu', 'Equinox'],
-    Nissan: ['Altima', 'Rogue', 'Sentra'],
-    BMW: ['3 Series', '5 Series', 'X5'],
-    Mercedes: ['C-Class', 'E-Class', 'GLA'],
-    Audi: ['A4', 'Q5', 'A6'],
-    Hyundai: ['Elantra', 'Sonata', 'Tucson'],
-    Kia: ['Sorento', 'Sportage', 'Optima'],
-  };
+  useEffect(() => {
+    // Fetch all car makes
+    const fetchMakes = async () => {
+      try {
+        const response = await fetch(
+          `https://vpic.nhtsa.dot.gov/api/vehicles/GetMakesForVehicleType/car?format=json`
+        );
+        const data = await response.json();
+        const makeValues = data.Results.map((item) => item.MakeName);
+        setMakeList(makeValues);
+      } catch (error) {
+        console.error('Error fetching makes:', error);
+      }
+    };
+
+    fetchMakes();
+  }, []);
 
   useEffect(() => {
+    if (make) {
+      // Fetch models for the selected make
+      const fetchModels = async () => {
+        setLoadingModels(true);
+        try {
+          const response = await fetch(
+            `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/${make}?format=json`
+          );
+          const data = await response.json();
+          const modelValues = data.Results.map((item) => item.Model_Name);
+          setModelList(modelValues);
+        } catch (error) {
+          console.error('Error fetching models:', error);
+        } finally {
+          setLoadingModels(false);
+        }
+      };
+
+      fetchModels();
+    } else {
+      setModelList([]); // Clear models if no make is selected
+    }
+  }, [make]);
+
+  useEffect(() => {
+    // Initialize Google Places autocomplete for location input
     if (window.google && window.google.maps && window.google.maps.places) {
       const input = locationInputRef.current;
       if (input) {
@@ -46,8 +80,8 @@ const CarSearchPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!location) {
-      alert('Please select a valid location from the suggestions.');
+    if (!make || !model || !location) {
+      alert('Please fill in all required fields.');
       return;
     }
 
@@ -61,14 +95,10 @@ const CarSearchPage = () => {
     navigate(`/results?${query}`);
   };
 
-  const handleAdvancedSearchRedirect = () => {
-    navigate('/advanced-search');
-  };
-
   return (
     <div className="car-search-page">
       <div className="search-card">
-        <h1>Begin Your Car Journey Here</h1>
+        <h1>Find Your Next Car</h1>
         <form onSubmit={handleSubmit} className="car-search-form">
           <div className="form-section">
             <label>Make:</label>
@@ -76,11 +106,11 @@ const CarSearchPage = () => {
               value={make}
               onChange={(e) => {
                 setMake(e.target.value);
-                setModel('');
+                setModel(''); // Reset model when make changes
               }}
             >
               <option value="">Select Make</option>
-              {Object.keys(modelsByMake).map((makeOption) => (
+              {makeList.map((makeOption) => (
                 <option key={makeOption} value={makeOption}>
                   {makeOption}
                 </option>
@@ -96,13 +126,13 @@ const CarSearchPage = () => {
               disabled={!make}
             >
               <option value="">Select Model</option>
-              {make &&
-                modelsByMake[make].map((modelOption) => (
-                  <option key={modelOption} value={modelOption}>
-                    {modelOption}
-                  </option>
-                ))}
+              {modelList.map((modelOption) => (
+                <option key={modelOption} value={modelOption}>
+                  {modelOption}
+                </option>
+              ))}
             </select>
+            {loadingModels && <p>Loading models...</p>}
           </div>
 
           <div className="form-section">
@@ -136,13 +166,6 @@ const CarSearchPage = () => {
             Search
           </button>
         </form>
-
-        <button
-          onClick={handleAdvancedSearchRedirect}
-          className="advanced-search-button"
-        >
-          Advanced Search
-        </button>
       </div>
     </div>
   );
