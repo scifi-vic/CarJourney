@@ -1,25 +1,94 @@
 // src/pages/SaveSearch.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, deleteDoc} from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import "./../styles/SaveSearch.css";
 
 const SaveSearch = () => {
+  // Variables
+  const [user, setUser] = useState(null);
+
   // Load saved searches from localStorage (Initiate array)
   const [savedSearches, setSavedSearches] = useState([]);
 
-  // Load saved searches from localStorage on component mount
+  // Fetch searches when the component mounts or user state changes
   useEffect(() => {
-    const storedSearches = JSON.parse(localStorage.getItem("savedSearches")) || [];
-    setSavedSearches(storedSearches);
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      setUser(currentUser);
+
+      if (currentUser) {
+        // Fetch searches from Firestore
+        await fetchSearchesFromFirestore(currentUser.uid);
+      } else {
+        // Fetch searches from localStorage
+        fetchSearchesFromLocalStorage();
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  // Remove a search by the ID
-  const handleRemoveSearch = (id) => {
-    const updatedSearches = savedSearches.filter((search) => search.id !== id);
-    setSavedSearches(updatedSearches);
-    localStorage.setItem("savedSearches", JSON.stringify(updatedSearches));
+
+  // Fetch searches from Firestore
+  const fetchSearchesFromFirestore = async (userId) => {
+    try {
+      const userSearchesRef = collection(db, "users", userId, "savedSearches");
+      const querySnapshot = await getDocs(userSearchesRef);
+      const savedSearches = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt ? data.createdAt.toDate() : new Date(), // Convert Firestore Timestamp to Date
+        };
+      });
+      setSavedSearches(savedSearches);
+      console.log("Fetched searches from Firestore:", savedSearches);
+    } catch (error) {
+      console.error("Error fetching searches from Firestore:", error);
+    }
+  };
+
+  // Fetch searches from localStorage
+  const fetchSearchesFromLocalStorage = () => {
+    const storedSearches = JSON.parse(localStorage.getItem("savedSearches")) || [];
+    const parsedSearches = storedSearches.map((search) => ({
+      ...search,
+      createdAt: search.createdAt ? new Date(search.createdAt) : new Date(), // Parse to Date
+    }));
+    setSavedSearches(parsedSearches);
+    console.log("Fetched searches from localStorage:", parsedSearches);
+  };
+
+  const handleRemoveSearch = async (id) => {
+    const user = auth.currentUser;
+  
+    if (user) {
+      // Remove from Firestore
+      try {
+        const searchDocRef = doc(db, "users", user.uid, "savedSearches", id);
+        await deleteDoc(searchDocRef);
+        console.log(`Search with ID ${id} removed from Firestore`);
+  
+        // Update local state
+        setSavedSearches((prevSearches) =>
+          prevSearches.filter((search) => search.id !== id)
+        );
+      } catch (error) {
+        console.error("Error removing search from Firestore:", error);
+      }
+    } else {
+      // Remove from localStorage
+      const savedSearches = JSON.parse(localStorage.getItem("savedSearches")) || [];
+      const updatedSearches = savedSearches.filter((search) => search.id !== id);
+      localStorage.setItem("savedSearches", JSON.stringify(updatedSearches));
+  
+      // Update local state
+      setSavedSearches(updatedSearches);
+      console.log(`Search with ID ${id} removed from localStorage`);
+    }
   };
 
   // Redirect Link
@@ -34,6 +103,7 @@ const SaveSearch = () => {
     const search = savedSearches.find((s) => s.id === id);
     if (search) {
       const url = `/results?make=${search.make}&model=${search.model}`
+                  + `&zipCode=${search.zipCode}&distance=${search.distance}`
                   + `&minPrice=${search.minPrice}&maxPrice=${search.maxPrice}`
                   + `&minYear=${search.minYear}&maxYear=${search.maxYear}`
                   + `&mileage=${search.mileage}&transmission=${search.transmission}`
@@ -94,20 +164,23 @@ const SaveSearch = () => {
                 Start a New Search
               </button>
               <ul>
-                  {savedSearches.map((search) => (
-                    <div key={search.id}>
+              {[...savedSearches]
+                .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)) // Sort by createdAt ascending
+                .reverse() // Reverse the array to render the oldest at the bottom
+                .map((search, index, array) => (
+                    <div key={search.id || index}>
                         <div className="search-header">
-                          <p className="search-title">Saved Search ({search.id})</p>
+                          <p className="search-title">Saved Search ({array.length - index})</p> {/* Reverse numbering */}
                           <p className="remove-text" onClick={() => handleRemoveSearch(search.id)}>Remove</p>
                         </div>
-                        <p className="created-text">Created on: <span>{date.toLocaleDateString('en-US')}</span></p>
+                        <p className="created-text">Created on: <span>{new Date(search.createdAt).toLocaleDateString('en-US')}</span></p>
                         <p className="search-criteria">Search Criteria</p>
 
                         { /*  Search Filters
                               Checks if certain filters exist, do not display if it does not exist */}
                         <div className="search-filters">
-                          {search.make && <p>Make: <span>{search.make}</span></p>}
-                          {search.model && <p>Model: <span>{search.model}</span></p>}
+                          <p>Make: <span>{search.make || "Any"}</span></p>
+                          <p>Model: <span>{search.model || "Any"}</span></p>
                           {search.distance && <p>Distance: <span>{search.distance} miles</span></p>}
                           {search.zipCode && <p>ZIP Code: <span>{search.zipCode}</span></p>}
 
