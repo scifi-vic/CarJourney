@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styles/carDifferences-menu.css";
 
-const VinDecoder = () => {
+const CarDifferencesMenu = () => {
   const [numCars, setNumCars] = useState(1); // User choice: 1 or 2 cars
   const [vin1, setVin1] = useState(""); // VIN for Car 1
   const [vin2, setVin2] = useState(""); // VIN for Car 2
@@ -188,4 +188,4 @@ const VinDecoder = () => {
   );
 };
 
-export default VinDecoder;
+export default CarDifferencesMenu;

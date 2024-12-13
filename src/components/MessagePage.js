@@ -27,6 +27,7 @@ useEffect(() => {
     const q = query(messageCollection, orderBy('timestamp', 'asc'));
     const unsubscribe = onSnapshot(q, (doc) => {
       setMessages(doc.docs);
+      console.log(doc.docs[0].data());
     })
   }
 }, [chatId]);

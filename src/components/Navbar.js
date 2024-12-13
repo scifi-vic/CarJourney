@@ -15,7 +15,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle, FaBars } from "react-icons/fa";
 import RegisterModal from "./RegisterModal";
 import LoginModal from "./LoginModal";
@@ -45,11 +45,12 @@ function Navbar({ profilePicture }) {
   const handleMenuClose = () => setAnchorEl(null);
   const toggleModal = (modalSetter) => modalSetter((prev) => !prev);
   const toggleDrawer = () => setDrawerOpen((prev) => !prev);
-
+  const navigate = useNavigate();
   const handleSignOut = () => {
     signOut(auth)
       .then(handleMenuClose)
       .catch((error) => console.error("Sign-out error:", error));
+      navigate('/');
   };
 
   return (

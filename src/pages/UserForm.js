@@ -43,14 +43,17 @@ function UserForm({ profilePicture, setProfilePicture }) {
       const currentUser = auth.currentUser.uid;
       const userInfo = doc(db, "users", currentUser);
 
-      // Update the Firestore document
-      await updateDoc(userInfo, {
+      const profileData = {
         firstName: formData.firstName,
         lastName: formData.lastName,
         dateOfBirth: formData.dateOfBirth,
         phone: formData.phone,
         email: formData.email,
-      });
+        
+      }
+
+      // Update the Firestore document
+      await updateDoc(userInfo, profileData);
 
       console.log("User profile updated successfully");
       successfulUpdateMessage(true); 
@@ -62,15 +65,43 @@ function UserForm({ profilePicture, setProfilePicture }) {
     }
   };
 
-  const handleProfilePictureChange = async (event) => {
-    const file = event.target.files[0];
+  // const handleProfilePictureChange = async (event) => {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onload = () => {
+  //       setProfilePicture(reader.result); // Set the profile picture with the data URL
+  //     };
+  //     reader.readAsDataURL(file); // Convert image to base64 URL
+  //   }
+  // };
+
+  // Handle images
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+
+    // Read Image
+    reader.onloadend = () => {
+      console.log(reader.result);
+      setProfilePicture(reader.result);
+      updateDoc(doc(db, 'users', auth.currentUser.uid), {
+        profilePicture: reader.result, // Save Base64 string to makeModelData
+      });
+
+
+    };
+    // Convert Image
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setProfilePicture(reader.result); // Set the profile picture with the data URL
-      };
-      reader.readAsDataURL(file); // Convert image to base64 URL
+        reader.readAsDataURL(file); // Convert image to Base64
     }
+
+  };
+
+  // Handle Image File Click
+  const handleImageClick = () => {
+    document.getElementById('car-image-input').click();
   };
 
   return (
@@ -109,7 +140,7 @@ function UserForm({ profilePicture, setProfilePicture }) {
           <input
             accept="image/*"
             type="file"
-            onChange={handleProfilePictureChange}
+            onChange={handleImageChange}
             style={{ display: "none" }}
             id="upload-photo"
           />

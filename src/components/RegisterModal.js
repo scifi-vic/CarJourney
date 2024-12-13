@@ -74,6 +74,7 @@ function RegisterModal({ open, onClose }) {
         firstName: `${formData.firstName}`,
         lastName: `${formData.lastName}`,
         uid: user.uid, 
+        profilePicture: "images/no-image.png", 
         conversations: [],
         cargarage: []
       });
