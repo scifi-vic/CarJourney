@@ -39,7 +39,7 @@ const ResultsPage = () => {
   const [fuelType, setFuelType] = useState(queryParams.get('fuelType') || '');
   const [driveType, setDriveType] = useState(queryParams.get('driveType') || '');
   const [bodyStyle, setBodyStyle] = useState(queryParams.get('bodyStyle') || '');
-  const [engineType, setEngineType] = useState(queryParams.get('engineType') || '');
+  //const [engineType, setEngineType] = useState(queryParams.get('engineType') || '');
   const [color, setColor] = useState(queryParams.get('color') || '');
   const [radius, setRadius] = useState(queryParams.get('distance') || 10); // Default distance in miles
   const [filteredCars, setFilteredCars] = useState([]);
@@ -115,8 +115,9 @@ useEffect(() => {
         const usersSnapshot = await getDocs(collection(db, "users"));
   
         for (const userDoc of usersSnapshot.docs) {
+          const ownerId = userDoc.id; // Grabs the user ID
           const carsSnapshot = await getDocs(
-            collection(db, "users", userDoc.id, "cars")
+            collection(db, "users", ownerId, "cars")
           );
   
           for (const carDoc of carsSnapshot.docs) {
@@ -148,7 +149,7 @@ useEffect(() => {
               }
             }
   
-            allCars.push({ id: carDoc.id, ...carData });
+            allCars.push({ id: carDoc.id, ownerId, ...carData });
           }
         }
   
@@ -238,7 +239,7 @@ useEffect(() => {
       const matchesFuelType = !fuelType || car.fuelType === fuelType;
       const matchesDriveType = !driveType || car.driveType === driveType;
       const matchesBodyStyle = !bodyStyle || car.bodyStyle === bodyStyle;
-      const matchesEngineType = !engineType || car.engineType === engineType;
+      //const matchesEngineType = !engineType || car.engineType === engineType;
       const matchesColor = !color || car.color === color;
 
       // Calculate distance if both user and car coordinates are available
@@ -265,7 +266,7 @@ useEffect(() => {
         matchesFuelType &&
         matchesDriveType &&
         matchesBodyStyle &&
-        matchesEngineType &&
+        //matchesEngineType &&
         matchesColor &&
         withinDistance
       );
@@ -288,7 +289,7 @@ useEffect(() => {
   fuelType,
   driveType,
   bodyStyle,
-  engineType,
+  //engineType,
   color,
   radius,
   fetchedCars,
@@ -336,7 +337,7 @@ useEffect(() => {
       fuelType: fuelType,
       driveType: driveType,
       bodyStyle: bodyStyle,
-      engineType: engineType,
+      //engineType: engineType,
       color: color,
     };
 
@@ -516,7 +517,8 @@ useEffect(() => {
               {generateDropdownOptions(10000, 200000, 10000)}
             </select>
           </div>
-
+          
+          {/* 
           <div className="form-section">
             <label>Engine Type:</label>
             <select
@@ -528,13 +530,17 @@ useEffect(() => {
               <option value="V6">V6</option>
               <option value="V8">V8</option>
             </select>
-          </div>
-        </div>
+          </div> */} 
+        </div> 
 
         <div className="vehicle-list">
           {filteredCars.length > 0 ? (
             filteredCars.map((car) => (
               <div key={car.id} className="vehicle-card">
+                <a
+                  href={`/carlistingpage/${car.ownerId}/${car.id}`}
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
                 <img src={car.image} alt={`${car.make} ${car.model}`} />
                 <h3>
                   {car.year} {car.make} {car.model}
@@ -542,6 +548,7 @@ useEffect(() => {
                 <p>Price: ${car.price}</p>
                 <p>Mileage: {car.mileage} miles</p>
                 <p>Location: {car.zipCode}</p>
+                </a>
               </div>
             ))
           ) : (
