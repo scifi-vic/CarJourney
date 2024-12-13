@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete } from '@react-google-maps/api';
 import '../styles/AdvancedSearchPage.css';
@@ -11,28 +11,73 @@ const AdvancedSearchPage = () => {
   const [minYear, setMinYear] = useState('');
   const [maxYear, setMaxYear] = useState('');
   const [mileage, setMileage] = useState('');
-  const [transmission, setTransmission] = useState('');
-  const [fuelType, setFuelType] = useState('');
-  const [bodyStyle, setBodyStyle] = useState('');
-  const [driveType, setDriveType] = useState('');
   const [color, setColor] = useState('');
-  const [keyword, setKeyword] = useState('');
-  const [condition, setCondition] = useState('');
-  const [features, setFeatures] = useState({
-    bluetooth: false,
-    backupCamera: false,
-    navigation: false,
-    sunroof: false,
-    heatedSeats: false,
-  });
   const [zipCode, setZipCode] = useState('');
   const [distance, setDistance] = useState('');
+  const [yearList, setYearList] = useState([]);
+  const [makeList, setMakeList] = useState([]);
+  const [modelList, setModelList] = useState([]);
+  const [loadingModels, setLoadingModels] = useState(false);
 
   const autocompleteRef = useRef(null);
   const navigate = useNavigate();
 
-  const handleFeatureChange = (feature) => {
-    setFeatures({ ...features, [feature]: !features[feature] });
+  // Generate years from 1992 to the current year
+  const getYearRange = () => {
+    const currentYear = new Date().getFullYear();
+    const range = [];
+    for (let year = currentYear; year >= 1992; year--) {
+      range.push(year.toString());
+    }
+    return range;
+  };
+
+  useEffect(() => {
+    setYearList(getYearRange());
+  }, []);
+
+  // Fetch Makes for Selected Year
+  useEffect(() => {
+    if (minYear) {
+      fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/GetMakesForVehicleType/car?format=json`)
+        .then((response) => response.json())
+        .then((data) => {
+          const makeValues = data.Results.map((item) => item.MakeName);
+          setMakeList(makeValues.sort((a, b) => a.localeCompare(b))); // Alphabetize makes
+          setModelList([]); // Clear models when make changes
+        })
+        .catch((error) => console.error('Error fetching makes:', error));
+    }
+  }, [minYear]);
+
+  // Fetch Models for Selected Make and Year
+  useEffect(() => {
+    if (minYear && make) {
+      setLoadingModels(true);
+      fetch(
+        `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/${make}/modelyear/${minYear}?format=json`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          const modelValues = data.Results.map((item) => item.Model_Name);
+          setModelList(modelValues.sort((a, b) => a.localeCompare(b))); // Alphabetize models
+          setLoadingModels(false);
+        })
+        .catch((error) => {
+          console.error('Error fetching models:', error);
+          setLoadingModels(false);
+        });
+    }
+  }, [minYear, make]);
+
+  const handlePlaceChanged = () => {
+    if (autocompleteRef.current) {
+      const place = autocompleteRef.current.getPlace();
+      const postalCode = place?.address_components?.find((comp) =>
+        comp.types.includes('postal_code')
+      )?.long_name;
+      setZipCode(postalCode || '');
+    }
   };
 
   const handleSearch = (e) => {
@@ -46,41 +91,13 @@ const AdvancedSearchPage = () => {
       minYear,
       maxYear,
       mileage,
-      transmission,
-      fuelType,
-      bodyStyle,
-      driveType,
       color,
-      keyword,
-      condition,
       zipCode,
       distance,
-      ...Object.entries(features)
-        .filter(([_, value]) => value)
-        .reduce((acc, [key]) => ({ ...acc, [key]: 'true' }), {}),
     }).toString();
 
     console.log(`/results?${searchParams}`);
     navigate(`/results?${searchParams}`);
-  };
-
-  const getModelsForMake = (make) => {
-    const models = {
-      Toyota: ['Camry', 'Corolla'],
-      Honda: ['Civic', 'Accord'],
-      Ford: ['F-150', 'Mustang'],
-    };
-    return models[make] || [];
-  };
-
-  const handlePlaceChanged = () => {
-    if (autocompleteRef.current) {
-      const place = autocompleteRef.current.getPlace();
-      const postalCode = place?.address_components?.find((comp) =>
-        comp.types.includes('postal_code')
-      )?.long_name;
-      setZipCode(postalCode || '');
-    }
   };
 
   return (
@@ -88,49 +105,58 @@ const AdvancedSearchPage = () => {
       <h2>Advanced Search</h2>
       <form onSubmit={handleSearch} className="advanced-search-form">
         <div className="form-group">
-          <label>Keyword</label>
-          <input
-            type="text"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            placeholder="Enter keywords (e.g., sunroof, leather)"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Make</label>
-          <select value={make} onChange={(e) => setMake(e.target.value)}>
-            <option value="">Any</option>
-            <option value="Toyota">Toyota</option>
-            <option value="Honda">Honda</option>
-            <option value="Ford">Ford</option>
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label>Model</label>
+          <label>Year:</label>
           <select
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-            disabled={!make}
+            value={minYear}
+            onChange={(e) => {
+              setMinYear(e.target.value);
+              setMake('');
+              setModel('');
+            }}
           >
-            <option value="">Any</option>
-            {getModelsForMake(make).map((mod) => (
-              <option key={mod} value={mod}>
-                {mod}
+            <option value="">Select Year</option>
+            {yearList.map((yearOption) => (
+              <option key={yearOption} value={yearOption}>
+                {yearOption}
               </option>
             ))}
           </select>
         </div>
 
         <div className="form-group">
-          <label>Condition</label>
-          <select value={condition} onChange={(e) => setCondition(e.target.value)}>
-            <option value="">Any</option>
-            <option value="New">New</option>
-            <option value="Used">Used</option>
-            <option value="Certified">Certified Pre-Owned (CPO)</option>
+          <label>Make:</label>
+          <select
+            value={make}
+            onChange={(e) => {
+              setMake(e.target.value);
+              setModel('');
+            }}
+            disabled={!minYear}
+          >
+            <option value="">Select Make</option>
+            {makeList.map((makeOption) => (
+              <option key={makeOption} value={makeOption}>
+                {makeOption}
+              </option>
+            ))}
           </select>
+        </div>
+
+        <div className="form-group">
+          <label>Model:</label>
+          <select
+            value={model}
+            onChange={(e) => setModel(e.target.value)}
+            disabled={!make}
+          >
+            <option value="">Select Model</option>
+            {modelList.map((modelOption) => (
+              <option key={modelOption} value={modelOption}>
+                {modelOption}
+              </option>
+            ))}
+          </select>
+          {loadingModels && <p>Loading models...</p>}
         </div>
 
         <div className="form-group">
@@ -173,41 +199,9 @@ const AdvancedSearchPage = () => {
           <label>Distance (miles)</label>
           <select value={distance} onChange={(e) => setDistance(e.target.value)}>
             <option value="">Any Distance</option>
-            {[5, 10, 25, 50, 100].map((dist) => (
-              <option key={dist} value={dist}>{`${dist} miles`}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="form-group features-container">
-          <label>Features</label>
-          {Object.keys(features).map((feature) => (
-            <div key={feature}>
-              <input
-                type="checkbox"
-                checked={features[feature]}
-                onChange={() => handleFeatureChange(feature)}
-              />
-              <label>{feature.charAt(0).toUpperCase() + feature.slice(1)}</label>
-            </div>
-          ))}
-        </div>
-
-        <div className="form-group">
-          <label>Year Range</label>
-          <select value={minYear} onChange={(e) => setMinYear(e.target.value)}>
-            <option value="">Min Year</option>
-            {[...Array(23)].map((_, i) => (
-              <option key={i} value={2000 + i}>
-                {2000 + i}
-              </option>
-            ))}
-          </select>
-          <select value={maxYear} onChange={(e) => setMaxYear(e.target.value)}>
-            <option value="">Max Year</option>
-            {[...Array(23)].map((_, i) => (
-              <option key={i} value={2000 + i}>
-                {2000 + i}
+            {[10, 25, 50, 100, 150, 200].map((dist) => (
+              <option key={dist} value={dist}>
+                {`${dist} miles`}
               </option>
             ))}
           </select>

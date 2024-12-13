@@ -32,46 +32,58 @@
 /* Vehicle List Styling */
 .vehicle-list {
   flex: 3;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Dynamic grid layout */
   gap: 20px;
+  justify-items: center; /* Center the cards horizontally */
 }
 
 /* Vehicle Card Styling */
 .vehicle-card {
-  width: 280px;
-  background-color: #fff;
+  width: 250px; /* Consistent card width */
+  height: 300px; /* Consistent card height */
+  background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .vehicle-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .vehicle-card img {
   width: 100%;
-  height: 180px;
+  height: 60%; /* Adjust to fit the image proportionally */
   object-fit: cover;
+  border-bottom: 1px solid #f1f2f6;
 }
 
 .vehicle-card h3 {
-  font-size: 18px;
-  color: #333;
-  margin: 15px 10px 5px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #34495e;
+  margin: 10px;
+  text-align: center;
 }
 
 .vehicle-card p {
   font-size: 14px;
-  color: #666;
+  color: #7f8c8d;
   margin: 5px 10px;
+  text-align: center;
 }
 
-/* Save Search Button */
-/* Heart Icon and "Save Search" Container */
+.vehicle-card p:last-child {
+  margin-bottom: 10px;
+}
+
+/* Save Search Button Styling */
 .save-container {
   display: flex;
   align-items: center;
@@ -94,7 +106,7 @@
 }
 
 .save-search-button:disabled {
-  cursor: not-allowed; /* Indicate the button is not clickable */
+  cursor: not-allowed;
 }
 
 .save-search-button:hover {
@@ -112,7 +124,6 @@
   color: rgb(240, 240, 240);
 }
 
-/* Heart Icon */
 .heart-icon {
   color: white;
   cursor: pointer;

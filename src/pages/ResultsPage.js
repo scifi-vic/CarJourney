@@ -518,57 +518,6 @@ useEffect(() => {
           </div>
 
           <div className="form-section">
-            <label>Transmission:</label>
-            <select
-              value={transmission}
-              onChange={(e) => setTransmission(e.target.value)}
-            >
-              <option value="">Any</option>
-              <option value="Automatic">Automatic</option>
-              <option value="Manual">Manual</option>
-            </select>
-          </div>
-
-          <div className="form-section">
-            <label>Fuel Type:</label>
-            <select
-              value={fuelType}
-              onChange={(e) => setFuelType(e.target.value)}
-            >
-              <option value="">Any</option>
-              <option value="Gasoline">Gasoline</option>
-              <option value="Diesel">Diesel</option>
-              <option value="Electric">Electric</option>
-            </select>
-          </div>
-
-          <div className="form-section">
-            <label>Drive Type:</label>
-            <select
-              value={driveType}
-              onChange={(e) => setDriveType(e.target.value)}
-            >
-              <option value="">Any</option>
-              <option value="FWD">FWD</option>
-              <option value="RWD">RWD</option>
-              <option value="AWD">AWD</option>
-            </select>
-          </div>
-
-          <div className="form-section">
-            <label>Body Style:</label>
-            <select
-              value={bodyStyle}
-              onChange={(e) => setBodyStyle(e.target.value)}
-            >
-              <option value="">Any</option>
-              <option value="Sedan">Sedan</option>
-              <option value="SUV">SUV</option>
-              <option value="Truck">Truck</option>
-            </select>
-          </div>
-
-          <div className="form-section">
             <label>Engine Type:</label>
             <select
               value={engineType}
@@ -578,19 +527,6 @@ useEffect(() => {
               <option value="V4">V4</option>
               <option value="V6">V6</option>
               <option value="V8">V8</option>
-            </select>
-          </div>
-
-          <div className="form-section">
-            <label>Color:</label>
-            <select
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
-            >
-              <option value="">Any</option>
-              <option value="Red">Red</option>
-              <option value="Blue">Blue</option>
-              <option value="Gray">Gray</option>
             </select>
           </div>
         </div>
