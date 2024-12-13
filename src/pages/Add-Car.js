@@ -6,6 +6,7 @@ import { getAuth } from 'firebase/auth';
 import { auth, db, storage } from "../firebaseConfig";
 import "./../styles/Add-Car.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // Add car
 const AddCar = () => {
@@ -17,8 +18,14 @@ const AddCar = () => {
     const [vinError, setVinError] = useState("");
     const [makeError, setMakeError] = useState("");
 
+    // Make/Model
+    const [makeModelZipValid, setMakeModelZipValid] = useState(null);
+    const [makeModelZipError, setMakeModelZipError] = useState("");
+
     // VIN
     const [vin, setVin] = useState("");
+    const [vinZipValid, setVinZipValid] = useState(null); // null: no validation yet, true: valid, false: invalid
+    const [vinZipError, setVinZipError] = useState("");
     const [loading, setLoading] = useState(false);
     const [vinDetails, setVinDetails] = useState(null);
     const [vinData, setVinData] = useState({
@@ -183,7 +190,7 @@ const AddCar = () => {
     };
 
     // Handle Make/Model Go Button
-    const handleMakeGo = () => {
+    const handleMakeGo = async () => {
       // User must be logged in
       if (!auth.currentUser) {
         setMakeError("You must be logged in to add a car.");
@@ -204,6 +211,7 @@ const AddCar = () => {
       makeModelData.make && // Make is required
       makeModelData.mileage && // Mileage is required
       makeModelData.zipCode && // ZIP Code is required
+      makeModelZipValid  && // Checks if zip Code is valid
       (modelList.length === 0 || makeModelData.model); // Either no models available, or a model is selected
       
     // Handle Back Button (Reset Data)
@@ -234,6 +242,61 @@ const AddCar = () => {
 
       // Unshow Results Section
       setShowResults(false);
+    };
+
+    /* Handle Zip Codes */
+    // Handle Zip Code
+    const validateZipCode = async (zipCode) => {
+      // Basic format validation
+      const zipRegex = /^[0-9]{5}(?:-[0-9]{4})?$/;
+      if (!zipRegex.test(zipCode)) {
+        return { isValid: false };
+      }
+    
+      try {
+        // Real-time verification using the Zippopotam API
+        const response = await axios.get(`https://api.zippopotam.us/us/${zipCode}`);
+        if (response.status === 200) {
+          return { isValid: true, data: response.data };
+        }
+      } catch (error) {
+        console.error("Error validating ZIP code:", error);
+      }
+    
+      return { isValid: false };
+    };
+    
+    // Handle Zip Code Changes
+    const handleZipChange = async (e) => {
+      const zip = e.target.value;
+
+      if (activeTab === "VIN") {
+        // VIN
+        setVinData({ ...vinData, zipCode: zip });
+    
+        if (zip.length >= 5) {
+          const validationResult = await validateZipCode(zip);
+          setVinZipValid(validationResult.isValid);
+          setVinZipError("ZIP Code is invalid. Please enter a valid one.");
+        } else {
+          setVinZipValid(null);
+          setVinZipError("");
+        }
+
+      } else if (activeTab === "Make/Model") {
+        // Make/Model
+        setMakeModelData({ ...makeModelData, zipCode: zip });
+    
+        if (zip.length >= 5) {
+          const validationResult = await validateZipCode(zip);
+          setMakeModelZipValid(validationResult.isValid);
+          setMakeModelZipError("ZIP Code is invalid. Please enter a valid one.");
+        } else {
+          setMakeModelZipValid(null);
+          setMakeModelZipError("");
+        }
+      }
+
     };
 
     // Handle VIN
@@ -480,7 +543,7 @@ const AddCar = () => {
             placeholder="ZIP Code"
             value={makeModelData.zipCode}
             className="make-input"
-            onChange={(e) => setMakeModelData({ ...makeModelData, zipCode: e.target.value })}
+            onChange={handleZipChange}
           />
 
           { /* Button */ }
@@ -495,6 +558,7 @@ const AddCar = () => {
 
         </div>
         { /* Error Message */ }
+        {makeModelZipValid === false && <p className="error-message">{makeModelZipError}</p>}
         {makeError && <p className="error-message">{makeError}</p>}
 
       </div>
@@ -596,10 +660,10 @@ const AddCar = () => {
                 className="vin-input-btn"
                 placeholder="ZIP Code"
                 value={vinData.zipCode}
-                onChange={(e) => setVinData({ ...vinData, zipCode: e.target.value })}
+                onChange={handleZipChange}
             />
           </div>
-
+          {vinZipValid === false && <p className="error-message">{vinZipError}</p>}
 
         { /* Button */ }
         <div className="vin-buttons">
@@ -608,7 +672,7 @@ const AddCar = () => {
           </button>
           <button 
             className="add-button"
-            disabled={!vin || !vinData.mileage || !vinData.zipCode || !vinData.price || !vinData.color}
+            disabled={!vin || !vinData.mileage || !vinData.zipCode || !vinData.price || !vinData.color || !vinZipValid}
             onClick={handleAddCars}>
             Add
           </button>
