@@ -95,6 +95,10 @@ const CarSearchPage = () => {
     navigate(`/results?${query}`);
   };
 
+  const handleAdvancedSearchRedirect = () => {
+    navigate('/advanced-search');
+  };
+
   return (
     <div className="car-search-page">
       <div className="search-card">
@@ -166,6 +170,13 @@ const CarSearchPage = () => {
             Search
           </button>
         </form>
+
+        <button
+          onClick={handleAdvancedSearchRedirect}
+          className="advanced-search-button"
+        >
+          Advanced Search
+        </button>
       </div>
     </div>
   );
