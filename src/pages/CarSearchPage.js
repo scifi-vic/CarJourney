@@ -15,7 +15,7 @@ const CarSearchPage = () => {
   const locationInputRef = useRef(null);
 
   useEffect(() => {
-    // Fetch all car makes
+    // Fetch all car makes and alphabetize
     const fetchMakes = async () => {
       try {
         const response = await fetch(
@@ -23,7 +23,7 @@ const CarSearchPage = () => {
         );
         const data = await response.json();
         const makeValues = data.Results.map((item) => item.MakeName);
-        setMakeList(makeValues);
+        setMakeList(makeValues.sort((a, b) => a.localeCompare(b))); // Alphabetize makes
       } catch (error) {
         console.error('Error fetching makes:', error);
       }
@@ -34,7 +34,7 @@ const CarSearchPage = () => {
 
   useEffect(() => {
     if (make) {
-      // Fetch models for the selected make
+      // Fetch models for the selected make and alphabetize
       const fetchModels = async () => {
         setLoadingModels(true);
         try {
@@ -43,7 +43,7 @@ const CarSearchPage = () => {
           );
           const data = await response.json();
           const modelValues = data.Results.map((item) => item.Model_Name);
-          setModelList(modelValues);
+          setModelList(modelValues.sort((a, b) => a.localeCompare(b))); // Alphabetize models
         } catch (error) {
           console.error('Error fetching models:', error);
         } finally {
