@@ -11,6 +11,7 @@ import UserInbox from './components/UserInbox';
 import { auth, db } from './firebaseConfig'; 
 import {addDoc, collection, doc, getDoc, getFirestore, setDoc} from 'firebase/firestore';
 import GoogleMapsProvider from './components/GoogleMapsProvider'; // Import the provider
+import Chatbot from './components/Chatbot'; 
 
 // Lazy load page components
 const Home = lazy(() => import('./pages/Home'));
