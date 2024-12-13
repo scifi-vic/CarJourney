@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
 import { useLocation } from 'react-router-dom';
-import { doc, setDoc, collection } from "firebase/firestore"; // Import Firestore methods
+import { doc, setDoc, collection, getDocs } from "firebase/firestore"; // Import Firestore methods
 import { auth, db } from "../firebaseConfig"; // Import your Firebase configuration
 import '../styles/ResultsPage.css';
 
@@ -44,16 +44,31 @@ const ResultsPage = () => {
   const [radius, setRadius] = useState(queryParams.get('distance') || 10); // Default distance in miles
   const [filteredCars, setFilteredCars] = useState([]);
 
-  const sampleCars = useMemo(
-    () => [
-      { id: 1, make: 'Toyota', model: 'Camry', year: 2018, price: 20000, mileage: 30000, transmission: 'Automatic', fuelType: 'Gasoline', location: '90001', driveType: 'FWD', bodyStyle: 'Sedan', engineType: 'V4', color: 'Red', lat: 33.973951, lng: -118.248405, image: 'https://via.placeholder.com/280x180' },
-      { id: 4, make: 'Honda', model: 'Civic', year: 2020, price: 18000, mileage: 20000, transmission: 'Manual', fuelType: 'Gasoline', location: '90002', driveType: 'FWD', bodyStyle: 'Sedan', engineType: 'V4', color: 'Blue', lat: 33.950396, lng: -118.247621, image: 'https://via.placeholder.com/280x180' },
-      { id: 5, make: 'Toyota', model: 'Corolla', year: 2019, price: 15000, mileage: 25000, transmission: 'Automatic', fuelType: 'Gasoline', location: '90003', driveType: 'FWD', bodyStyle: 'Sedan', engineType: 'V4', color: 'Gray', lat: 33.965495, lng: -118.261867, image: 'https://via.placeholder.com/280x180' },
-      // Add more cars as necessary
-    ],
-    []
-  );
+  const [fetchedCars, setFetchedCars] = useState([]);
 
+  // Fetch cars from Firestore
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        let allCars = [];
+        for (const userDoc of usersSnapshot.docs) {
+          const carsSnapshot = await getDocs(
+            collection(db, "users", userDoc.id, "cars")
+          );
+          carsSnapshot.forEach((carDoc) => {
+            allCars.push({ id: carDoc.id, ...carDoc.data() });
+          });
+        }
+        setFetchedCars(allCars);
+      } catch (error) {
+        console.error("Error fetching cars from Firestore:", error);
+      }
+    };
+  
+    fetchCars();
+  }, []); // Run once on component mount
+  
   // Helper function to calculate distance between two coordinates
   const calculateDistance = (lat1, lng1, lat2, lng2) => {
     const toRad = (value) => (value * Math.PI) / 180;
@@ -117,7 +132,7 @@ const ResultsPage = () => {
         }
       }
 
-      const newFilteredCars = sampleCars.filter((car) => {
+      const newFilteredCars = fetchedCars.filter((car) => {
         const matchesMake = !make || car.make === make;
         const matchesModel = !model || car.model === model;
         const matchesMinYear = !minYear || car.year >= parseInt(minYear, 10);
@@ -165,7 +180,7 @@ const ResultsPage = () => {
     };
 
     filterCarsByDistance();
-  }, [make, model, zip, minYear, maxYear, minPrice, maxPrice, maxMileage, transmission, fuelType, driveType, bodyStyle, engineType, color, radius, sampleCars]);
+  }, [make, model, zip, minYear, maxYear, minPrice, maxPrice, maxMileage, transmission, fuelType, driveType, bodyStyle, engineType, color, radius, fetchedCars]);
 
   if (!isLoaded) {
     return <p>Loading Google Maps...</p>;
