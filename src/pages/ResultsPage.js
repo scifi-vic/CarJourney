@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
+import { useLocation } from 'react-router-dom';
+import { doc, setDoc, collection } from "firebase/firestore"; // Import Firestore methods
+import { auth, db } from "../firebaseConfig"; // Import your Firebase configuration
 import '../styles/ResultsPage.css';
+
+/* FontAwesome Icons */
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons'; // Regular heart
+import { faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';   // Solid heart
 
 const ResultsPage = () => {
   const { isLoaded } = useJsApiLoader({
@@ -11,22 +19,29 @@ const ResultsPage = () => {
   // Define state for Autocomplete
   const [autocomplete, setAutocomplete] = useState(null);
 
+  // Handle Saves
+  const [isSaved, setIsSaved] = useState(false);
+
+  // Query Search
+  const urlLocation = useLocation();
+  const queryParams = new URLSearchParams(urlLocation.search);
+  
   // Define filter states
-  const [make, setMake] = useState('');
-  const [model, setModel] = useState('');
-  const [zip, setZip] = useState('');
-  const [minYear, setMinYear] = useState('');
-  const [maxYear, setMaxYear] = useState('');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [maxMileage, setMaxMileage] = useState('');
-  const [transmission, setTransmission] = useState('');
-  const [fuelType, setFuelType] = useState('');
-  const [driveType, setDriveType] = useState('');
-  const [bodyStyle, setBodyStyle] = useState('');
-  const [engineType, setEngineType] = useState('');
-  const [color, setColor] = useState('');
-  const [radius, setRadius] = useState(10); // Default distance in miles
+  const [make, setMake] = useState(queryParams.get('make') || '');
+  const [model, setModel] = useState(queryParams.get('model') || '');
+  const [zip, setZip] = useState(queryParams.get('zipCode') || '');
+  const [minYear, setMinYear] = useState(queryParams.get('minYear') || '');
+  const [maxYear, setMaxYear] = useState(queryParams.get('maxYear') || '');
+  const [minPrice, setMinPrice] = useState(queryParams.get('minPrice') || '');
+  const [maxPrice, setMaxPrice] = useState(queryParams.get('maxPrice') || '');
+  const [maxMileage, setMaxMileage] = useState(queryParams.get('mileage') || '');
+  const [transmission, setTransmission] = useState(queryParams.get('transmission') || '');
+  const [fuelType, setFuelType] = useState(queryParams.get('fuelType') || '');
+  const [driveType, setDriveType] = useState(queryParams.get('driveType') || '');
+  const [bodyStyle, setBodyStyle] = useState(queryParams.get('bodyStyle') || '');
+  const [engineType, setEngineType] = useState(queryParams.get('engineType') || '');
+  const [color, setColor] = useState(queryParams.get('color') || '');
+  const [radius, setRadius] = useState(queryParams.get('distance') || 10); // Default distance in miles
   const [filteredCars, setFilteredCars] = useState([]);
 
   const sampleCars = useMemo(
@@ -168,11 +183,97 @@ const ResultsPage = () => {
     return options;
   };
 
+  {/* Miguel's Code
+    Handle Save Search */}
+  // Handle Save Search
+  const handleSaveSearch = async () => {
+    // Variables
+    const searchId = `${Date.now()}`;
+
+    // Check if user is logged in
+    const user = auth.currentUser;
+
+    // Set Saved to True
+    setIsSaved(true);
+
+    // Define Filters
+    const filters = {
+      userId: user.uid,
+      createdAt: new Date(Date.now()), // MM/DD/YYYY
+      make: make, model: model,
+      zipCode: zip, distance: radius,
+      minYear: minYear, maxYear: maxYear,
+      minPrice: minPrice, maxPrice: maxPrice,
+      mileage: maxMileage,
+      transmission: transmission,
+      fuelType: fuelType,
+      driveType: driveType,
+      bodyStyle: bodyStyle,
+      engineType: engineType,
+      color: color,
+    };
+
+    if (user) {
+      // Logged-in user: Save to Firebase
+      try {
+        const userSearchesRef = collection(db, "users", user.uid, "savedSearches");
+        await setDoc(doc(userSearchesRef, searchId), filters);
+        console.log("Search saved to Firebase for user:", user.uid);
+      } catch (error) {
+        console.error("Error saving search to Firebase:", error);
+      }
+    // If user is not logged in
+    } else {
+      // Guest user: Save to localStorage
+      // Take existing searches
+      const existingSearches = JSON.parse(localStorage.getItem("savedSearches")) || [];
+
+      // Give unique IDs to each save added
+      const newId = existingSearches.length > 0 
+        ? Math.max(...existingSearches.map((s) => s.id)) + 1 
+        : 1;
+      
+      // Renew array
+      const newSearch = {
+        id: newId,
+        ...filters,
+      };
+
+      // Update searches in localStorage
+      const updatedSearches = [newSearch, ...existingSearches];
+      localStorage.setItem("savedSearches", JSON.stringify(updatedSearches));
+    }
+
+    // Change "Save Search" button after 1 second
+    setTimeout(() => {
+      setIsSaved(false);
+    }, 1000); // Revert text after 1 second
+  };
+
+  // HTML
   return (
     <div className="results-page">
       <h2 className="results-title">Search Results</h2>
       <div className="results-container">
+
+        {/* Filter Panel */}
         <div className="filter-panel">
+
+          {/* Save Search Button */}
+          <div className="save-container">
+            <button className="save-search-button" 
+              onClick={handleSaveSearch}
+              disabled={isSaved} // Prevent multiple clicks while in 'Saved' state
+            >
+              <FontAwesomeIcon
+                icon={isSaved ? fasHeart : farHeart}
+                className="heart-icon"
+              />
+              <span className="save-text">{isSaved ? 'Saved!' : 'Save Search'}</span>             
+            </button>
+          </div>
+          { /* End of Miguel's Code */}
+
           <div className="form-section">
             <label>Make:</label>
             <select
