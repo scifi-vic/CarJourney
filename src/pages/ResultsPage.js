@@ -317,6 +317,7 @@ useEffect(() => {
   const handleSaveSearch = async () => {
     // Variables
     const searchId = `${Date.now()}`;
+    const date = new Date(Date.now());
 
     // Check if user is logged in
     const user = auth.currentUser;
@@ -326,8 +327,7 @@ useEffect(() => {
 
     // Define Filters
     const filters = {
-      userId: user.uid,
-      createdAt: new Date(Date.now()), // MM/DD/YYYY
+      createdAt: date,
       make: make, model: model,
       zipCode: zip, distance: radius,
       minYear: minYear, maxYear: maxYear,
@@ -337,19 +337,26 @@ useEffect(() => {
       fuelType: fuelType,
       driveType: driveType,
       bodyStyle: bodyStyle,
-      //engineType: engineType,
+      // engineType: engineType,
       color: color,
     };
 
     if (user) {
       // Logged-in user: Save to Firebase
       try {
+        // Update Filters for Firebase
+        const updatedFilters = {
+          ...filters,
+          userId: user.uid,
+        };
+
         const userSearchesRef = collection(db, "users", user.uid, "savedSearches");
-        await setDoc(doc(userSearchesRef, searchId), filters);
+        await setDoc(doc(userSearchesRef, searchId), updatedFilters);
         console.log("Search saved to Firebase for user:", user.uid);
       } catch (error) {
         console.error("Error saving search to Firebase:", error);
       }
+
     // If user is not logged in
     } else {
       // Guest user: Save to localStorage
