@@ -8,57 +8,65 @@ const CarSearchPage = () => {
   const [model, setModel] = useState('');
   const [location, setLocation] = useState('');
   const [distance, setDistance] = useState('10');
+  const [minYear, setMinYear] = useState('');
+  const [yearList, setYearList] = useState([]);
   const [makeList, setMakeList] = useState([]);
   const [modelList, setModelList] = useState([]);
   const [loadingModels, setLoadingModels] = useState(false);
   const navigate = useNavigate();
   const locationInputRef = useRef(null);
 
-  useEffect(() => {
-    // Fetch all car makes and alphabetize
-    const fetchMakes = async () => {
-      try {
-        const response = await fetch(
-          `https://vpic.nhtsa.dot.gov/api/vehicles/GetMakesForVehicleType/car?format=json`
-        );
-        const data = await response.json();
-        const makeValues = data.Results.map((item) => item.MakeName);
-        setMakeList(makeValues.sort((a, b) => a.localeCompare(b))); // Alphabetize makes
-      } catch (error) {
-        console.error('Error fetching makes:', error);
-      }
-    };
+  // Generate years from 1992 to the current year
+  const getYearRange = () => {
+    const currentYear = new Date().getFullYear();
+    const range = [];
+    for (let year = currentYear; year >= 1992; year--) {
+      range.push(year.toString());
+    }
+    return range;
+  };
 
-    fetchMakes();
+  useEffect(() => {
+    const filteredYears = getYearRange();
+    setYearList(filteredYears);
   }, []);
 
+  // Fetch Makes for Selected Year
   useEffect(() => {
-    if (make) {
-      // Fetch models for the selected make and alphabetize
-      const fetchModels = async () => {
-        setLoadingModels(true);
-        try {
-          const response = await fetch(
-            `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/${make}?format=json`
-          );
-          const data = await response.json();
+    if (minYear) {
+      fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/GetMakesForVehicleType/car?format=json`)
+        .then((response) => response.json())
+        .then((data) => {
+          const makeValues = data.Results.map((item) => item.MakeName);
+          setMakeList(makeValues.sort((a, b) => a.localeCompare(b))); // Alphabetize makes
+          setModelList([]); // Clear models when make changes
+        })
+        .catch((error) => console.error('Error fetching makes:', error));
+    }
+  }, [minYear]);
+
+  // Fetch Models for Selected Make and Year
+  useEffect(() => {
+    if (minYear && make) {
+      setLoadingModels(true);
+      fetch(
+        `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/${make}/modelyear/${minYear}?format=json`
+      )
+        .then((response) => response.json())
+        .then((data) => {
           const modelValues = data.Results.map((item) => item.Model_Name);
           setModelList(modelValues.sort((a, b) => a.localeCompare(b))); // Alphabetize models
-        } catch (error) {
-          console.error('Error fetching models:', error);
-        } finally {
           setLoadingModels(false);
-        }
-      };
-
-      fetchModels();
-    } else {
-      setModelList([]); // Clear models if no make is selected
+        })
+        .catch((error) => {
+          console.error('Error fetching models:', error);
+          setLoadingModels(false);
+        });
     }
-  }, [make]);
+  }, [minYear, make]);
 
+  // Initialize Google Places autocomplete for location input
   useEffect(() => {
-    // Initialize Google Places autocomplete for location input
     if (window.google && window.google.maps && window.google.maps.places) {
       const input = locationInputRef.current;
       if (input) {
@@ -80,7 +88,7 @@ const CarSearchPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!make || !model || !location) {
+    if (!make || !model || !location || !minYear) {
       alert('Please fill in all required fields.');
       return;
     }
@@ -90,6 +98,7 @@ const CarSearchPage = () => {
       model,
       location,
       distance,
+      year: minYear,
     }).toString();
 
     navigate(`/results?${query}`);
@@ -105,6 +114,25 @@ const CarSearchPage = () => {
         <h1>Find Your Next Car</h1>
         <form onSubmit={handleSubmit} className="car-search-form">
           <div className="form-section">
+            <label>Year:</label>
+            <select
+              value={minYear}
+              onChange={(e) => {
+                setMinYear(e.target.value);
+                setMake(''); // Reset make and model when year changes
+                setModel('');
+              }}
+            >
+              <option value="">Select Year</option>
+              {yearList.map((yearOption) => (
+                <option key={yearOption} value={yearOption}>
+                  {yearOption}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-section">
             <label>Make:</label>
             <select
               value={make}
@@ -112,6 +140,7 @@ const CarSearchPage = () => {
                 setMake(e.target.value);
                 setModel(''); // Reset model when make changes
               }}
+              disabled={!minYear}
             >
               <option value="">Select Make</option>
               {makeList.map((makeOption) => (

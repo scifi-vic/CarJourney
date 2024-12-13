@@ -45,6 +45,65 @@ const ResultsPage = () => {
   const [filteredCars, setFilteredCars] = useState([]);
 
   const [fetchedCars, setFetchedCars] = useState([]);
+  const [yearList, setYearList] = useState([]);
+  const [makeList, setMakeList] = useState([]);
+  const [modelList, setModelList] = useState([]);
+  const [loadingModels, setLoadingModels] = useState(false);
+
+
+
+    // Generate years from 1992 to the current year
+  const getYearRange = () => {
+    const currentYear = new Date().getFullYear();
+    const range = [];
+    for (let year = currentYear; year >= 1992; year--) {
+      range.push(year.toString());
+    }
+    return range;
+  };
+
+  useEffect(() => {
+    const filteredYears = getYearRange();
+    setYearList(filteredYears);
+  }, []);
+
+  // Fetch Makes for Selected Year
+  useEffect(() => {
+    if (minYear) {
+      fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/GetMakesForVehicleType/car?format=json`)
+        .then((response) => response.json())
+        .then((data) => {
+          const makeValues = data.Results.map((item) => item.MakeName);
+          setMakeList(makeValues);
+          setModelList([]); // Clear models when make changes
+        })
+        .catch((error) => console.error("Error fetching makes:", error));
+    }
+  }, [minYear]);
+
+// Fetch Models for Selected Make and Year
+useEffect(() => {
+  if (minYear && make) {
+    setLoadingModels(true);
+    fetch(
+      `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/${make}/modelyear/${minYear}?format=json`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const modelValues = data.Results.map((item) => item.Model_Name);
+        setModelList(modelValues.sort((a, b) => a.localeCompare(b))); // Alphabetize models
+        // If a model is pre-selected via query parameters, ensure it's valid
+        if (!modelValues.includes(model)) {
+          setModel('');
+        }
+        setLoadingModels(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching models:', error);
+        setLoadingModels(false);
+      });
+  }
+}, [minYear, make]);
 
   // Fetch cars from Firestore
   useEffect(() => {
@@ -295,13 +354,15 @@ const ResultsPage = () => {
               value={make}
               onChange={(e) => {
                 setMake(e.target.value);
-                setModel(''); // Reset model when make changes
+                setModel('');
               }}
             >
               <option value="">Any</option>
-              <option value="Toyota">Toyota</option>
-              <option value="Honda">Honda</option>
-              {/* Add more makes */}
+              {makeList.map((make) => (
+                <option key={make} value={make}>
+                  {make}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -310,23 +371,18 @@ const ResultsPage = () => {
             <select
               value={model}
               onChange={(e) => setModel(e.target.value)}
-              disabled={!make} // Disable model selection if no make is selected
+              disabled={!make}
             >
               <option value="">Any</option>
-              {make === 'Toyota' && (
-                <>
-                  <option value="Camry">Camry</option>
-                  <option value="Corolla">Corolla</option>
-                  {/* Add more Toyota models */}
-                </>
+              {loadingModels ? (
+                <option>Loading...</option>
+              ) : (
+                modelList.map((model) => (
+                  <option key={model} value={model}>
+                    {model}
+                  </option>
+                ))
               )}
-              {make === 'Honda' && (
-                <>
-                  <option value="Civic">Civic</option>
-                  {/* Add more Honda models */}
-                </>
-              )}
-              {/* Add more makes and their models */}
             </select>
           </div>
 
@@ -361,19 +417,21 @@ const ResultsPage = () => {
 
           <div className="form-section">
             <label>Year Range:</label>
-            <select
-              value={minYear}
-              onChange={(e) => setMinYear(e.target.value)}
-            >
+            <select value={minYear} onChange={(e) => setMinYear(e.target.value)}>
               <option value="">Min Year</option>
-              {generateDropdownOptions(1990, 2025)}
+              {yearList.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
             </select>
-            <select
-              value={maxYear}
-              onChange={(e) => setMaxYear(e.target.value)}
-            >
+            <select value={maxYear} onChange={(e) => setMaxYear(e.target.value)}>
               <option value="">Max Year</option>
-              {generateDropdownOptions(1990, 2025)}
+              {yearList.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -494,7 +552,7 @@ const ResultsPage = () => {
                 </h3>
                 <p>Price: ${car.price}</p>
                 <p>Mileage: {car.mileage} miles</p>
-                <p>Location: {car.location}</p>
+                <p>Location: {car.zipCode}</p>
               </div>
             ))
           ) : (
