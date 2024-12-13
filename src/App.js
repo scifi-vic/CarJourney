@@ -83,7 +83,6 @@ function App() {
                 <Route path="/add-car" element={<AddCar />} />
                 <Route path="/carlistingpage/:carId" element={<CarListingPage />} />
                 <Route path="/contactseller" element={<ContactSeller />} />
-                <Route path="/resultspage" element={<ResultsPage />} />
                 <Route path="/results" element={<ResultsPage />} />
                 <Route path="/car-quiz" element={<CarQuiz />} />
                 <Route path="/locate-dealer" element={<LocateDealer />} />
