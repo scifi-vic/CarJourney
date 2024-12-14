@@ -208,7 +208,7 @@ const FavoriteList = () => {
                     {(user && user.uid !== car.owner) &&
                       <p className="contact-seller">
                         <p className="contact-seller-link" onClick={() => getChatId(car)}>
-                          Contact Seller{" "}
+                          Contact Seller
                           <i>
                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                           </i>
