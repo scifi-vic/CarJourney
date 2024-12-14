@@ -209,14 +209,14 @@ const AdvancedSearchPage = () => {
 
         <div className="form-group">
           <label>Mileage (Max)</label>
-          <select value={mileage} onChange={(e) => setMileage(e.target.value)}>
-            <option value="">Any Mileage</option>
-            {[10000, 20000, 30000, 40000, 50000].map((mileage) => (
-              <option key={mileage} value={mileage}>
-                {`${mileage.toLocaleString()} miles`}
-              </option>
-            ))}
-          </select>
+          <input
+            type="number"
+            placeholder="Enter maximum mileage"
+            value={mileage}
+            onChange={(e) => setMileage(e.target.value)}
+            style={{ width: '100%', height: '40px' }}
+            min="0" // Ensure the user can only enter non-negative numbers
+        />
         </div>
 
         <button type="submit" className="search-button">

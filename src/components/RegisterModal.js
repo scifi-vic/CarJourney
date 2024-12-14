@@ -1,8 +1,8 @@
 // RegisterModal.js
 import React, { useState, useEffect } from 'react';
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword /*, sendEmailVerification */ } from 'firebase/auth';
 import { Box, Modal, TextField, Button, Typography, IconButton, InputAdornment } from '@mui/material';
-import { db, auth } from "../firebaseConfig"; 
+import { db, auth } from "../firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
 import CloseIcon from '@mui/icons-material/Close';
 import Visibility from '@mui/icons-material/Visibility';
@@ -68,17 +68,19 @@ function RegisterModal({ open, onClose }) {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
 
-      // create users with email, name, conversations (for messaging)
+      // Create users with email, name, conversations (for messaging)
       await setDoc(doc(db, "users", user.uid), {
         email: formData.email,
         firstName: `${formData.firstName}`,
         lastName: `${formData.lastName}`,
-        uid: user.uid, 
-        profilePicture: "images/no-image.png", 
+        uid: user.uid,
+        profilePicture: "images/no-image.png",
         conversations: [],
         cargarage: []
       });
 
+      // Commented out the email verification
+      /*
       await sendEmailVerification(user)
         .then(() => {
           setVerificationMessage('A verification email has been sent. Please check your inbox and verify your account.');
@@ -86,6 +88,7 @@ function RegisterModal({ open, onClose }) {
         .catch(() => {
           setError('Failed to send verification email. Please try again later.');
         });
+      */
     } catch (error) {
       setError(`Registration failed: ${error.message}`);
     }
