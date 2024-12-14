@@ -6,7 +6,7 @@ import '../styles/CarSearchPage.css';
 const CarSearchPage = () => {
   const [make, setMake] = useState('');
   const [model, setModel] = useState('');
-  const [location, setLocation] = useState('');
+  const [zipCode, setZipCode] = useState('');
   const [distance, setDistance] = useState('10');
   const [minYear, setMinYear] = useState('');
   const [yearList, setYearList] = useState([]);
@@ -14,7 +14,7 @@ const CarSearchPage = () => {
   const [modelList, setModelList] = useState([]);
   const [loadingModels, setLoadingModels] = useState(false);
   const navigate = useNavigate();
-  const locationInputRef = useRef(null);
+  const autocompleteRef = useRef(null);
 
   // Generate years from 1992 to the current year
   const getYearRange = () => {
@@ -27,8 +27,7 @@ const CarSearchPage = () => {
   };
 
   useEffect(() => {
-    const filteredYears = getYearRange();
-    setYearList(filteredYears);
+    setYearList(getYearRange());
   }, []);
 
   // Fetch Makes for Selected Year
@@ -65,10 +64,10 @@ const CarSearchPage = () => {
     }
   }, [minYear, make]);
 
-  // Initialize Google Places autocomplete for location input
+  // Initialize Google Places autocomplete for zip code input
   useEffect(() => {
     if (window.google && window.google.maps && window.google.maps.places) {
-      const input = locationInputRef.current;
+      const input = autocompleteRef.current;
       if (input) {
         const autocomplete = new window.google.maps.places.Autocomplete(input, {
           types: ['(regions)'],
@@ -77,9 +76,10 @@ const CarSearchPage = () => {
 
         autocomplete.addListener('place_changed', () => {
           const place = autocomplete.getPlace();
-          if (place.geometry) {
-            setLocation(place.formatted_address);
-          }
+          const postalCode = place?.address_components?.find((comp) =>
+            comp.types.includes('postal_code')
+          )?.long_name;
+          setZipCode(postalCode || '');
         });
       }
     }
@@ -87,21 +87,22 @@ const CarSearchPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!make || !model || !location || !minYear) {
+  
+    if (!minYear || !make || !model || !zipCode) {
       alert('Please fill in all required fields.');
       return;
     }
-
+  
+    // Construct the query parameters with correct naming
     const query = new URLSearchParams({
+      minYear, // Update the key to match ResultsPage
       make,
       model,
-      location,
+      zipCode,
       distance,
-      year: minYear,
     }).toString();
-
-    navigate(`/results?${query}`);
+  
+    navigate(`/results?${query}`); // Pass parameters to the results page
   };
 
   const handleAdvancedSearchRedirect = () => {
@@ -169,13 +170,13 @@ const CarSearchPage = () => {
           </div>
 
           <div className="form-section">
-            <label>Location:</label>
+            <label>ZIP Code:</label>
             <input
               type="text"
-              ref={locationInputRef}
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Enter ZIP code or city"
+              ref={autocompleteRef}
+              value={zipCode}
+              onChange={(e) => setZipCode(e.target.value)}
+              placeholder="Enter ZIP code"
             />
           </div>
 
