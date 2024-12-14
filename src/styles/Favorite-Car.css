@@ -157,6 +157,10 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
     overflow: hidden;
+    height: 500px; /* Set a fixed height for the card */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensure proper spacing for content */
   }
   
   .car-item:hover {
@@ -166,15 +170,20 @@
   /* Position the image container as relative */
   .car-image {
     position: relative;
-    overflow: hidden; /* Ensures content doesn't overflow */
+    width: 100%;
+    height: 600px; /* Fixed height for the image container */
+    display: flex; /* Use flexbox to center the image */
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+    overflow: hidden; /* Ensure no overflow of content */
+    background-color: #dddddd; /* Optional: Gray background for consistency */
   }
 
   /* Image styling */
   .car-image img {
-    width: 100%;
-    height: 300px; /* Set a fixed height */
-    object-fit: cover; /* Ensures the image scales to fill the area without distortion */
-    background-color: #f4f4f4; /* Optional: Gray background for missing images */
+    max-width: 100%; /* Ensure image doesn't overflow horizontally */
+    max-height: 100%; /* Ensure image doesn't overflow vertically */
+    object-fit: contain; /* Scale the image to fit within the container */
   }
 
 /* Style for the car cost */
@@ -245,6 +254,7 @@
 
 .contact-seller-link:hover {
   text-decoration: underline; /* Underline on hover */
+  cursor: pointer;
 }
 
 /* Align the text and add spacing */
