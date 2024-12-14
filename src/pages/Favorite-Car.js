@@ -207,12 +207,12 @@ const FavoriteList = () => {
                     {/* Only show Contact Seller when User is logged in or the car is not owned by the same user */}
                     {(user && user.uid !== car.owner) &&
                       <p className="contact-seller">
-                        <a className="contact-seller-link" onClick={() => getChatId(car)}>
+                        <p className="contact-seller-link" onClick={() => getChatId(car)}>
                           Contact Seller{" "}
                           <i>
                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                           </i>
-                        </a>
+                        </p>
                       </p>
                     }
                   </div>
