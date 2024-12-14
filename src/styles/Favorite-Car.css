@@ -163,16 +163,18 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
   }
   
-/* Position the image container as relative */
-.car-image {
-  position: relative;
-}
+  /* Position the image container as relative */
+  .car-image {
+    position: relative;
+    overflow: hidden; /* Ensures content doesn't overflow */
+  }
 
   /* Image styling */
   .car-image img {
     width: 100%;
-    height: auto;
-    object-fit: cover;
+    height: 300px; /* Set a fixed height */
+    object-fit: cover; /* Ensures the image scales to fill the area without distortion */
+    background-color: #f4f4f4; /* Optional: Gray background for missing images */
   }
 
 /* Style for the car cost */
