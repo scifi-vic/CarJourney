@@ -24,6 +24,7 @@
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
+    margin-top: 20px;
   }
   
   /* Navigation Header */
@@ -241,9 +242,13 @@
 .contact-seller-link {
   color: #007bff; /* Blue color */
   text-decoration: none;
-  font-size: 0.9rem; 
+  font-size: 0.9rem;
   display: inline-flex; /* Align the icon with the text */
   align-items: center;
+}
+
+.car-details .contact-seller-link {
+  font-size: 0.9rem;  /* Font Size of the text */
 }
 
 .contact-seller-link i {
