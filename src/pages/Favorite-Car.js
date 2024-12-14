@@ -110,6 +110,9 @@ const FavoriteList = () => {
                 sender_id: auth.currentUser.uid,
               }).then(() => {
                 window.location.href = `/messaging/${docRef.id}`;
+
+                // Navigate to Messaging
+                navigate(`/messaging/${docRef.id}`)
               });
             });
           } else {
@@ -201,10 +204,10 @@ const FavoriteList = () => {
                     </p>
                     <p className="seller">{car.seller}</p>
 
-                    {/* Only show Contact Seller when User is logged in */}
-                    { user &&
+                    {/* Only show Contact Seller when User is logged in or the car is not owned by the same user */}
+                    {(user && user.uid !== car.owner) &&
                       <p className="contact-seller">
-                        <a href="contact-seller" className="contact-seller-link" onClick={() => getChatId(car)}>
+                        <a className="contact-seller-link" onClick={() => getChatId(car)}>
                           Contact Seller{" "}
                           <i>
                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
