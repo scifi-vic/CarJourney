@@ -105,7 +105,7 @@ function Navbar({ profilePicture }) {
           )}
           {isLoggedIn && (
             <Button component={Link} to="/messaging" className="nav-link">
-              Messaging
+              Messages
             </Button>
           )}
           <Button component={Link} to="/car-quiz" className="nav-link">
