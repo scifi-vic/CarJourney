@@ -1,60 +1,66 @@
-// src/pages/AddedCars-Garage.js
 import React, { useEffect, useState } from "react";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, deleteDoc, collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
-import { collection, getDocs, query, where, deleteDoc } from "firebase/firestore";
 import "./../styles/AddedCars-Garage.css";
 
 /* FontAwesome Icons */
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlus as fasPlus,
-  faXmark as fasXMark,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus as fasPlus, faXmark as fasXMark } from "@fortawesome/free-solid-svg-icons";
 
-// My Cars
 const Garage = () => {
-  // Initiate variables
-  const [selectedCar, setSelectedCar] = useState(null); // Set ID as 0
+  // State variables
+  const [selectedCar, setSelectedCar] = useState(null); // Stores the currently selected car
+  const [savedCars, setSavedCars] = useState([]); // Stores the list of saved cars
 
-  // Load saved cars from localStorage (Initiate array)
-  const [savedCars, setSavedCars] = useState([]);
-
-  // Automatically selects the first car on Garage load
+  // Automatically selects the first car in the list when the garage loads
   useEffect(() => {
     if (savedCars.length > 0) {
       setSelectedCar(savedCars[0]); // Select the first car in the list
     }
-  }, [savedCars]); // Runs whenever the `cars` array changes
+  }, [savedCars]);
 
-  // Load saved searches from localStorage on component mount
+  // Fetch saved cars from Firestore on component mount
   useEffect(() => {
-    auth.onAuthStateChanged(async (user) => {
-      if (!user) return;
-      const carsCollection = collection(db, "users", auth.currentUser.uid, "cars");
-      const snapshot = await getDocs(carsCollection);
+    const fetchSavedCars = async () => {
+      try {
+        auth.onAuthStateChanged(async (user) => {
+          if (!user) return; // If user is not authenticated, do nothing
+          const carsCollection = collection(db, "users", auth.currentUser.uid, "cars");
+          const snapshot = await getDocs(carsCollection);
 
-      const storedCars = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      console.log(storedCars);
-      setSavedCars(storedCars);
-    });
+          // Map Firestore documents to an array of car objects
+          const storedCars = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setSavedCars(storedCars);
+        });
+      } catch (error) {
+        console.error("Error fetching saved cars:", error);
+      }
+    };
+
+    fetchSavedCars();
   }, []);
 
-  // Remove a search by the ID
-  const handleRemoveCar = (id) => {
-    deleteDoc(doc(db, "cars", id));
-    setSavedCars(savedCars.filter((car) => car.id !== id));
+  // Function to handle removing a car from Firestore and updating the state
+  const handleRemoveCar = async (id) => {
+    try {
+      const carDocRef = doc(db, "users", auth.currentUser.uid, "cars", id);
+      await deleteDoc(carDocRef); // Delete the car document from Firestore
+      setSavedCars(savedCars.filter((car) => car.id !== id)); // Update local state
+      console.log(`Car with ID ${id} has been removed.`);
+    } catch (error) {
+      console.error("Error removing car:", error);
+    }
   };
 
-  // Select Car
+  // Function to handle selecting a car
   const handleCarSelect = (car) => {
-    setSelectedCar(car);
+    setSelectedCar(car); // Update the selected car state
   };
 
-  // HTML
+  // Render the component
   return (
     <div>
       {/* Navigation Headbar */}
@@ -94,16 +100,13 @@ const Garage = () => {
               <p>No cars found.</p>
             ) : (
               <>
-                <div class="my-cars-header">
-                  <h2 class="my-cars-title">My Cars</h2>
+                <div className="my-cars-header">
+                  <h2 className="my-cars-title">My Cars</h2>
 
-                  {/* Remove Car Option */}
+                  {/* Add Car Option */}
                   <div className="add-car-container">
-                    <FontAwesomeIcon
-                      className="plus-icon"
-                      icon={fasPlus}
-                    ></FontAwesomeIcon>
-                    <a href="add-car" class="add-car-link">
+                    <FontAwesomeIcon className="plus-icon" icon={fasPlus} />
+                    <a href="add-car" className="add-car-link">
                       Add another car
                     </a>
                   </div>
@@ -115,18 +118,12 @@ const Garage = () => {
                       className="car-item"
                       onClick={() => handleCarSelect(car)}
                     >
-                      <img
-                        src={car.image}
-                        alt={car.name}
-                        className="car-image"
-                      />
+                      <img src={car.image} alt={car.name} className="car-image" />
                       <div className="car-info">
                         <h3>
                           {car.year} {car.make} {car.model}
                         </h3>
-                        <p>
-                          Mileage: {Number(car.mileage).toLocaleString()} miles
-                        </p>
+                        <p>Mileage: {Number(car.mileage).toLocaleString()} miles</p>
                       </div>
                     </li>
                   ))}
@@ -137,17 +134,14 @@ const Garage = () => {
           {savedCars.length === 0 ? (
             <p></p>
           ) : (
-            <div class="car-details-container">
+            <div className="car-details-container">
               {/* Car Details Header */}
-              <div class="car-details-header">
-                <h2 class="car-details-title">Car Details</h2>
+              <div className="car-details-header">
+                <h2 className="car-details-title">Car Details</h2>
 
                 {/* Remove Car Option */}
                 <div className="remove-car-container">
-                  <FontAwesomeIcon
-                    className="x-icon"
-                    icon={fasXMark}
-                  ></FontAwesomeIcon>
+                  <FontAwesomeIcon className="x-icon" icon={fasXMark} />
                   <p
                     className="remove-car"
                     onClick={() => handleRemoveCar(selectedCar.id)}
@@ -161,11 +155,11 @@ const Garage = () => {
               <div className="car-details-card">
                 {selectedCar ? (
                   <div className="car-details-info">
-                    <h2 class="car-info-title">
+                    <h2 className="car-info-title">
                       {selectedCar.year} {selectedCar.make} {selectedCar.model}
                     </h2>
 
-                    <div class="car-image-container">
+                    <div className="car-image-container">
                       <img
                         src={selectedCar.image}
                         alt={selectedCar.name}
@@ -176,15 +170,11 @@ const Garage = () => {
                     <div className="car-details-text">
                       <p>
                         Price:{" "}
-                        <span>
-                          ${Number(selectedCar.price).toLocaleString()}
-                        </span>
+                        <span>${Number(selectedCar.price).toLocaleString()}</span>
                       </p>
                       <p>
                         Mileage:{" "}
-                        <span>
-                          {Number(selectedCar.mileage).toLocaleString()} miles
-                        </span>
+                        <span>{Number(selectedCar.mileage).toLocaleString()} miles</span>
                       </p>
                       <p>
                         ZIP Code: <span>{selectedCar.zipCode}</span>
