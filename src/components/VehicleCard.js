@@ -20,14 +20,22 @@ import { auth, db, serverTimestamp } from "../firebaseConfig";
 const VehicleCard = ({ vehicle, detailed = false }) => {
   const [isLiked, setIsLiked] = useState(false); // Toggle Favorite
   const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user); // Set login state
       if (user) {
         setButtonDisabled(user.uid === vehicle.ownerId);
+      } else {
+        setButtonDisabled(true); // Disable button for non-logged-in users
       }
-    });
-  }, []);
+      });
+  
+      return () => {
+        unsubscribeAuth();
+      };
+    }, [vehicle.ownerId]);
 
   {
     /* Miguel's Code
@@ -199,14 +207,14 @@ const VehicleCard = ({ vehicle, detailed = false }) => {
         <button
           className="contact-button"
           style={{
-            backgroundColor: buttonDisabled ? "gray" : "#007bff",
-            color: buttonDisabled ? "lightgray" : "white",
-            cursor: buttonDisabled ? "not-allowed" : "pointer",
+            backgroundColor: buttonDisabled || !isLoggedIn ? "gray" : "#007bff",
+            color: buttonDisabled || !isLoggedIn ? "lightgray" : "white",
+            cursor: buttonDisabled || !isLoggedIn ? "not-allowed" : "pointer",
           }}
           onClick={() => ContactSeller()}
-          disabled={buttonDisabled}
+          disabled={buttonDisabled || !isLoggedIn} // Disable for guests or owner's vehicles
         >
-          Contact Seller
+          {isLoggedIn ? "Contact Seller" : "Login to Contact"}
         </button>
       </div>
 
