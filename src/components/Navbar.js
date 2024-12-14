@@ -114,6 +114,9 @@ function Navbar({ profilePicture }) {
           <Button component={Link} to="/locate-dealer" className="nav-link">
             Locate Dealer
           </Button>
+          <Button component={Link} to="/compare-cars" className="nav-link">
+            Compare Cars
+          </Button>
         </Box>
 
         {/* Right Aligned User Icon / Login & Register */}
