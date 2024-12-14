@@ -63,3 +63,20 @@
     font-size: 1rem;
   }
   
+  .contact-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .contact-link:hover {
+    text-decoration: underline;
+  }
+  
+  .map-container {
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
