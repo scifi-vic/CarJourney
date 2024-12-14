@@ -29,24 +29,6 @@ const VehicleCard = ({ vehicle, detailed = false }) => {
     });
   }, []);
 
-  useEffect(() => {
-    const fetchCarData = async () => {
-      try {
-        const docRef = doc(db, "users", vehicle.ownerId, "cars", vehicle.carId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-        } else {
-          console.error("No such document!");
-        }
-      } catch (error) {
-        console.error("Error fetching car data:", error);
-      }
-    };
-
-    fetchCarData();
-  }, [vehicle.ownerId, vehicle.carId]);
-
   {
     /* Miguel's Code
     Favorite Function */
