@@ -5,29 +5,93 @@ import "./../styles/Favorite-Car.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as fasHeart } from "@fortawesome/free-solid-svg-icons"; // Solid heart
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
-import { collection, query, where, getDocs, addDoc, doc } from "firebase/firestore";
+import { collection, query, where, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
 import { auth, db, serverTimestamp } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 
 const FavoriteList = () => {
   // Initialize variables
   const [favorites, setFavorites] = useState([]);
+  const [user, setUser] = useState(null);
 
+  // Navigation
   const navigate = useNavigate();
-  // Load favorites from localStorage when the component mounts
+
+  // Fetch searches when the component mounts or user state changes
   useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    setFavorites(storedFavorites);
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      setUser(currentUser);
+
+      if (currentUser) {
+        // Fetch searches from Firestore
+        await fetchFavoritesFromFirestore(currentUser.uid);
+      } else {
+        // Fetch searches from localStorage
+        fetchFavoritesFromLocalStorage();
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  // Remove the selected car from favorites
-  const removeFromFavorites = (id) => {
-    const updatedFavorites = favorites.filter((car) => car.id !== id);
-    // updatedFavorites.splice(id, 1);
-    setFavorites(updatedFavorites);
-    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+  // Fetch favorited cars from Firestore
+  const fetchFavoritesFromFirestore = async (userId) => {
+    try {
+      const userFavRef = collection(db, "users", userId, "favoritedCars");
+      const querySnapshot = await getDocs(userFavRef);
+      const storedFavorites = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          date: data.date?.toDate() || new Date(), // Convert Firestore Timestamp to Date
+        };
+      });
+
+      setFavorites(storedFavorites);
+      console.log("Fetched cars from Firestore:", storedFavorites);
+    } catch (error) {
+      console.error("Error fetching cars from Firestore:", error);
+    }
   };
 
+  // Fetch favorited cars from localStorage
+  const fetchFavoritesFromLocalStorage = () => {
+    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    setFavorites(storedFavorites);
+    console.log("Fetched cars from localStorage:", storedFavorites);
+  };
+
+  // Remove the selected car from favorites
+  const removeFromFavorites = async (id) => {
+    // Define user
+    const user = auth.currentUser;
+
+    if (user) {
+      // Remove from Firestore
+      try {
+        const userFavRef = doc(db, "users", user.uid, "favoritedCars", id);
+        await deleteDoc(userFavRef);
+        console.log(`Car with ID ${id} removed from Firestore`);
+
+        // Update state to reflect the deletion in real-time
+        setFavorites((prevFavorites) => prevFavorites.filter((fav) => fav.carId !== id));
+
+      } catch (error) {
+        console.error("Error removing car from Firestore:", error);
+      }
+
+    } else {
+      // Remove from localStorage
+      const updatedFavorites = favorites.filter((car) => car.carId !== id);
+      setFavorites(updatedFavorites);
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      console.log(`Car with ID ${id} removed from localStorage`);
+    }
+
+  };
+
+  // Get Chat ID (Contact Seller)
   const getChatId = (car) => {
 
     const chatCollection = collection(db, "chats");
@@ -41,7 +105,7 @@ const FavoriteList = () => {
               members: {[auth.currentUser.uid]: true, [car.owner]: true},
             }).then((docRef) => {
               addDoc(collection(db, "messages", docRef.id, "messages"), {
-                text: `Hello, I'm interested in your ${car.make} ${car.model}!`,
+                text: `Hello, I'm interested in your ${car.year} ${car.make} ${car.model}!`,
                 timestamp: serverTimestamp(),
                 sender_id: auth.currentUser.uid,
               }).then(() => {
@@ -104,11 +168,18 @@ const FavoriteList = () => {
           <div className="container car-details">
             <h2>Favorited Cars</h2>
             <div id="favorite-cars-container" className="car-list">
-              {favorites.map((car) => (
+              {favorites
+              .sort((a, b) => {
+                const dateA = new Date(a.date).getTime(); // Ensure valid timestamp
+                const dateB = new Date(b.date).getTime();
+                return dateA - dateB; // Oldest first
+              })
+              .reverse() // Reverse the array to render the oldest at the bottom
+              .map((car) => (
                 <div key={car.id} className="car-item">
                   <div className="car-image">
-                    <a href={`car-listing?make=${car.make}&model=${car.model}`}>
-                      <img src={car.image} alt={car.make} />
+                    <a href={`carlistingpage/${car.owner}/${car.carId}`}>
+                      <img src={car.image} alt={`${car.year} ${car.make} ${car.model}`}/>
                     </a>
                     <FontAwesomeIcon
                       icon={fasHeart}
@@ -119,7 +190,7 @@ const FavoriteList = () => {
                   <div className="car-details">
                     <div className="title-cost">
                       <h3>
-                        {car.make} {car.model}
+                        {car.year} {car.make} {car.model}
                       </h3>
                       <p className="car-cost">
                         ${Number(car.cost).toLocaleString()}
@@ -129,21 +200,18 @@ const FavoriteList = () => {
                       {Number(car.odometer).toLocaleString()} miles
                     </p>
                     <p className="seller">{car.seller}</p>
-                    <p className="contact-seller">
-                      <a href="contact-seller" className="contact-seller-link">
-                        Contact Seller{" "}
-                        <i>
-                          <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                        </i>
-                      </a>
 
-                      <button
-                        className="contact-seller"
-                        onClick={() => getChatId(car)}
-                      >
-                        Contact Seller
-                      </button>
-                    </p>
+                    {/* Only show Contact Seller when User is logged in */}
+                    { user &&
+                      <p className="contact-seller">
+                        <a href="contact-seller" className="contact-seller-link" onClick={() => getChatId(car)}>
+                          Contact Seller{" "}
+                          <i>
+                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                          </i>
+                        </a>
+                      </p>
+                    }
                   </div>
                 </div>
               ))}
