@@ -84,7 +84,7 @@ function App() {
                 <Route path="/add-car" element={<AddCar />} />
                 <Route path="/carlistingpage/:ownerId/:carId" element={<CarListingPage />} />
                 <Route path="/favorited-cars" element={<FavoriteCar />} />
-                <Route path="/saved-searches" element={<SavedSearch />} />
+                <Route path="/saved-searches" element={<SaveSearch />} />
                 <Route path="/contactseller" element={<ContactSeller />} />
                 <Route path="/results" element={<ResultsPage />} />
                 <Route path="/car-quiz" element={<CarQuiz />} />
