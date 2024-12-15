@@ -1,55 +1,99 @@
-// src/pages/AddedCars-Garage.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "../firebaseConfig";
+import { doc, deleteDoc, collection, getDoc, getDocs } from "firebase/firestore";
+import { auth, db, storage } from "../firebaseConfig";
+import { ref, deleteObject } from "firebase/storage";
 import "./../styles/AddedCars-Garage.css";
 
 /* FontAwesome Icons */
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus as fasPlus, faXmark as fasXMark} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus as fasPlus, faXmark as fasXMark } from "@fortawesome/free-solid-svg-icons";
 
-// My Cars
-const MyCars = () => {
-    // Initiate variables
-    const [selectedCar, setSelectedCar] = useState(null);  // Set ID as 0
-  
-    // Load saved cars from localStorage (Initiate array)
-    const [savedCars, setSavedCars] = useState([]);
+const Garage = () => {
+  // State variables
+  const [selectedCar, setSelectedCar] = useState(null); // Stores the currently selected car
+  const [savedCars, setSavedCars] = useState([]); // Stores the list of saved cars
 
-    // Automatically selects the first car on Garage load
-    useEffect(() => {
-      if (savedCars.length > 0) {
-          setSelectedCar(savedCars[0]); // Select the first car in the list
+  // Automatically selects the first car in the list when the garage loads
+  useEffect(() => {
+    if (savedCars.length > 0) {
+      setSelectedCar(savedCars[0]); // Select the first car in the list
+    }
+  }, [savedCars]);
+
+  // Fetch saved cars from Firestore on component mount
+  useEffect(() => {
+    const fetchSavedCars = async () => {
+      try {
+        auth.onAuthStateChanged(async (user) => {
+          if (!user) return; // If user is not authenticated, do nothing
+          const carsCollection = collection(db, "users", auth.currentUser.uid, "cars");
+          const snapshot = await getDocs(carsCollection);
+
+          // Map Firestore documents to an array of car objects
+          const storedCars = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setSavedCars(storedCars);
+        });
+      } catch (error) {
+        console.error("Error fetching saved cars:", error);
       }
-    }, [savedCars]); // Runs whenever the `cars` array changes
-
-    // Load saved searches from localStorage on component mount
-    useEffect(() => {
-      const storedCars = JSON.parse(localStorage.getItem("addedCars")) || [];
-      setSavedCars(storedCars);
-    }, []);
-
-    // Remove a search by the ID
-    const handleRemoveCar = (id) => {
-      const updatedCars = savedCars.filter((car) => car.id !== id);
-      setSavedCars(updatedCars);
-      localStorage.setItem("addedCars", JSON.stringify(updatedCars));
     };
 
-    // Select Car
-    const handleCarSelect = (car) => {
-      setSelectedCar(car);
-    };
+    fetchSavedCars();
+  }, []);
 
-    /* Navigation */
-    const navigate = useNavigate();
+  // Function to handle removing a car from Firestore and updating the state
+  const handleRemoveCar = async (id) => {
+    try {
+      // Reference to the car document in Firestore
+      const carDocRef = doc(db, "users", auth.currentUser.uid, "cars", id);
+  
+      // Fetch the car document to retrieve the image URL
+      const carDoc = await getDoc(carDocRef);
+      if (carDoc.exists()) {
+        const carData = carDoc.data();
+        const imageUrl = carData.image; // Assuming `image` holds the image URL
+        
+        if (imageUrl) {
+          // Extract the path from the URL
+          const baseUrl = `https://firebasestorage.googleapis.com/v0/b/${storage.app.options.storageBucket}/o/`;
+          const imagePath = decodeURIComponent(imageUrl.replace(baseUrl, "").split("?")[0]);
+  
+          // Reference to the image in Firebase Storage
+          const imageRef = ref(storage, imagePath);
+  
+          // Delete the image from Firebase Storage
+          await deleteObject(imageRef);
+          console.log(`Image at URL ${imageUrl} has been deleted.`);
+        }
+      }
+  
+      // Delete the car document from Firestore
+      await deleteDoc(carDocRef);
+      setSavedCars(savedCars.filter((car) => car.id !== id)); // Update local state
+      console.log(`Car with ID ${id} has been removed.`);
+    } catch (error) {
+      console.error("Error removing car or its image:", error);
+    }
+  };
 
-    // Reusable function for redirection
-    const handleRedirect = (url) => {
-      navigate(url); // Redirect to the provided URL
-    };
+  // Function to handle selecting a car
+  const handleCarSelect = (car) => {
+    setSelectedCar(car); // Update the selected car state
+  };
 
+  /* Navigation */
+  const navigate = useNavigate();
+
+  // Reusable function for redirection
+  const handleRedirect = (url) => {
+    navigate(url); // Redirect to the provided URL
+  };
+
+  // Render the component
   // HTML
   return (
     <div>
@@ -193,4 +237,4 @@ const MyCars = () => {
   );
 };
 
-export default MyCars;
+export default Garage;

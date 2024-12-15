@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { doc, deleteDoc, collection, getDocs } from "firebase/firestore";
-import { auth, db } from "../firebaseConfig";
+import { doc, deleteDoc, collection, getDoc, getDocs } from "firebase/firestore";
+import { auth, db, storage } from "../firebaseConfig";
+import { ref, deleteObject } from "firebase/storage";
 import "./../styles/AddedCars-Garage.css";
 
 /* FontAwesome Icons */
@@ -47,12 +48,35 @@ const Garage = () => {
   // Function to handle removing a car from Firestore and updating the state
   const handleRemoveCar = async (id) => {
     try {
+      // Reference to the car document in Firestore
       const carDocRef = doc(db, "users", auth.currentUser.uid, "cars", id);
-      await deleteDoc(carDocRef); // Delete the car document from Firestore
+  
+      // Fetch the car document to retrieve the image URL
+      const carDoc = await getDoc(carDocRef);
+      if (carDoc.exists()) {
+        const carData = carDoc.data();
+        const imageUrl = carData.image; // Assuming `image` holds the image URL
+        
+        if (imageUrl) {
+          // Extract the path from the URL
+          const baseUrl = `https://firebasestorage.googleapis.com/v0/b/${storage.app.options.storageBucket}/o/`;
+          const imagePath = decodeURIComponent(imageUrl.replace(baseUrl, "").split("?")[0]);
+  
+          // Reference to the image in Firebase Storage
+          const imageRef = ref(storage, imagePath);
+  
+          // Delete the image from Firebase Storage
+          await deleteObject(imageRef);
+          console.log(`Image at URL ${imageUrl} has been deleted.`);
+        }
+      }
+  
+      // Delete the car document from Firestore
+      await deleteDoc(carDocRef);
       setSavedCars(savedCars.filter((car) => car.id !== id)); // Update local state
       console.log(`Car with ID ${id} has been removed.`);
     } catch (error) {
-      console.error("Error removing car:", error);
+      console.error("Error removing car or its image:", error);
     }
   };
 
