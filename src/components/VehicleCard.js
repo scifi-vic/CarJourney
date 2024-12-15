@@ -218,7 +218,7 @@ const VehicleCard = ({ vehicle, detailed = false }) => {
         </button>
       </div>
 
-      <div className="image-box">
+      <div className="vehicle-image-container">
         <img
           src={vehicle.image}
           alt={`${vehicle.make} ${vehicle.model}`}
