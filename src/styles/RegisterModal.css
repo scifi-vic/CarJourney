@@ -1,0 +1,153 @@
+/* Modal Container */
+.modal-container {
+    position: relative;
+    padding: 2rem;
+    margin: auto;
+    width: 100%;
+    max-width: 400px; /* Max width for better responsiveness */
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 400px) {
+    .modal-container {
+        width: 90%;
+        padding: 1.5rem;
+    }
+}
+
+/* Close Button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    color: #242058;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover {
+    color: #3a4579;
+}
+
+/* Header */
+.modal-header {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.7rem;
+    margin-bottom: 1.5rem;
+    color: #242058;
+}
+
+/* Form Fields */
+.text-field {
+    margin: 1rem 0;
+    width: 100%;
+}
+
+.text-field input {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 12px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Input Focus Effect */
+.text-field input:focus {
+    outline: none;
+    border-color: #3a4579;
+    box-shadow: 0 0 8px rgba(58, 69, 121, 0.3);
+    border-radius: 8px;
+}
+
+/* Password Criteria List */
+.password-criteria {
+    font-size: 0.85rem;
+    margin: 0.5rem 0 1.5rem;
+    padding: 0;
+    list-style: none;
+    color: #333;
+}
+
+.password-criteria-item {
+    padding: 2px 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.3s ease;
+    font-weight: 500;
+}
+
+.password-criteria-item.valid {
+    color: #4caf50; /* Green for valid criteria */
+}
+
+.password-criteria-item.invalid {
+    color: #f44336; /* Red for invalid criteria */
+}
+
+/* Adding icons to password criteria */
+.password-criteria-item::before {
+    font-family: 'Material Icons'; /* Leverage Material Icons font */
+}
+
+.password-criteria-item.valid::before {
+    content: '✔'; /* Check icon */
+}
+
+.password-criteria-item.invalid::before {
+    content: '✘'; /* Cross icon */
+}
+
+/* Error Message */
+.error-message {
+    padding: 0.5rem;
+    background-color: rgba(255, 0, 0, 0.1);
+    color: #f44336;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    border-radius: 5px;
+}
+
+/* Sign Up Button */
+.signup-button {
+    background-color: #242058;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.signup-button:hover {
+    background-color: #3a4579;
+    transform: scale(1.02); /* Subtle scale effect */
+}
+
+/* Password Visibility Icon */
+.MuiInputAdornment-root .MuiIconButton-root {
+    color: #242058;
+    transition: color 0.3s ease;
+}
+
+.MuiInputAdornment-root .MuiIconButton-root:hover {
+    color: #3a4579;
+}
+
+/* Enhanced styles for cohesive look */
+.modal-container label {
+    font-size: 0.9rem;
+    color: #666;
+}

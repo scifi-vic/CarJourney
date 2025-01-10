@@ -1,0 +1,180 @@
+/* Container styling */
+.car-search-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f9;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Card container */
+.search-card {
+  width: 100%;
+  max-width: 600px;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.search-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Title styling */
+.search-card h1 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+/* Form styling */
+.car-search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Form section styling */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+/* Label styling */
+.form-section label {
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 5px;
+}
+
+/* Input and select styling */
+.form-section input,
+.form-section select {
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  background-color: #f9f9f9;
+}
+
+.form-section input:hover,
+.form-section select:hover {
+  background-color: #f1f1f1;
+}
+
+.form-section input:focus,
+.form-section select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Placeholder styling */
+.form-section input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+/* Search button styling */
+.search-button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 14px;
+  width: 100%;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.search-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.03);
+}
+
+/* Advanced Search button styling */
+.advanced-search-button {
+  margin-top: 20px;
+  padding: 14px;
+  width: 100%;
+  font-size: 16px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.advanced-search-button:hover {
+  background-color: #218838;
+  transform: scale(1.03);
+}
+
+/* Remove arrow for select dropdowns */
+.form-section select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray"><polygon points="0,0 16,0 8,8"/></svg>') no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 12px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .search-card {
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .search-card h1 {
+    font-size: 24px;
+  }
+
+  .form-section input,
+  .form-section select {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .search-button,
+  .advanced-search-button {
+    padding: 12px;
+    font-size: 16px;
+  }
+}
+
+/* Desktop Improvements */
+@media (min-width: 1024px) {
+  .search-card {
+    max-width: 700px;
+  }
+
+  .search-card h1 {
+    font-size: 30px;
+  }
+
+  .form-section input,
+  .form-section select {
+    font-size: 18px;
+    padding: 14px;
+  }
+
+  .search-button,
+  .advanced-search-button {
+    font-size: 18px;
+    padding: 16px;
+  }
+}

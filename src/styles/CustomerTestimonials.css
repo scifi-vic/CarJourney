@@ -1,0 +1,165 @@
+/* General Styles */
+.customer-testimonials {
+  background: #f8f9fa;
+  padding: 50px 20px;
+  text-align: center;
+  font-family: "Roboto", sans-serif;
+}
+
+/* Header */
+.customer-testimonials h1 {
+  font-size: 2.5rem;
+  color: #242058;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* Testimonials Container */
+.testimonials-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  justify-items: center;
+  padding: 20px;
+}
+
+/* Testimonial Card */
+.testimonial-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 350px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Star Rating */
+.stars {
+  margin-bottom: 15px;
+}
+
+.stars svg {
+  font-size: 1.2rem;
+}
+
+/* Review Text */
+.review-text {
+  font-size: 1.1rem;
+  color: #555;
+  margin: 15px 0;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* Reviewer Name */
+.reviewer-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #242058;
+  margin-top: 10px;
+}
+
+/* Add Testimonial Button */
+.add-testimonial-button {
+  margin: 20px 0;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-testimonial-button:hover {
+  background-color: #0056b3;
+}
+
+/* Testimonial Form */
+.testimonial-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 30px auto;
+  max-width: 400px;
+  text-align: left;
+}
+
+.testimonial-form input,
+.testimonial-form textarea,
+.testimonial-form select {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.testimonial-form input:focus,
+.testimonial-form textarea:focus,
+.testimonial-form select:focus {
+  border-color: #007BFF;
+}
+
+.testimonial-form textarea {
+  resize: none;
+  height: 100px;
+}
+
+.testimonial-form button {
+  padding: 10px;
+  font-size: 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.testimonial-form button:hover {
+  background-color: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .customer-testimonials h1 {
+      font-size: 2rem;
+  }
+
+  .testimonial-card {
+      max-width: 90%;
+  }
+
+  .add-testimonial-button {
+      width: 100%;
+      padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .testimonial-form {
+      padding: 0 10px;
+  }
+
+  .testimonial-form input,
+  .testimonial-form textarea,
+  .testimonial-form select {
+      font-size: 13px;
+  }
+
+  .testimonial-form button {
+      font-size: 14px;
+  }
+}
